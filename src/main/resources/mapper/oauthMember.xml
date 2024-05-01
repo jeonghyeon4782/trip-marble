@@ -4,20 +4,20 @@
 <mapper namespace="com.dj.trip.domain.oauth.mapper.OauthMemberMapper">
 
     <select id="selectOauthMemberByOauthId" parameterType="int">
-        select oauth_id, oauth_service_type, email
+        select oauth_id, oauth_server_type, email
         from oauth_member
         where oauth_id = #{oauthId}
     </select>
 
-    <select id="selectOauthMemberByOauthServiceTypeAndEmail" parameterType="OauthMember">
-        select oauth_id, oauth_service_type, email
+    <select id="selectOauthMemberByOauthServerTypeAndEmail" parameterType="OauthMember">
+        select oauth_id, oauth_server_type, email
         from oauth_member
-        where email = #{email} and oauth_service_type = #{oauthServiceType}
+        where email = #{email} and oauth_server_type = #{oauthServerType}
     </select>
 
     <insert id="insertOauthMember" parameterType="OauthMember">
-        insert into oauth_member(oauth_service_type, email)
-        values (#{oauthServiceType}, #{email})
+        insert into oauth_member(oauth_server_type, email)
+        values (#{oauthServerType}, #{email})
 
         <selectKey keyProperty="oauth_id" resultType="int" order="AFTER">
             SELECT LAST_INSERT_ID()

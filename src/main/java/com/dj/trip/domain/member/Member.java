@@ -1,6 +1,6 @@
 package com.dj.trip.domain.member;
 
-import com.dj.trip.domain.oauth.OauthServiceType;
+import com.dj.trip.domain.oauth.OauthServerType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +11,6 @@ public class Member {
     private String password;
     private String nickname;
     private String email;
-    private OauthServiceType oauthServiceType;
+    private OauthServerType oauthServiceType;
     private char role;
 }

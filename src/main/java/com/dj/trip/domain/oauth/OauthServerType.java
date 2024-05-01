@@ -8,12 +8,12 @@ import static java.util.Locale.ENGLISH;
 
 @AllArgsConstructor
 @Getter
-public enum OauthServiceType {
+public enum OauthServerType {
 
     GOOGLE;
 
     @JsonCreator
-    public static OauthServiceType fromName(String type) {
-        return OauthServiceType.valueOf(type.toUpperCase(ENGLISH));
+    public static OauthServerType fromName(String type) {
+        return OauthServerType.valueOf(type.toUpperCase(ENGLISH));
     }
 }

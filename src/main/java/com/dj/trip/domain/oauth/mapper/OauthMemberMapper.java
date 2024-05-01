@@ -8,9 +8,12 @@ import java.util.Optional;
 @Mapper
 public interface OauthMemberMapper {
 
+    //  id로 oauth 유저 조회
     OauthMember selectOauthMemberByOauthId(int oauthId);
 
-    Optional<OauthMember> selectOauthMemberByOauthServiceTypeAndEmail(OauthMember oauthMember);
+    // OauthServiceType과 email로 유저 조회
+    Optional<OauthMember> selectOauthMemberByOauthServerTypeAndEmail(OauthMember oauthMember);
 
+    // oauth 유저 저장
     int insertOauthMember(OauthMember oauthMember);
 }

@@ -1,9 +1,9 @@
 package com.dj.trip.domain.oauth.dto.request;
 
-import com.dj.trip.domain.oauth.OauthServiceType;
+import com.dj.trip.domain.oauth.OauthServerType;
 
 public record OauthLoginRequest(
-        OauthServiceType oauthServerType,
+        OauthServerType oauthServerType,
         String code
 ) {
 }

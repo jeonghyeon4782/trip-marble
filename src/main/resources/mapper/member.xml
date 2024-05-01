@@ -14,9 +14,9 @@
         where member_Id = #{memberId}
     </select>
 
-    <select id="selectMemberByOauthServiceTypeAndEmail" parameterType="Member">
-        select member_id, oauth_service_type, email
+    <select id="selectMemberByOauthServerTypeAndEmail" parameterType="Member">
+        select member_id, oauth_server_type, email
         from member
-        where email = #{email} and oauth_service_type = #{oauthServiceType}
+        where email = #{email} and oauth_server_type = #{oauthServerType}
     </select>
 </mapper>

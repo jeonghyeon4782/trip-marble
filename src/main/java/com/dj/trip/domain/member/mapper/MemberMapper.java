@@ -16,5 +16,5 @@ public interface MemberMapper {
     Member selectMemberByMemberId(String memberId);
 
     // OauthServiceType과 email로 유저 조회
-    Optional<Member> selectMemberByOauthServiceTypeAndEmail(OauthMember oauthMember);
+    Optional<Member> selectMemberByOauthServerTypeAndEmail(OauthMember oauthMember);
 }

@@ -14,6 +14,6 @@ import static lombok.AccessLevel.PROTECTED;
 public class OauthMember {
 
     private int oauth_id;
-    private OauthServiceType oauthServiceType;
+    private OauthServerType oauthServerType;
     private String email;
 }

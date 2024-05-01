@@ -56,6 +56,9 @@ dependencies {
 
 	// Gson
 	implementation 'com.google.code.gson:gson:2.8.9'
+
+	// webflux
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {

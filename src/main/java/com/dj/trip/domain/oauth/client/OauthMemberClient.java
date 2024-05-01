@@ -1,10 +1,10 @@
 package com.dj.trip.domain.oauth.client;
 
 import com.dj.trip.domain.oauth.OauthMember;
-import com.dj.trip.domain.oauth.OauthServiceType;
+import com.dj.trip.domain.oauth.OauthServerType;
 
 public interface OauthMemberClient {
-    OauthServiceType supportServer();
+    OauthServerType supportServer();
 
     OauthMember fetch(String code);
 }
