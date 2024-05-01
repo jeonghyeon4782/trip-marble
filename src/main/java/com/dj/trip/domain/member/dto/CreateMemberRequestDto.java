@@ -1,4 +1,4 @@
-package com.dj.trip.member.dto;
+package com.dj.trip.domain.member.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

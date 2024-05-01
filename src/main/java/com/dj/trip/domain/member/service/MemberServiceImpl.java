@@ -1,16 +1,13 @@
-package com.dj.trip.member.service;
+package com.dj.trip.domain.member.service;
 
-import com.dj.trip.member.domain.Member;
-import com.dj.trip.member.dto.CreateMemberRequestDto;
-import com.dj.trip.member.mapper.MemberMapper;
+import com.dj.trip.domain.member.Member;
+import com.dj.trip.domain.member.dto.CreateMemberRequestDto;
+import com.dj.trip.domain.member.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 
 @Service
 @Log4j2
