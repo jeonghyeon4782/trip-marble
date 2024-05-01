@@ -1,7 +1,7 @@
 package com.dj.trip.global.security;
 
-import com.dj.trip.member.domain.Member;
-import com.dj.trip.member.mapper.MemberMapper;
+import com.dj.trip.domain.member.Member;
+import com.dj.trip.domain.member.mapper.MemberMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
