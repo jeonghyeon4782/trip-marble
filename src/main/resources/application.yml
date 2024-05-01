@@ -1,0 +1,40 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NAME}?serverTimezone=UTC
+    hikari:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      username: ${MYSQL_USERNAME}
+      password: ${MYSQL_PASSWORD}
+
+mybatis:
+  type-aliases-package: com.dj.trip.domain.*
+  mapper-locations: mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+logging:
+  level:
+    org.springframework: info
+    com.dj: debug
+    org.springframework.security: debug
+
+com:
+  dj:
+    jwt:
+      secret:
+
+oauth:
+  google:
+    client-id: ${GOOGLE_CLIENT_ID}
+    client-secret: ${GOOGLE_CLIENT_SECRET}
+    redirect-uri: ${GOOGLE_REDIRECT_ID}
+    scope: email
+
+
