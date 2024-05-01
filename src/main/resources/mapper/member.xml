@@ -1,7 +1,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.dj.trip.member.mapper.MemberMapper">
+<mapper namespace="com.dj.trip.domain.member.mapper.MemberMapper">
 
     <select id="insertMember" parameterType="Member">
         insert into member(member_id, password, nickname, email, role)
@@ -12,5 +12,11 @@
         select member_id, password, nickname, email, role
         from member
         where member_Id = #{memberId}
+    </select>
+
+    <select id="selectMemberByOauthServiceTypeAndEmail" parameterType="Member">
+        select member_id, oauth_service_type, email
+        from member
+        where email = #{email} and oauth_service_type = #{oauthServiceType}
     </select>
 </mapper>
