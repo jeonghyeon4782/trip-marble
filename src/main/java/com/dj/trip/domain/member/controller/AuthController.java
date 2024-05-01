@@ -1,8 +1,8 @@
-package com.dj.trip.member.controller;
+package com.dj.trip.domain.member.controller;
 
+import com.dj.trip.domain.member.dto.CreateMemberRequestDto;
+import com.dj.trip.domain.member.service.MemberService;
 import com.dj.trip.global.dto.ResponseDto;
-import com.dj.trip.member.dto.CreateMemberRequestDto;
-import com.dj.trip.member.service.MemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
