@@ -56,4 +56,12 @@ public class JWTUtil {
 
         return claim;
     }
+
+    // 아이디 추출
+    // 토큰에서 아이디 추출
+    public String getMeberId(String token) throws JwtException {
+        Map<String, Object> claims = validateToken(token);
+        String memberId = (String) claims.get("memberId");
+        return memberId;
+    }
 }
