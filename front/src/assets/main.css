@@ -10,14 +10,15 @@
 a,
 .green {
   text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
+  color: #28161C;
   transition: 0.4s;
   padding: 3px;
 }
 
 @media (hover: hover) {
   a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
+    background-color:  #9E6F99;
+    border-radius: 10px;
   }
 }
 
@@ -28,7 +29,7 @@ a,
   }
 
   #app {
-    display: grid;
+    /* display: grid; */
     grid-template-columns: 1fr 1fr;
     padding: 0 2rem;
   }
