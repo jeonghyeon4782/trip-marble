@@ -21,11 +21,14 @@ const review = ref({
 </script>
 
 <template>
+    <div>
+        상세 게시판이야
+    </div>
     <div class="container">
         <div class="link">
             <RouterLink :to="{ name: 'review-list' }">Back to Posts</RouterLink>
             <span class="user-link">
-                <RouterLink :to="{ name: 'review-write' }">modify</RouterLink>
+                <RouterLink :to="{ name: 'review-modify' }">modify</RouterLink>
                 <RouterLink :to="{ name: 'review-list' }">delete</RouterLink>
             </span>
         </div>
@@ -53,7 +56,6 @@ const review = ref({
                 </div>
             </div>
         </div>
-        <h2>{{ reviewid }}</h2>
     </div>
 </template>
 
@@ -133,7 +135,7 @@ const review = ref({
     font-size: 0.9rem;
 }
 
-.favorite-icon{
+.favorite-icon {
     margin-right: 20px;
     margin-bottom: 20px;
 }
