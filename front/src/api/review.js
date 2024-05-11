@@ -1,6 +1,6 @@
 import { localAxios } from "@/util/http-commons";
 
-let local = localAxios();
+const local = localAxios();
 
 function listReview(param, success, fail) {
   local.get(`/review`, { params: param }).then(success).catch(fail);

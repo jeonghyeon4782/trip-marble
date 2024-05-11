@@ -2,25 +2,24 @@
 import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
-import imageSrc from '@/assets/image1.jpg';
 import favorite from '@/assets/favorite.svg';
 import favoriteFill from '@/assets/favorite_fill.svg';
 import location from '@/assets/location.svg';
 import { deleteReview, detailReview } from "@/api/review";
 
 
-let route = useRoute();
-let router = useRouter();
+const route = useRoute();
+const router = useRouter();
 
-let { reviewid } = route.params;
+const { reviewid } = route.params;
 
-let review = ref({});
+const review = ref({});
 
 onMounted(() => {
     getReview();
 })
 
-let getReview = () => {
+const getReview = () => {
     console.log(reviewid + "번 리뷰 요청");
     detailReview(
         reviewid,
@@ -49,7 +48,7 @@ function onDeleteReview() {
     }
 }
 
-let favoriteIcon = computed(() => {
+const favoriteIcon = computed(() => {
     console.log(review.value.isCheckLike);
     return review.value.isCheckLike ? favoriteFill : favorite;
 })

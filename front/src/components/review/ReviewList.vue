@@ -5,11 +5,11 @@ import { listReview } from "@/api/review.js";
 
 import ReviewListItem from '@/components/review/item/ReviewListItem.vue';
 
-let reviews = ref([]);
-let currentPage = ref(1);
-let totalPage = ref(0);
-let { VITE_ARTICLE_LIST_SIZE } = import.meta.env;
-let param = ref({
+const reviews = ref([]);
+const currentPage = ref(1);
+const totalPage = ref(0);
+const { VITE_ARTICLE_LIST_SIZE } = import.meta.env;
+const param = ref({
     pgno: currentPage.value,
     spp: VITE_ARTICLE_LIST_SIZE,
     key: "",
@@ -20,7 +20,7 @@ onMounted(() => {
     getReviewList();
 })
 
-let getReviewList = () => {
+const getReviewList = () => {
     console.log("서버에 review 목록 요청", param.value);
     listReview(
         param.value,
