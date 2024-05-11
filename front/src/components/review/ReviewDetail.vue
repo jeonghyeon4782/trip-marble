@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import imageSrc from '@/assets/image1.jpg';
@@ -25,6 +25,7 @@ let getReview = () => {
     detailReview(
         reviewid,
         ({ data }) => {
+            console.log(data);
             review.value = data;
         },
         (error) => {
@@ -48,6 +49,15 @@ function onDeleteReview() {
     }
 }
 
+let favoriteIcon = computed(() => {
+    console.log(review.value.isCheckLike);
+    return review.value.isCheckLike ? favoriteFill : favorite;
+})
+
+function favoriteClick() {
+    review.value.isCheckLike = !review.value.isCheckLike;
+}
+
 </script>
 
 <template>
@@ -69,15 +79,15 @@ function onDeleteReview() {
                 <h2 class="review-title">{{ review.title }}</h2>
                 <div class="top-info">
                     <div class="review-profile">
-                        <img :src="imageSrc" class="profile-image">
+                        <img :src="review.profileImageUrl" class="profile-image">
                         <span class="username">{{ review.nickname }}</span>
                         <img :src="location" class="location-icon">
-                        <span class="location-text">{{ review.location }}</span>
-                        <span class="review-date">{{ review.createdDate }}</span>
+                        <span class="location-text">{{ review.attractionName }}</span>
+                        <span class="review-date">{{ review.createDate }}</span>
                     </div>
-                    <img :src="favorite" class="favorite-icon">
+                    <img :src="favoriteIcon" class="favorite-icon" @click="favoriteClick">
                 </div>
-                <img class="review-image" :src="imageSrc">
+                <img :src="review.reviewImageUrl" class="review-image">
                 <p class="review-description">{{ review.content }}</p>
                 <div class="review-info">
                     <span>Likes: {{ review.likes }}</span>
