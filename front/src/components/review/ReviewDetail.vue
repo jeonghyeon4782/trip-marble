@@ -6,18 +6,48 @@ import imageSrc from '@/assets/image1.jpg';
 import favorite from '@/assets/favorite.svg';
 import favoriteFill from '@/assets/favorite_fill.svg';
 import location from '@/assets/location.svg';
+import { deleteReview, detailReview } from "@/api/review";
 
 
-const route = useRoute();
-const router = useRouter();
+let route = useRoute();
+let router = useRouter();
 
-// const articleno = ref(route.params.articleno);
-const { reviewid } = route.params;
+let { reviewid } = route.params;
 
-const review = ref({
-    id: 1, title: "제목1", nickname: "유저", location: " 서울", createdDate: "2024-05-10 12:11:23",
-    content: "내일은 즐거운 주말이야 조금만 더 힘내자", likes: 30, comments: 30, hits: 20,
-});
+let review = ref({});
+
+onMounted(() => {
+    getReview();
+})
+
+let getReview = () => {
+    console.log(reviewid + "번 리뷰 요청");
+    detailReview(
+        reviewid,
+        ({ data }) => {
+            review.value = data;
+        },
+        (error) => {
+            console.log(error);
+        }
+    );
+};
+
+function onDeleteReview() {
+    if (window.confirm("정말 삭제하시겠습니까?")) {
+        console.log(reviewid + "번 리뷰 삭제 요청");
+        deleteReview(
+            reviewid,
+            (response) => {
+                if (response.status == 204) router.replace({ name: "review-list" });
+            },
+            (error) => {
+                console.log(error);
+            }
+        );
+    }
+}
+
 </script>
 
 <template>
@@ -29,7 +59,7 @@ const review = ref({
             <RouterLink :to="{ name: 'review-list' }">Back to Posts</RouterLink>
             <span class="user-link">
                 <RouterLink :to="{ name: 'review-modify' }">modify</RouterLink>
-                <RouterLink :to="{ name: 'review-list' }">delete</RouterLink>
+                <a :to="{ name: 'review-list' }" @click="onDeleteReview">delete</a>
             </span>
         </div>
 
@@ -77,6 +107,7 @@ const review = ref({
 
 .user-link>a {
     margin-right: 20px;
+    cursor: pointer;
 }
 
 .review {
