@@ -3,12 +3,12 @@ defineProps({ review: Object });
 </script>
 
 <template>
-  <RouterLink :to="{ name: 'review-view', params: { reviewid: review.review_id } }">
+  <RouterLink :to="{ name: 'review-view', params: { reviewid: review.reviewId } }">
     <div class="item">
-      <img :src="review.review_image_url" :alt="imageAlt">
+      <img :src="review.reviewImageUrl" :alt="imageAlt">
       <div class="item-content">
         <div class="item-profile">
-          <img :src="review.profile_image_url" :alt="imageAlt">
+          <img :src="review.profileImageUrl" :alt="imageAlt">
           <span>{{ review.nickname }}</span>
         </div>
         <h3 class="item-title">{{ review.title }}</h3>

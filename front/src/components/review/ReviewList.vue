@@ -1,13 +1,9 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import { useRouter } from "vue-router";
-import axios from "axios";
 import { listReview } from "@/api/review.js";
 
 
 import ReviewListItem from '@/components/review/item/ReviewListItem.vue';
-
-let router = useRouter();
 
 let reviews = ref([]);
 let currentPage = ref(1);
@@ -47,7 +43,7 @@ let getReviewList = () => {
         리뷰 게시판이야
     </div>
     <div class="review-grid">
-        <ReviewListItem v-for="review in reviews" :key="review.review_id" :review="review"></ReviewListItem>
+        <ReviewListItem v-for="review in reviews" :key="review.reviewId" :review="review"></ReviewListItem>
     </div>
 </template>
 
