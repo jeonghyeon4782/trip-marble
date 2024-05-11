@@ -1,31 +1,45 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import { useRouter } from "vue-router";
+import axios from "axios";
+import { listReview } from "@/api/review.js";
+
 
 import ReviewListItem from '@/components/review/item/ReviewListItem.vue';
 
-const reviews = ref([
-{ id: 1, title: "제목1", nickname:"유저", location:" 서울", createDate:"2024-05-10 12:11:23",
-content:"내일은 즐거운 주말이야 조금만 더 힘내자", likes:30, comments:30, hits:20,
- },
- { id: 2, title: "제목2", nickname:"유저2", location:" 서울2", createDate:"2024-05-10 12:11:23",
-content:"내일은 즐거운 주말이야 조금만 더 힘내자", likes:30, comments:30, hits:20,
- },
- { id: 3, title: "제목3", nickname:"유저3", location:" 서울3", createDate:"2024-05-10 12:11:23",
-content:"내일은 즐거운 주말이야 조금만 더 힘내자", likes:30, comments:30, hits:20,
- },
- { id: 4, title: "제목4", nickname:"유저4", location:" 서울", createDate:"2024-05-10 12:11:23",
-content:"내일은 즐거운 주말이야 조금만 더 힘내자", likes:30, comments:30, hits:20,
- },
- { id: 5, title: "제목5", nickname:"유저5", location:" 서울", createDate:"2024-05-10 12:11:23",
-content:"내일은 즐거운 주말이야 조금만 더 힘내자", likes:30, comments:30, hits:20,
- },
- { id: 6, title: "제목6", nickname:"유저6", location:" 서울", createDate:"2024-05-10 12:11:23",
-content:"내일은 즐거운 주말이야 조금만 더 힘내자", likes:30, comments:30, hits:20,
- },
- { id: 7, title: "제목7", nickname:"유저7", location:" 서울", createDate:"2024-05-10 12:11:23",
-content:"내일은 즐거운 주말이야 조금만 더 힘내자", likes:30, comments:30, hits:20,
- },
-])
+let router = useRouter();
+
+let reviews = ref([]);
+let currentPage = ref(1);
+let totalPage = ref(0);
+let { VITE_ARTICLE_LIST_SIZE } = import.meta.env;
+let param = ref({
+    pgno: currentPage.value,
+    spp: VITE_ARTICLE_LIST_SIZE,
+    key: "",
+    word: "",
+});
+
+onMounted(() => {
+    getReviewList();
+})
+
+let getReviewList = () => {
+    console.log("서버에 review 목록 요청", param.value);
+    listReview(
+        param.value,
+        ({ data }) => {
+            console.log(data);
+            reviews.value = data.reviews;
+            currentPage.value = data.currentPage;
+            totalPage.value = data.totalPageCount;
+        },
+        (error) => {
+            console.log(error);
+        }
+    );
+};
+
 </script>
 
 <template>
@@ -33,7 +47,7 @@ content:"내일은 즐거운 주말이야 조금만 더 힘내자", likes:30, co
         리뷰 게시판이야
     </div>
     <div class="review-grid">
-        <ReviewListItem v-for="review in reviews" :key="review.reviewid" :review="review"></ReviewListItem>
+        <ReviewListItem v-for="review in reviews" :key="review.review_id" :review="review"></ReviewListItem>
     </div>
 </template>
 

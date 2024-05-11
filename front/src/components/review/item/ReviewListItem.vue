@@ -1,22 +1,21 @@
 <script setup>
-import imageSrc from '@/assets/image1.jpg';
 defineProps({ review: Object });
 </script>
 
 <template>
-  <RouterLink :to="{ name: 'review-view', params: { reviewid: review.id } }">
+  <RouterLink :to="{ name: 'review-view', params: { reviewid: review.review_id } }">
     <div class="item">
-      <img :src="imageSrc" :alt="imageAlt">
+      <img :src="review.review_image_url" :alt="imageAlt">
       <div class="item-content">
         <div class="item-profile">
-          <img :src="imageSrc" :alt="imageAlt">
-          <span>Username</span>
+          <img :src="review.profile_image_url" :alt="imageAlt">
+          <span>{{ review.nickname }}</span>
         </div>
-        <h3 class="item-title">Post Title</h3>
+        <h3 class="item-title">{{ review.title }}</h3>
         <div class="item-info">
-          <span>Likes: 100</span>
-          <span>Comments: 20</span>
-          <span>Views: 500</span>
+          <span>Likes: {{ review.likes }}</span>
+          <span>Comments: {{ review.comments }}</span>
+          <span>Views: {{ review.hits }}</span>
         </div>
       </div>
     </div>
