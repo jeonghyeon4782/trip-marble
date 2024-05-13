@@ -3,17 +3,18 @@ package com.dj.trip.domain.oauth.service;
 import com.dj.trip.domain.member.Member;
 import com.dj.trip.domain.member.mapper.MemberMapper;
 import com.dj.trip.domain.oauth.OauthMember;
-import com.dj.trip.domain.oauth.OauthServerType;
 import com.dj.trip.domain.oauth.authcode.AuthCodeRequestUrlProviderComposite;
 import com.dj.trip.domain.oauth.client.OauthMemberClientComposite;
 import com.dj.trip.domain.oauth.dto.request.OauthLoginRequest;
 import com.dj.trip.domain.oauth.dto.response.OauthLoginResponse;
 import com.dj.trip.domain.oauth.mapper.OauthMemberMapper;
+import com.dj.trip.global.util.JWTUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -24,11 +25,7 @@ public class OauthService {
     private final OauthMemberClientComposite oauthMemberClientComposite;
     private final OauthMemberMapper oauthMemberMapper;
     private final MemberMapper memberMapper;
-
-    // oauthServerType의 소셜 로그인 code를 얻을 수 있는 인증 URL 제공
-    public String getAuthCodeRequestUrl(OauthServerType oauthServerType) {
-        return authCodeRequestUrlProviderComposite.provide(oauthServerType);
-    }
+    private final JWTUtil jwtUtil;
 
     @Transactional
     public OauthLoginResponse login(OauthLoginRequest oauthLoginRequest, HttpServletResponse response) {
@@ -54,8 +51,10 @@ public class OauthService {
     }
 
     private void processUserTokens(Member member, HttpServletResponse response) {
-        // token 발급 처리
+        String accessToken = jwtUtil.getAccessToken(Map.of("memberId", member.getMemberId()));
+        String refreshToken = jwtUtil.getRefreshToken(Map.of("memberId", member.getMemberId()));
+
+        jwtUtil.setHeaderAccessToken(response, accessToken);
+        jwtUtil.setHeaderRefreshToken(response, refreshToken);
     }
-
-
 }
