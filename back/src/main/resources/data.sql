@@ -8,7 +8,7 @@ CREATE TABLE `member`
     `member_id` varchar(12)  NOT NULL,
     `password`  varchar(200) NOT NULL,
     `nickname`  varchar(10)  NOT NULL unique,
-    `email`     varchar(50)  NOT NULL unique,
+    `email`     varchar(50)  NOT NULL,
     `role`      char(1),
     `oauth_server_type` ENUM('GOOGLE') NOT NULL,
     PRIMARY KEY (`member_id`)
@@ -17,7 +17,7 @@ CREATE TABLE `member`
 CREATE TABLE `oauth_member`
 (
     `oauth_id`           int NOT NULL AUTO_INCREMENT,
-    `email`              varchar(50) NOT NULL unique,
+    `email`              varchar(50) NOT NULL,
     `oauth_server_type` ENUM('GOOGLE') NOT NULL,
     PRIMARY KEY (`oauth_id`)
 );
