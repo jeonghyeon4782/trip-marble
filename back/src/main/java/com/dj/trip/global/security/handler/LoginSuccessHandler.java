@@ -29,10 +29,10 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         Map<String, Object> claims = Map.of("memberId", authentication.getName());
         // Access Token의 유효기간
-        String accessToken = jwtUtil.generateToken(claims, 30);  // 30분
+        String accessToken = jwtUtil.getAccessToken(claims);
         log.info("------------------------------------------새로운 Access Token 생성-----------------------------------------");
         // Refresh Token의 유효기간
-        String refreshToken = jwtUtil.generateToken(claims, 30 * 24 * 60);  // 30일
+        String refreshToken = jwtUtil.getRefreshToken(claims);
         log.info("------------------------------------------새로운 Refresh Token 생성-----------------------------------------");
 
 
