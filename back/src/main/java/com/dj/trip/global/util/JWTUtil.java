@@ -4,6 +4,8 @@ import com.dj.trip.global.property.JwtProperties;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
@@ -72,5 +74,23 @@ public class JWTUtil {
         Map<String, Object> claims = validateToken(token);
         String memberId = (String) claims.get("memberId");
         return memberId;
+    }
+
+    public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
+        Cookie accessTokenCookie = new Cookie("DJTRIP_TOKEN", accessToken);
+        accessTokenCookie.setMaxAge(86400);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setHttpOnly(true);
+
+        response.addCookie(accessTokenCookie);
+    }
+
+    public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
+        Cookie refreshTokenCookie = new Cookie("DJTRIP_REFRESH_TOKEN", refreshToken);
+        refreshTokenCookie.setMaxAge(604800);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setHttpOnly(true);
+
+        response.addCookie(refreshTokenCookie);
     }
 }
