@@ -25,16 +25,17 @@ logging:
     com.dj: debug
     org.springframework.security: debug
 
-com:
-  dj:
-    jwt:
-      secret:
+auth:
+  jwt:
+    secretKey: ${JWT_SECRET_KEY}
+    accessExp: ${JWT_ACCESS_EXP}
+    refreshExp: ${JWT_REFRESH_EXP}
 
 oauth:
   google:
     client-id: ${GOOGLE_CLIENT_ID}
     client-secret: ${GOOGLE_CLIENT_SECRET}
     redirect-uri: ${GOOGLE_REDIRECT_ID}
-    scope: email
-
-
+    scope:
+      - profile
+      - email
