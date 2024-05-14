@@ -11,4 +11,6 @@ public interface LikeMapper {
     boolean isHasLike(Like like);
 
     boolean isWriteByMe(Like like);
+
+    int deleteLike(Like like);
 }

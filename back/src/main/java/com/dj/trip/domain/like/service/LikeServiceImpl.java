@@ -23,4 +23,15 @@ public class LikeServiceImpl implements LikeService {
         }
         likeMapper.insertLike(like);
     }
+
+    @Override
+    public void deleteLike(int reviewId, String memberId) {
+        Like like = Like.builder()
+                .memberId(memberId)
+                .reviewId(reviewId)
+                .build();
+        if (likeMapper.deleteLike(like) == 0) {
+            throw new InsufficientAuthenticationException("잘못된 요청");
+        }
+    }
 }

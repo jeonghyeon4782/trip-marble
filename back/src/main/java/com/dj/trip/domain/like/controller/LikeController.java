@@ -24,5 +24,14 @@ public class LikeController {
         return new ResponseDto<>(HttpStatus.CREATED.value(), "좋아요 성공", null);
     }
 
+    @DeleteMapping("{reviewid}")
+    public ResponseDto<?> deleteLike(@PathVariable("reviewid") int reviewId,
+                                     @RequestHeader("Authorization") String tokenHeader) {
+        String token = tokenHeader.substring(7);
+        String memberId = jwtUtil.getMeberId(token);
+        likeService.deleteLike(reviewId, memberId);
+        return new ResponseDto<>(HttpStatus.NO_CONTENT.value(), "좋아요 취소", null);
+    }
+
 
 }
