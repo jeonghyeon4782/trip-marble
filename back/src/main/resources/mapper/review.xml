@@ -17,4 +17,31 @@
           and content = #{content}
         order by review_id desc limit 1
     </select>
+
+    <select id="selectReview" parameterType="Review" resultType="GetReviewResponse">
+        select r.review_id,
+               r.attraction_info_id,
+               a.name                                                                            as attractionName,
+               m.nickname,
+               r.title,
+               r.content,
+               r.image_url                                                                       as reviewImageUrl,
+               m.image_url                                                                       as profileImageUrl,
+               r.hits,
+               r.create_date,
+               count(l.member_board_like_id)                                                     as likes,
+               if(r.member_id = #{memberId}, true, false)                                        as isWriteByMe,
+               if(r.review_id in (select review_id
+                                  from member_board_like
+                                  where member_board_like.member_id = #{memberId}), true, false) as isCheckLike
+        from review r
+                 join member m
+                      on r.member_id = m.member_id
+                 join attraction_info a
+                      on r.attraction_info_id = a.attraction_info_id
+                 left join member_board_like l
+                           on r.review_id = l.review_id
+        group by r.review_id
+        having r.review_id = #{reviewId}
+    </select>
 </mapper>

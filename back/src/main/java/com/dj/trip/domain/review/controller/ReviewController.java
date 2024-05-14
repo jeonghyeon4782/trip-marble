@@ -25,4 +25,14 @@ public class ReviewController {
         return new ResponseDto<>(HttpStatus.CREATED.value(), "리뷰 작성 성공",
                 reviewService.createReview(reviewRequest, memberId));
     }
+
+    @GetMapping({"{reviewid}"})
+    public ResponseDto<?> getReview(@RequestHeader("Authorization") String tokenHeader,
+                                    @PathVariable("reviewid") int reviewId
+    ) {
+        String token = tokenHeader.substring(7);
+        String memberId = jwtUtil.getMeberId(token);
+        return new ResponseDto<>(HttpStatus.OK.value(), "리뷰 요청 성공",
+                reviewService.getReview(reviewId, memberId));
+    }
 }

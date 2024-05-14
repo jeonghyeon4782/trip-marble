@@ -3,6 +3,7 @@ package com.dj.trip.domain.review.service;
 import com.dj.trip.domain.review.Review;
 import com.dj.trip.domain.review.dto.request.CreateReviewRequest;
 import com.dj.trip.domain.review.dto.response.CreateReviewResponse;
+import com.dj.trip.domain.review.dto.response.GetReviewResponse;
 import com.dj.trip.domain.review.mapper.ReviewMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -33,5 +34,15 @@ public class ReviewServiceImpl implements ReviewService {
         }
         int id = reviewMapper.selectReviewId(review);
         return new CreateReviewResponse(id);
+    }
+
+    @Override
+    public GetReviewResponse getReview(int reviewId, String memberId) {
+        Review review = Review
+                .getReview(
+                        reviewId,
+                        memberId
+                );
+        return reviewMapper.selectReview(review);
     }
 }

@@ -31,4 +31,11 @@ public class Review {
                 .imageUrl(imageUrl)
                 .build();
     }
+
+    public static Review getReview(int reviewId, String memberId) {
+        return builder()
+                .reviewId(reviewId)
+                .memberId(memberId)
+                .build();
+    }
 }
