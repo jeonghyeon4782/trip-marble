@@ -1,0 +1,20 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.dj.trip.domain.review.mapper.ReviewMapper">
+
+    <insert id="insertReview" parameterType="Review">
+        insert into review(attraction_info_id, member_id, title, content, image_url)
+        values (#{attractionInfoId}, #{memberId}, #{title}, #{content}, #{imageUrl})
+    </insert>
+
+    <select id="selectReviewId" parameterType="Review" resultType="int">
+        select review_id
+        from review
+        where attraction_info_id = #{attractionInfoId}
+          and member_id = #{memberId}
+          and title = #{title}
+          and content = #{content}
+        order by review_id desc limit 1
+    </select>
+</mapper>
