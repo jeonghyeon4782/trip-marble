@@ -100,4 +100,11 @@
             image_url          = #{imageUrl}
         where review_id = #{reviewId}
     </update>
+
+    <delete id="deleteReview" parameterType="Review">
+        delete
+        from review
+        where review_id = #{reviewId}
+          and member_id = #{memberId}
+    </delete>
 </mapper>

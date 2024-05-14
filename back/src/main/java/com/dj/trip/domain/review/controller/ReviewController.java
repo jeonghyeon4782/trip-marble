@@ -55,4 +55,14 @@ public class ReviewController {
         return new ResponseDto<>(HttpStatus.CREATED.value(), "리뷰 수정 완료",
                 reviewService.modifyReview(reviewId, modigyReviewRequest, memberId));
     }
+
+    @DeleteMapping({"{reviewid}"})
+    public ResponseDto<?> deleteReview(@PathVariable("reviewid") int reviewId,
+                                       @RequestHeader("Authorization") String tokenHeader
+    ) {
+        String token = tokenHeader.substring(7);
+        String memberId = jwtUtil.getMeberId(token);
+        reviewService.deleteReview(reviewId, memberId);
+        return new ResponseDto<>(HttpStatus.NO_CONTENT.value(), "리뷰 삭제 완료", null);
+    }
 }

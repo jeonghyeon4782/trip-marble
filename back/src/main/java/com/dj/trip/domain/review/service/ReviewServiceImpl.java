@@ -86,4 +86,16 @@ public class ReviewServiceImpl implements ReviewService {
         }
         return new ModifyReviewResponse(review.getReviewId());
     }
+
+    @Override
+    public void deleteReview(int reviewId, String memberId) {
+        Review review = Review
+                .deleteReview(
+                        reviewId,
+                        memberId
+                );
+        if (reviewMapper.deleteReview(review) == 0) {
+            throw new InsufficientAuthenticationException("잘못된 요청");
+        }
+    }
 }

@@ -21,4 +21,6 @@ public interface ReviewMapper {
     int getTotalReviewsCount(ReviewsDao reviewsDao);
 
     int modifyReview(Review review);
+
+    int deleteReview(Review review);
 }

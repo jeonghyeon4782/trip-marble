@@ -16,4 +16,6 @@ public interface ReviewService {
     GetReviewsResponse getReviews(GetReviewsRequest getReviewsRequest);
 
     ModifyReviewResponse modifyReview(int reviewId, ModifyReviewRequest modigyReviewRequest, String memberId);
+
+    void deleteReview(int reviewId, String memberId);
 }
