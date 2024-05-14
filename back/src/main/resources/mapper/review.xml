@@ -107,4 +107,10 @@
         where review_id = #{reviewId}
           and member_id = #{memberId}
     </delete>
+
+    <update id="updateHit" parameterType="int">
+        update review
+        set hits = hits + 1
+        where review_id = #{reviewId}
+    </update>
 </mapper>

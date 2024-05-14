@@ -98,4 +98,11 @@ public class ReviewServiceImpl implements ReviewService {
             throw new InsufficientAuthenticationException("잘못된 요청");
         }
     }
+
+    @Override
+    public void updateHits(int reviewId) {
+        if (reviewMapper.updateHit(reviewId) == 0) {
+            throw new InsufficientAuthenticationException("잘못된 요청");
+        }
+    }
 }

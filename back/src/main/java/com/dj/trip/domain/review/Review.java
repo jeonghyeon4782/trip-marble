@@ -56,4 +56,11 @@ public class Review {
                 .memberId(memberId)
                 .build();
     }
+
+    public static Review updateLikes(int reviewId, String memberId) {
+        return builder()
+                .reviewId(reviewId)
+                .memberId(memberId)
+                .build();
+    }
 }

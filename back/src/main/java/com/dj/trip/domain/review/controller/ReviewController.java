@@ -65,4 +65,12 @@ public class ReviewController {
         reviewService.deleteReview(reviewId, memberId);
         return new ResponseDto<>(HttpStatus.NO_CONTENT.value(), "리뷰 삭제 완료", null);
     }
+
+    @PatchMapping("{reviewid}")
+    public ResponseDto<?> updateHits(@PathVariable("reviewid") int reviewId,
+                                     @RequestHeader("Authorization") String tokenHeader
+    ) {
+        reviewService.updateHits(reviewId);
+        return new ResponseDto<>(HttpStatus.OK.value(), "조회수 증가 완료", null);
+    }
 }

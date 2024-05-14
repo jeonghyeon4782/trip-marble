@@ -18,4 +18,6 @@ public interface ReviewService {
     ModifyReviewResponse modifyReview(int reviewId, ModifyReviewRequest modigyReviewRequest, String memberId);
 
     void deleteReview(int reviewId, String memberId);
+
+    void updateHits(int reviewId);
 }
