@@ -31,7 +31,7 @@ public class JWTUtil {
     }
 
     // JWT 문자열 생성
-    private String generateToken(Map<String, Object> valueMap, int minute) {
+    private String generateToken(Map<String, Object> valueMap, Long time) {
 
         // 헤더 부분
         Map<String, Object> headers = new HashMap<>();
@@ -41,9 +41,6 @@ public class JWTUtil {
         // payload 부분
         Map<String, Object> payloads = new HashMap<>();
         payloads.putAll(valueMap);
-
-        // 유효 기간
-        int time = minute;  // 분 단위
 
         String jwtStr = Jwts.builder()
                 .setHeader(headers)
