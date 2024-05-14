@@ -38,4 +38,15 @@ public class Review {
                 .memberId(memberId)
                 .build();
     }
+
+    public static Review modifyReview(int reviewId, int attractionInfoId, String memberId, String title, String content, String imageUrl) {
+        return builder()
+                .reviewId(reviewId)
+                .attractionInfoId(attractionInfoId)
+                .memberId(memberId)
+                .title(title)
+                .content(content)
+                .imageUrl(imageUrl)
+                .build();
+    }
 }

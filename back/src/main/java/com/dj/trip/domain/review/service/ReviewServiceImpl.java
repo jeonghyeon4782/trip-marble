@@ -5,9 +5,11 @@ import com.dj.trip.domain.review.ReviewInfo;
 import com.dj.trip.domain.review.ReviewsDao;
 import com.dj.trip.domain.review.dto.request.CreateReviewRequest;
 import com.dj.trip.domain.review.dto.request.GetReviewsRequest;
+import com.dj.trip.domain.review.dto.request.ModifyReviewRequest;
 import com.dj.trip.domain.review.dto.response.CreateReviewResponse;
 import com.dj.trip.domain.review.dto.response.GetReviewResponse;
 import com.dj.trip.domain.review.dto.response.GetReviewsResponse;
+import com.dj.trip.domain.review.dto.response.ModifyReviewResponse;
 import com.dj.trip.domain.review.mapper.ReviewMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -66,5 +68,22 @@ public class ReviewServiceImpl implements ReviewService {
         int page = getReviewsRequest.pageno() + 1;
         int total = reviewMapper.getTotalReviewsCount(reviewsDao);
         return new GetReviewsResponse(reviews, page, total);
+    }
+
+    @Override
+    public ModifyReviewResponse modifyReview(int reviewId, ModifyReviewRequest modigyReviewRequest, String memberId) {
+        Review review = Review
+                .modifyReview(
+                        reviewId,
+                        modigyReviewRequest.attractionInfoId(),
+                        memberId,
+                        modigyReviewRequest.title(),
+                        modigyReviewRequest.content(),
+                        modigyReviewRequest.imageUrl()
+                );
+        if (reviewMapper.modifyReview(review) == 0) {
+            throw new InsufficientAuthenticationException("잘못된 요청");
+        }
+        return new ModifyReviewResponse(review.getReviewId());
     }
 }

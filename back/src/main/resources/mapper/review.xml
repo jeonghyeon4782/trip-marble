@@ -90,4 +90,14 @@
             <include refid="search"></include>
         </where>
     </select>
+
+    <update id="modifyReview" parameterType="Review">
+        update review
+        set attraction_info_id = #{attractionInfoId},
+            member_id          = #{memberId},
+            title              = #{title},
+            content            = #{content},
+            image_url          = #{imageUrl}
+        where review_id = #{reviewId}
+    </update>
 </mapper>

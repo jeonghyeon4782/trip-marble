@@ -2,7 +2,7 @@ package com.dj.trip.domain.review.controller;
 
 import com.dj.trip.domain.review.dto.request.CreateReviewRequest;
 import com.dj.trip.domain.review.dto.request.GetReviewsRequest;
-import com.dj.trip.domain.review.dto.request.ModigyReviewRequest;
+import com.dj.trip.domain.review.dto.request.ModifyReviewRequest;
 import com.dj.trip.domain.review.service.ReviewService;
 import com.dj.trip.global.dto.ResponseDto;
 import com.dj.trip.global.util.JWTUtil;
@@ -43,5 +43,16 @@ public class ReviewController {
     ) {
         return new ResponseDto<>(HttpStatus.OK.value(), "리뷰들 요청 성공",
                 reviewService.getReviews(getReviewsRequest));
+    }
+
+    @PutMapping({"{reviewid}"})
+    public ResponseDto<?> modifyReview(@PathVariable("reviewid") int reviewId,
+                                       @RequestHeader("Authorization") String tokenHeader,
+                                       @RequestBody ModifyReviewRequest modigyReviewRequest
+    ) {
+        String token = tokenHeader.substring(7);
+        String memberId = jwtUtil.getMeberId(token);
+        return new ResponseDto<>(HttpStatus.CREATED.value(), "리뷰 수정 완료",
+                reviewService.modifyReview(reviewId, modigyReviewRequest, memberId));
     }
 }
