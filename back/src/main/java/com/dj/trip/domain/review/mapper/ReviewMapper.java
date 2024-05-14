@@ -15,4 +15,8 @@ public interface ReviewMapper {
     int selectReviewId(Review review);
 
     GetReviewResponse selectReview(Review review);
+
+    List<ReviewInfo> selectReviews(ReviewsDao reviewsDao);
+
+    int getTotalReviewsCount(ReviewsDao reviewsDao);
 }

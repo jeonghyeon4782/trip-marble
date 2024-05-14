@@ -44,4 +44,50 @@
         group by r.review_id
         having r.review_id = #{reviewId}
     </select>
+
+    <sql id="search">
+        <if test="word != null and word != ''">
+            <if test="key == 'keyword'">
+                and title like concat('%', #{word}, '%')
+                or content like concat('%', #{word}, '%')
+            </if>
+            <if test="key == 'sido'">
+                and ${key} = concat(#{word}, '%')
+            </if>
+        </if>
+    </sql>
+
+    <sql id="order">
+        <if test="key == 'like'">
+            order by likes desc
+        </if>
+        <if test="key != 'like'">
+            order by r.review_id desc
+        </if>
+    </sql>
+
+    <select id="selectReviews" parameterType="ReviewsDao" resultType="ReviewInfo">
+        select r.review_id, m.nickname, r.title, r.image_url as reviewImageUrl,
+        m.image_url as profileImageUrl, r.hits,
+        count(l.member_board_like_id)as likes
+        from review r
+        join member m
+        on r.member_id=m.member_id
+        left join member_board_like l
+        on r.review_id=l.review_id
+        <where>
+            <include refid="search"></include>
+        </where>
+        group by r.review_id
+        <include refid="order"></include>
+        limit #{start}, #{pageSize}
+    </select>
+
+    <select id="getTotalReviewsCount" parameterType="ReviewsDao" resultType="int">
+        select count(review_id)
+        from review
+        <where>
+            <include refid="search"></include>
+        </where>
+    </select>
 </mapper>

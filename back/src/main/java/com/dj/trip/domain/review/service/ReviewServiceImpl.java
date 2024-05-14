@@ -1,14 +1,20 @@
 package com.dj.trip.domain.review.service;
 
 import com.dj.trip.domain.review.Review;
+import com.dj.trip.domain.review.ReviewInfo;
+import com.dj.trip.domain.review.ReviewsDao;
 import com.dj.trip.domain.review.dto.request.CreateReviewRequest;
+import com.dj.trip.domain.review.dto.request.GetReviewsRequest;
 import com.dj.trip.domain.review.dto.response.CreateReviewResponse;
 import com.dj.trip.domain.review.dto.response.GetReviewResponse;
+import com.dj.trip.domain.review.dto.response.GetReviewsResponse;
 import com.dj.trip.domain.review.mapper.ReviewMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +22,6 @@ public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewMapper reviewMapper;
 
-    // 리뷰 작성
     @Override
     @Transactional
     public CreateReviewResponse createReview(CreateReviewRequest reviewRequest, String memberId) {
@@ -44,5 +49,22 @@ public class ReviewServiceImpl implements ReviewService {
                         memberId
                 );
         return reviewMapper.selectReview(review);
+    }
+
+    @Override
+    public GetReviewsResponse getReviews(GetReviewsRequest getReviewsRequest) {
+        ReviewsDao reviewsDao = ReviewsDao
+                .getReviews(
+                        getReviewsRequest.key(),
+                        getReviewsRequest.word(),
+                        getReviewsRequest.order(),
+                        getReviewsRequest.pagesize(),
+                        getReviewsRequest.pageno() * getReviewsRequest.pagesize()
+                );
+        List<ReviewInfo> reviews = reviewMapper.selectReviews(reviewsDao);
+
+        int page = getReviewsRequest.pageno() + 1;
+        int total = reviewMapper.getTotalReviewsCount(reviewsDao);
+        return new GetReviewsResponse(reviews, page, total);
     }
 }

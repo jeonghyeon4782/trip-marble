@@ -1,6 +1,8 @@
 package com.dj.trip.domain.review.controller;
 
 import com.dj.trip.domain.review.dto.request.CreateReviewRequest;
+import com.dj.trip.domain.review.dto.request.GetReviewsRequest;
+import com.dj.trip.domain.review.dto.request.ModigyReviewRequest;
 import com.dj.trip.domain.review.service.ReviewService;
 import com.dj.trip.global.dto.ResponseDto;
 import com.dj.trip.global.util.JWTUtil;
@@ -34,5 +36,12 @@ public class ReviewController {
         String memberId = jwtUtil.getMeberId(token);
         return new ResponseDto<>(HttpStatus.OK.value(), "리뷰 요청 성공",
                 reviewService.getReview(reviewId, memberId));
+    }
+
+    @GetMapping
+    public ResponseDto<?> getReviews(@ModelAttribute GetReviewsRequest getReviewsRequest
+    ) {
+        return new ResponseDto<>(HttpStatus.OK.value(), "리뷰들 요청 성공",
+                reviewService.getReviews(getReviewsRequest));
     }
 }
