@@ -22,4 +22,11 @@
         from comment
         where review_id = #{reviewId}
     </select>
+
+    <update id="modifyComment" parameterType="Comment">
+        update comment
+        set content = #{content}
+        where comment_id = #{commentId}
+          and member_id = #{memberId}
+    </update>
 </mapper>

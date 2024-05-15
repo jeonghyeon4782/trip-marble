@@ -15,4 +15,6 @@ public interface CommentMapper {
     List<CommentInfo> selectComments(CommentsDao commentsDao);
 
     int getTotalCommentsCount(CommentsDao commentsDao);
+
+    int modifyComment(Comment comment);
 }

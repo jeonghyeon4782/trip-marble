@@ -18,10 +18,18 @@ public class Comment {
     private String content;
     private Timestamp create_date;
 
-    public static Comment createComment(String memberId, int reviewId, String content){
+    public static Comment createComment(String memberId, int reviewId, String content) {
         return builder()
                 .memberId(memberId)
                 .reviewId(reviewId)
+                .content(content)
+                .build();
+    }
+
+    public static Comment modifyComment(int commentId, String memberId, String content) {
+        return builder()
+                .commentId(commentId)
+                .memberId(memberId)
                 .content(content)
                 .build();
     }

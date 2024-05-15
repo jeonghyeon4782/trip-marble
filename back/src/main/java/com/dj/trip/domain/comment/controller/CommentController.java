@@ -2,6 +2,7 @@ package com.dj.trip.domain.comment.controller;
 
 import com.dj.trip.domain.comment.dto.request.CreateCommentRequest;
 import com.dj.trip.domain.comment.dto.request.GetCommentsRequest;
+import com.dj.trip.domain.comment.dto.request.ModifyCommentRequest;
 import com.dj.trip.domain.comment.service.CommentService;
 import com.dj.trip.global.dto.ResponseDto;
 import com.dj.trip.global.util.JWTUtil;
@@ -33,5 +34,16 @@ public class CommentController {
     ) {
         return new ResponseDto<>(HttpStatus.CREATED.value(), "댓글 목록 요청 성공",
                 commentService.getComments(reviewId, getCommentsRequest));
+    }
+
+    @PutMapping({"{commentid}"})
+    public ResponseDto<?> modifyReview(@PathVariable("commentid") int commentId,
+                                       @RequestHeader("Authorization") String tokenHeader,
+                                       @RequestBody ModifyCommentRequest modifyCommentRequest
+    ) {
+        String token = tokenHeader.substring(7);
+        String memberId = jwtUtil.getMeberId(token);
+        commentService.modifyComment(commentId, modifyCommentRequest, memberId);
+        return new ResponseDto<>(HttpStatus.CREATED.value(), "리뷰 수정 완료", null);
     }
 }

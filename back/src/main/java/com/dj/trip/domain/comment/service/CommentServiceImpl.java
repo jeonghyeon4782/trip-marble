@@ -6,6 +6,7 @@ import com.dj.trip.domain.comment.CommentInfo;
 import com.dj.trip.domain.comment.CommentsDao;
 import com.dj.trip.domain.comment.dto.request.CreateCommentRequest;
 import com.dj.trip.domain.comment.dto.request.GetCommentsRequest;
+import com.dj.trip.domain.comment.dto.request.ModifyCommentRequest;
 import com.dj.trip.domain.comment.dto.response.GetCommentsResponse;
 import com.dj.trip.domain.comment.mapper.CommentMapper;
 import lombok.RequiredArgsConstructor;
@@ -44,5 +45,17 @@ public class CommentServiceImpl implements CommentService {
         int page = getCommentsRequest.pageno() + 1;
         int total = commentMapper.getTotalCommentsCount(commentsDao);
         return new GetCommentsResponse(comments, page, total);
+    }
+
+    @Override
+    public void modifyComment(int commentId, ModifyCommentRequest modifyCommentRequest, String memberId) {
+        Comment comment = Comment.modifyComment(
+                commentId,
+                memberId,
+                modifyCommentRequest.content()
+        );
+        if (commentMapper.modifyComment(comment) == 0) {
+            throw new InsufficientAuthenticationException("잘못된 요청");
+        }
     }
 }
