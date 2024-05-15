@@ -11,4 +11,6 @@ public interface CommentService {
     GetCommentsResponse getComments(int reviewId, GetCommentsRequest getCommentsRequest);
 
     void modifyComment(int commentId, ModifyCommentRequest modifyCommentRequest, String memberId);
+
+    void deleteComment(int commentId, String memberId);
 }

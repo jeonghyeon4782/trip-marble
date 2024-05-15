@@ -58,4 +58,15 @@ public class CommentServiceImpl implements CommentService {
             throw new InsufficientAuthenticationException("잘못된 요청");
         }
     }
+
+    @Override
+    public void deleteComment(int commentId, String memberId) {
+        Comment comment = Comment.deleteComment(
+                commentId,
+                memberId
+        );
+        if(commentMapper.deleteComment(comment)==0){
+            throw new InsufficientAuthenticationException("잘못된 요청");
+        }
+    }
 }

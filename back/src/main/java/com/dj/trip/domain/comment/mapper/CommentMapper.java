@@ -17,4 +17,6 @@ public interface CommentMapper {
     int getTotalCommentsCount(CommentsDao commentsDao);
 
     int modifyComment(Comment comment);
+
+    int deleteComment(Comment comment);
 }

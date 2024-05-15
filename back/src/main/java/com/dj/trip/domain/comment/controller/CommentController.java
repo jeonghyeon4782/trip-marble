@@ -44,6 +44,16 @@ public class CommentController {
         String token = tokenHeader.substring(7);
         String memberId = jwtUtil.getMeberId(token);
         commentService.modifyComment(commentId, modifyCommentRequest, memberId);
-        return new ResponseDto<>(HttpStatus.CREATED.value(), "리뷰 수정 완료", null);
+        return new ResponseDto<>(HttpStatus.CREATED.value(), "댓글 수정 완료", null);
+    }
+
+    @DeleteMapping({"{commentid}"})
+    public ResponseDto<?> deleteReview(@PathVariable("commentid") int commentId,
+                                       @RequestHeader("Authorization") String tokenHeader
+    ) {
+        String token = tokenHeader.substring(7);
+        String memberId = jwtUtil.getMeberId(token);
+        commentService.deleteComment(commentId, memberId);
+        return new ResponseDto<>(HttpStatus.NO_CONTENT.value(), "댓글 삭제 완료", null);
     }
 }

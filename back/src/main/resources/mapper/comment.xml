@@ -29,4 +29,11 @@
         where comment_id = #{commentId}
           and member_id = #{memberId}
     </update>
+
+    <delete id="deleteComment" parameterType="Comment">
+        delete
+        from comment
+        where comment_id = #{commentId}
+          and member_id = #{memberId}
+    </delete>
 </mapper>

@@ -33,4 +33,11 @@ public class Comment {
                 .content(content)
                 .build();
     }
+
+    public static Comment deleteComment(int commentId, String memberId) {
+        return builder()
+                .commentId(commentId)
+                .memberId(memberId)
+                .build();
+    }
 }
