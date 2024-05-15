@@ -1,6 +1,7 @@
 package com.dj.trip.domain.comment.controller;
 
 import com.dj.trip.domain.comment.dto.request.CreateCommentRequest;
+import com.dj.trip.domain.comment.dto.request.GetCommentsRequest;
 import com.dj.trip.domain.comment.service.CommentService;
 import com.dj.trip.global.dto.ResponseDto;
 import com.dj.trip.global.util.JWTUtil;
@@ -23,6 +24,14 @@ public class CommentController {
         String token = tokenHeader.substring(7);
         String memberId = jwtUtil.getMeberId(token);
         commentService.createComment(createCommentRequest, memberId);
-        return new ResponseDto<>(HttpStatus.CREATED.value(), "리뷰 작성 성공", null);
+        return new ResponseDto<>(HttpStatus.CREATED.value(), "댓글 작성 성공", null);
+    }
+
+    @GetMapping({"{reviewid}"})
+    public ResponseDto<?> getComments(@PathVariable("reviewid") int reviewId,
+                                      @ModelAttribute GetCommentsRequest getCommentsRequest
+    ) {
+        return new ResponseDto<>(HttpStatus.CREATED.value(), "댓글 목록 요청 성공",
+                commentService.getComments(reviewId, getCommentsRequest));
     }
 }
