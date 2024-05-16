@@ -17,4 +17,12 @@ public class ReviewInfo {
     private String profileImageUrl;
     private int hits;
     private int likes;
+
+    public void setReviewImageUrl(String reviewImageUrl) {
+        this.reviewImageUrl = reviewImageUrl;
+    }
+
+    public void setProfileImageUrl(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
 }

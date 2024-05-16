@@ -18,7 +18,7 @@
         order by review_id desc limit 1
     </select>
 
-    <select id="selectReview" parameterType="Review" resultType="GetReviewResponse">
+    <select id="selectReview" parameterType="GetReviewDao" resultType="GetReviewDao">
         select r.review_id,
                r.attraction_info_id,
                a.name                                                                            as attractionName,
@@ -91,13 +91,22 @@
         </where>
     </select>
 
+    <select id="getImageUrl" parameterType="Review" resultType="String">
+        select image_url
+        from review
+        where review_id = #{reviewId}
+          and member_id = #{memberId}
+    </select>
+
     <update id="modifyReview" parameterType="Review">
         update review
         set attraction_info_id = #{attractionInfoId},
-            member_id          = #{memberId},
-            title              = #{title},
-            content            = #{content},
-            image_url          = #{imageUrl}
+        member_id = #{memberId},
+        title = #{title},
+        content = #{content}
+        <if test="imageUrl != null and imageUrl != ''">
+            ,image_url = #{imageUrl}
+        </if>
         where review_id = #{reviewId}
     </update>
 

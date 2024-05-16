@@ -9,6 +9,7 @@ import com.dj.trip.global.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/review")
@@ -20,12 +21,13 @@ public class ReviewController {
 
     @PostMapping
     public ResponseDto<?> createReview(@RequestHeader("Authorization") String tokenHeader,
-                                       @RequestBody CreateReviewRequest reviewRequest
+                                       @RequestPart(value = "review") CreateReviewRequest reviewRequest,
+                                       @RequestPart(value = "file", required = false) MultipartFile file
     ) {
         String token = tokenHeader.substring(7);
         String memberId = jwtUtil.getMeberId(token);
         return new ResponseDto<>(HttpStatus.CREATED.value(), "리뷰 작성 성공",
-                reviewService.createReview(reviewRequest, memberId));
+                reviewService.createReview(reviewRequest, memberId, file));
     }
 
     @GetMapping({"{reviewid}"})
@@ -48,12 +50,13 @@ public class ReviewController {
     @PutMapping({"{reviewid}"})
     public ResponseDto<?> modifyReview(@PathVariable("reviewid") int reviewId,
                                        @RequestHeader("Authorization") String tokenHeader,
-                                       @RequestBody ModifyReviewRequest modigyReviewRequest
+                                       @RequestPart(value = "review") ModifyReviewRequest modigyReviewRequest,
+                                       @RequestPart(value = "file", required = false) MultipartFile file
     ) {
         String token = tokenHeader.substring(7);
         String memberId = jwtUtil.getMeberId(token);
         return new ResponseDto<>(HttpStatus.CREATED.value(), "리뷰 수정 완료",
-                reviewService.modifyReview(reviewId, modigyReviewRequest, memberId));
+                reviewService.modifyReview(reviewId, modigyReviewRequest, memberId, file));
     }
 
     @DeleteMapping({"{reviewid}"})
