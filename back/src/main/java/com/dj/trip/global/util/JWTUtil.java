@@ -1,10 +1,13 @@
 package com.dj.trip.global.util;
 
+import com.dj.trip.global.property.JwtProperties;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
@@ -14,13 +17,21 @@ import java.util.Map;
 
 @Component
 @Log4j2
+@RequiredArgsConstructor
 public class JWTUtil {
 
-    @Value("${com.dj.jwt.secret}")
-    private String key;
+    private final JwtProperties jwtProperties;
+
+    public String getAccessToken(Map<String, Object> valueMap) {
+        return generateToken(valueMap, jwtProperties.getAccessExp());
+    }
+
+    public String getRefreshToken(Map<String, Object> valueMap) {
+        return generateToken(valueMap, jwtProperties.getRefreshExp());
+    }
 
     // JWT 문자열 생성
-    public String generateToken(Map<String, Object> valueMap, int minute) {
+    private String generateToken(Map<String, Object> valueMap, Long time) {
 
         // 헤더 부분
         Map<String, Object> headers = new HashMap<>();
@@ -31,15 +42,12 @@ public class JWTUtil {
         Map<String, Object> payloads = new HashMap<>();
         payloads.putAll(valueMap);
 
-        // 유효 기간
-        int time = minute;  // 분 단위
-
         String jwtStr = Jwts.builder()
                 .setHeader(headers)
                 .setClaims(payloads)
                 .setIssuedAt(Date.from(ZonedDateTime.now().toInstant()))
                 .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(time).toInstant()))
-                .signWith(SignatureAlgorithm.HS256, key.getBytes())
+                .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecretKey().getBytes())
                 .compact();
 
         return jwtStr;
@@ -50,7 +58,7 @@ public class JWTUtil {
         Map<String, Object> claim = null;
 
         claim = Jwts.parser()
-                .setSigningKey(key.getBytes())  // Set key
+                .setSigningKey(jwtProperties.getSecretKey().getBytes())  // Set key
                 .parseClaimsJws(token)  // 파싱 및 검증, 실패 시 에러
                 .getBody();
 
@@ -63,5 +71,23 @@ public class JWTUtil {
         Map<String, Object> claims = validateToken(token);
         String memberId = (String) claims.get("memberId");
         return memberId;
+    }
+
+    public void setHeaderAccessToken(HttpServletResponse response, String accessToken) {
+        Cookie accessTokenCookie = new Cookie("DJTRIP_TOKEN", accessToken);
+        accessTokenCookie.setMaxAge(86400);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setHttpOnly(true);
+
+        response.addCookie(accessTokenCookie);
+    }
+
+    public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
+        Cookie refreshTokenCookie = new Cookie("DJTRIP_REFRESH_TOKEN", refreshToken);
+        refreshTokenCookie.setMaxAge(604800);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setHttpOnly(true);
+
+        response.addCookie(refreshTokenCookie);
     }
 }

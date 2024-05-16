@@ -5,20 +5,21 @@ use tripdb;
 
 CREATE TABLE `member`
 (
-    `member_id` varchar(12)  NOT NULL,
-    `password`  varchar(200) NOT NULL,
-    `nickname`  varchar(10)  NOT NULL unique,
-    `email`     varchar(50)  NOT NULL unique,
-    `role`      char(1),
-    `oauth_server_type` ENUM('GOOGLE') NOT NULL,
+    `member_id`         varchar(12)                                          NOT NULL,
+    `password`          varchar(200)                                         NOT NULL,
+    `nickname`          varchar(10)                                          NOT NULL unique,
+    `email`             varchar(50)                                          NOT NULL,
+    `image_url`         varchar(200)                                         NULL,
+    `role`              char(1),
+    `oauth_server_type` ENUM ('GENERAL','GOOGLE', 'KAKAO') default 'GENERAL' NOT NULL,
     PRIMARY KEY (`member_id`)
 );
 
 CREATE TABLE `oauth_member`
 (
-    `oauth_id`           int NOT NULL AUTO_INCREMENT,
-    `email`              varchar(50) NOT NULL unique,
-    `oauth_server_type` ENUM('GOOGLE') NOT NULL,
+    `oauth_id`          int                               NOT NULL AUTO_INCREMENT,
+    `email`             varchar(50)                       NOT NULL,
+    `oauth_server_type` ENUM ('GENERAL','GOOGLE','KAKAO') NOT NULL,
     PRIMARY KEY (`oauth_id`)
 );
 
@@ -49,12 +50,13 @@ CREATE TABLE `review`
     `member_id`          varchar(12)   NOT NULL,
     `title`              varchar(150)  NOT NULL,
     `content`            varchar(1500) NOT NULL,
-    `read_count`         int           NULL,
-    `url`                varchar(200)  NULL,
-    `create_date`        timestamp DEFAULT CURRENT_TIMESTAMP,
-    `update_date`        timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `hits`               int           not null default 0,
+    `image_url`          varchar(200)  NULL,
+    `create_date`        timestamp              DEFAULT CURRENT_TIMESTAMP,
+    `update_date`        timestamp              DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`review_id`),
-    FOREIGN KEY (`attraction_info_id`) REFERENCES `attraction_info` (`attraction_info_id`)
+    FOREIGN KEY (`attraction_info_id`) REFERENCES `attraction_info` (`attraction_info_id`),
+    FOREIGN KEY (`member_id`) REFERENCES `member` (`member_id`)
 );
 
 CREATE TABLE `comment`
@@ -139,4 +141,8 @@ CREATE TABLE `restaurant`
     PRIMARY KEY (`restaurant_id`)
 );
 
-
+insert into sido (name)
+values ('서울');
+insert into attraction_info (sido_id, name, addr, url, latitude, longitude)
+VALUES (1, 'test', '서울주소', 'https://seoulismuseum.kr/data/cn/246/img/2022_04_002.jpg',
+        37.51799330000000000, 126.95764780000000000)

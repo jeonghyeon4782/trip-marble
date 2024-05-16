@@ -18,15 +18,6 @@ public class OauthController {
 
     private final OauthService oauthService;
 
-    @SneakyThrows
-    @GetMapping("{oauthServerType}")
-    public ResponseDto<?> getAuthCodeRequestUrl(@PathVariable("oauthServerType") OauthServerType oauthServerType,
-                                                HttpServletResponse response) {
-        System.out.println(oauthServerType.name());
-        response.sendRedirect(oauthService.getAuthCodeRequestUrl(oauthServerType));
-        return new ResponseDto<>(HttpStatus.OK.value(), "Auth Code URL 생성 ", null);
-    }
-
     @PostMapping("/login/social")
     public ResponseDto<?> login(@RequestBody OauthLoginRequest oauthLoginRequest,
                                 HttpServletResponse response) {

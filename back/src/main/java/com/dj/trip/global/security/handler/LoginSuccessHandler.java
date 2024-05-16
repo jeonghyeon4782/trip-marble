@@ -29,10 +29,10 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
         Map<String, Object> claims = Map.of("memberId", authentication.getName());
         // Access Token의 유효기간
-        String accessToken = jwtUtil.generateToken(claims, 30);  // 30분
+        String accessToken = jwtUtil.getAccessToken(claims);
         log.info("------------------------------------------새로운 Access Token 생성-----------------------------------------");
         // Refresh Token의 유효기간
-        String refreshToken = jwtUtil.generateToken(claims, 30 * 24 * 60);  // 30일
+        String refreshToken = jwtUtil.getRefreshToken(claims);
         log.info("------------------------------------------새로운 Refresh Token 생성-----------------------------------------");
 
 
@@ -40,10 +40,9 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
         ResponseDto<Map<String, String>> responseDto = new ResponseDto<>();
         responseDto.setStatus(HttpServletResponse.SC_OK);
         responseDto.setMsg("로그인 성공");
-        responseDto.setData(Map.of(
-                "accessToken", accessToken,
-                "refreshToken", refreshToken
-        ));
+
+        jwtUtil.setHeaderAccessToken(response, accessToken);
+        jwtUtil.setHeaderRefreshToken(response, refreshToken);
 
         // ResponseDto 객체를 JSON 형식으로 변환하여 클라이언트에게 반환
         Gson gson = new Gson();
