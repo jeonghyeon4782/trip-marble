@@ -4,7 +4,6 @@ public record CreateReviewRequest(
         int attractionInfoId,
         String attractionName,
         String title,
-        String content,
-        String imageUrl
+        String content
 ) {
 }

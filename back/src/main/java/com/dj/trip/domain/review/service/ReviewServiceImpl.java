@@ -1,5 +1,7 @@
 package com.dj.trip.domain.review.service;
 
+import com.dj.trip.domain.image.service.ImageServiceUtils;
+import com.dj.trip.domain.review.GetReviewDao;
 import com.dj.trip.domain.review.Review;
 import com.dj.trip.domain.review.ReviewInfo;
 import com.dj.trip.domain.review.ReviewsDao;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -23,17 +26,26 @@ import java.util.List;
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewMapper reviewMapper;
+    private final ImageServiceUtils imageServiceUtils;
 
     @Override
     @Transactional
-    public CreateReviewResponse createReview(CreateReviewRequest reviewRequest, String memberId) {
+    public CreateReviewResponse createReview(CreateReviewRequest reviewRequest,
+                                             String memberId,
+                                             MultipartFile file
+    ) {
+        String fileName = null;
+        if (file != null) {
+            fileName = imageServiceUtils.upload(file);
+        }
+
         Review review = Review
                 .createReview(
                         reviewRequest.attractionInfoId(),
                         memberId,
                         reviewRequest.title(),
                         reviewRequest.content(),
-                        reviewRequest.imageUrl()
+                        fileName
                 );
 
         if (reviewMapper.insertReview(review) == 0) {
@@ -50,7 +62,18 @@ public class ReviewServiceImpl implements ReviewService {
                         reviewId,
                         memberId
                 );
-        return reviewMapper.selectReview(review);
+
+        GetReviewDao getReviewDao = reviewMapper.selectReview(review);
+        if (getReviewDao != null) {
+            if (getReviewDao.getReviewImageUrl() != null) {
+                getReviewDao.setReviewImageUrl(imageServiceUtils.getImageUrl(getReviewDao.getReviewImageUrl()));
+            }
+            if (getReviewDao.getProfileImageUrl() != null) {
+                getReviewDao.setProfileImageUrl(imageServiceUtils.getImageUrl(getReviewDao.getProfileImageUrl()));
+            }
+            return getReviewDao.getReviewResponse();
+        }
+        return null;
     }
 
     @Override
@@ -65,13 +88,31 @@ public class ReviewServiceImpl implements ReviewService {
                 );
         List<ReviewInfo> reviews = reviewMapper.selectReviews(reviewsDao);
 
+        for (ReviewInfo review : reviews) {
+            if (review.getReviewImageUrl() != null) {
+                review.setReviewImageUrl(imageServiceUtils.getImageUrl(review.getReviewImageUrl()));
+            }
+            if (review.getProfileImageUrl() != null) {
+                review.setProfileImageUrl(imageServiceUtils.getImageUrl(review.getProfileImageUrl()));
+            }
+        }
+
         int page = getReviewsRequest.pageno() + 1;
         int total = reviewMapper.getTotalReviewsCount(reviewsDao);
         return new GetReviewsResponse(reviews, page, total);
     }
 
     @Override
-    public ModifyReviewResponse modifyReview(int reviewId, ModifyReviewRequest modigyReviewRequest, String memberId) {
+    @Transactional
+    public ModifyReviewResponse modifyReview(int reviewId,
+                                             ModifyReviewRequest modigyReviewRequest,
+                                             String memberId,
+                                             MultipartFile file) {
+
+        String fileName = null;
+        if (file != null) {
+            fileName = imageServiceUtils.upload(file);
+        }
         Review review = Review
                 .modifyReview(
                         reviewId,
@@ -79,8 +120,17 @@ public class ReviewServiceImpl implements ReviewService {
                         memberId,
                         modigyReviewRequest.title(),
                         modigyReviewRequest.content(),
-                        modigyReviewRequest.imageUrl()
+                        fileName
                 );
+
+        if (fileName != null) {
+            // 해당 id의 이미지 이름으로 삭제 요청
+            String image_url = reviewMapper.getImageUrl(review);
+            if (image_url != null) {
+                imageServiceUtils.deleteImage(image_url);
+            }
+        }
+
         if (reviewMapper.modifyReview(review) == 0) {
             throw new InsufficientAuthenticationException("잘못된 요청");
         }
@@ -89,11 +139,19 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public void deleteReview(int reviewId, String memberId) {
+
         Review review = Review
                 .deleteReview(
                         reviewId,
                         memberId
                 );
+
+        // 해당 id의 이미지 이름으로 삭제 요청
+        String image_url = reviewMapper.getImageUrl(review);
+        if (image_url != null) {
+            imageServiceUtils.deleteImage(image_url);
+        }
+
         if (reviewMapper.deleteReview(review) == 0) {
             throw new InsufficientAuthenticationException("잘못된 요청");
         }

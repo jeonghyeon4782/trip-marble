@@ -31,10 +31,11 @@ public class ImageService implements ImageServiceUtils {
     private final AmazonS3 amazonS3;
 
     public UploadImageResponse uploadImage(MultipartFile file) {
-        return new UploadImageResponse(upload(file));
+
+        return new UploadImageResponse(getImageUrl(upload(file)));
     }
 
-    private String upload(MultipartFile file) {
+    public String upload(MultipartFile file) {
         if (file.isEmpty() && file.getOriginalFilename() != null)
             throw FileEmptyException.EXCEPTION;
 
@@ -69,7 +70,7 @@ public class ImageService implements ImageServiceUtils {
 
         log.info("url = {}", fileName);
 
-        return baseUrl + "/" + fileName;
+        return fileName;
     }
 
     public void deleteImage(String fileName) {
@@ -78,5 +79,9 @@ public class ImageService implements ImageServiceUtils {
         } catch (Exception e) {
             throw FileDeleteFailException.EXCEPTION;
         }
+    }
+
+    public String getImageUrl(String fileName) {
+        return baseUrl + "/" + fileName;
     }
 }
