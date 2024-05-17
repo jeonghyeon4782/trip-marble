@@ -33,6 +33,7 @@ public class LoginFailureHandler implements AuthenticationFailureHandler {
 
         // ResponseDto 객체를 JSON 형식으로 변환하여 클라이언트에게 반환
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         Gson gson = new Gson();
         String jsonResponse = gson.toJson(responseDto);
         response.getWriter().println(jsonResponse);

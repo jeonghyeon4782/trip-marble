@@ -5,6 +5,7 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -67,7 +68,7 @@ public class JWTUtil {
 
     // 아이디 추출
     // 토큰에서 아이디 추출
-    public String getMeberId(String token) throws JwtException {
+    public String getMemberId(String token) throws JwtException {
         Map<String, Object> claims = validateToken(token);
         String memberId = (String) claims.get("memberId");
         return memberId;
@@ -89,5 +90,22 @@ public class JWTUtil {
         refreshTokenCookie.setHttpOnly(true);
 
         response.addCookie(refreshTokenCookie);
+    }
+
+    public String getTokenByHeader(HttpServletRequest request, String name) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(name)) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+    public String getMemberIdByToken(HttpServletRequest request) {
+        String token = getTokenByHeader(request, "DJTRIP_TOKEN");
+        return token == null ? null : getMemberId(token);
     }
 }

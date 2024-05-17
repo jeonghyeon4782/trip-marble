@@ -48,7 +48,10 @@ public class TokenCheckFilter extends OncePerRequestFilter {
 
     // Access Token 검증
     private Map<String, Object> validateAccessToken(HttpServletRequest request) throws AccessTokenException {
-        // header에서 토큰 추출하기
+
+        String tokenStr = jwtUtil.getTokenByHeader(request, "DJTRIP_TOKEN");
+
+ /*       // header에서 토큰 추출하기
         String headerStr = request.getHeader("Authorization");
 
         if (headerStr == null || headerStr.length() < 8) {
@@ -63,7 +66,7 @@ public class TokenCheckFilter extends OncePerRequestFilter {
         if (!tokenType.equalsIgnoreCase("Bearer")) {
             log.info("------------------------------------------BADTYPEJwtException------------------------------------------");
             throw new AccessTokenException(AccessTokenException.TOKEN_ERROR.BADTYPE);
-        }
+        }*/
 
         try {
             Map<String, Object> values = jwtUtil.validateToken(tokenStr);
