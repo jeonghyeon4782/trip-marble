@@ -1,5 +1,6 @@
 package com.dj.trip.domain.member.dto;
 
+import com.dj.trip.domain.oauth.OauthServerType;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -35,4 +36,6 @@ public class CreateMemberRequestDto {
     private String email;
 
     private char role;
+
+    private OauthServerType oauthServiceType;
 }

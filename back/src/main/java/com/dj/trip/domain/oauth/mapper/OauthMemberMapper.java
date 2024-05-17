@@ -3,8 +3,6 @@ package com.dj.trip.domain.oauth.mapper;
 import com.dj.trip.domain.oauth.OauthMember;
 import org.apache.ibatis.annotations.Mapper;
 
-import java.util.Optional;
-
 @Mapper
 public interface OauthMemberMapper {
 
@@ -12,7 +10,7 @@ public interface OauthMemberMapper {
     OauthMember selectOauthMemberByOauthId(int oauthId);
 
     // OauthServiceType과 email로 유저 조회
-    Optional<OauthMember> selectOauthMemberByOauthServerTypeAndEmail(OauthMember oauthMember);
+    OauthMember selectOauthMemberByOauthServerTypeAndEmail(OauthMember oauthMember);
 
     // oauth 유저 저장
     int insertOauthMember(OauthMember oauthMember);
