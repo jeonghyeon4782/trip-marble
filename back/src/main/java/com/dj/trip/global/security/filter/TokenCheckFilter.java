@@ -31,6 +31,11 @@ public class TokenCheckFilter extends OncePerRequestFilter {
             return;
         }
 
+        if ("GET".equalsIgnoreCase(request.getMethod()) && path.startsWith("/api/review")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         log.info("------------------------------------------Token Check Filter------------------------------------------");
 
         try {
@@ -46,30 +51,30 @@ public class TokenCheckFilter extends OncePerRequestFilter {
         // header에서 토큰 추출하기
         String headerStr = request.getHeader("Authorization");
 
-        if(headerStr == null  || headerStr.length() < 8){
+        if (headerStr == null || headerStr.length() < 8) {
             log.info("------------------------------------------UNACCEPTJwtException------------------------------------------");
             throw new AccessTokenException(AccessTokenException.TOKEN_ERROR.UNACCEPT);
         }
 
         //Bearer 생략
-        String tokenType = headerStr.substring(0,6);
-        String tokenStr =  headerStr.substring(7);
+        String tokenType = headerStr.substring(0, 6);
+        String tokenStr = headerStr.substring(7);
 
-        if(!tokenType.equalsIgnoreCase("Bearer")){
+        if (!tokenType.equalsIgnoreCase("Bearer")) {
             log.info("------------------------------------------BADTYPEJwtException------------------------------------------");
             throw new AccessTokenException(AccessTokenException.TOKEN_ERROR.BADTYPE);
         }
 
-        try{
+        try {
             Map<String, Object> values = jwtUtil.validateToken(tokenStr);
             return values;
-        }catch(MalformedJwtException malformedJwtException){
+        } catch (MalformedJwtException malformedJwtException) {
             log.info("------------------------------------------MalformedJwtException------------------------------------------");
             throw new AccessTokenException(AccessTokenException.TOKEN_ERROR.MALFORM);
-        }catch(SignatureException signatureException){
+        } catch (SignatureException signatureException) {
             log.info("------------------------------------------SignatureException------------------------------------------");
             throw new AccessTokenException(AccessTokenException.TOKEN_ERROR.BADSIGN);
-        }catch(ExpiredJwtException expiredJwtException){
+        } catch (ExpiredJwtException expiredJwtException) {
             log.info("------------------------------------------ExpiredJwtException------------------------------------------");
             throw new AccessTokenException(AccessTokenException.TOKEN_ERROR.EXPIRED);
         }
