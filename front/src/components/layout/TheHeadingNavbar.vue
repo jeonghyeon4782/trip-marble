@@ -13,12 +13,12 @@
 <!-- Navigation Bar Content Here -->
 <div class="center">
     <RouterLink :to="{name: 'main'}"><p>Home</p></RouterLink>
-    <RouterLink :to="{name: 'review-list'}"><p>Review</p></RouterLink>
+    <RouterLink :to="{name: 'review-list'}"><p>Board</p></RouterLink>
     <RouterLink :to="{name: 'review-list'}"><p>Review</p></RouterLink>
     <RouterLink :to="{name: 'review-list'}"><p>Review</p></RouterLink>
 </div>
     <div class="left">
-        <RouterLink :to="{name: 'main'}"><p>Login</p></RouterLink>
+        <RouterLink :to="{name: 'auth'}"><p>Login</p></RouterLink>
         <RouterLink :to="{name: 'main'}"><p>Mypage</p></RouterLink>
     </div>
 </nav>
