@@ -3,6 +3,7 @@ package com.dj.trip.domain.member.controller;
 import com.dj.trip.domain.member.dto.CreateMemberRequestDto;
 import com.dj.trip.domain.member.service.MemberService;
 import com.dj.trip.global.dto.ResponseDto;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -28,5 +29,13 @@ public class AuthController {
         log.info("------------------------------------------회원가입 완료------------------------------------------");
         return ResponseEntity.status(HttpStatus.CREATED.value())
                 .body(new ResponseDto<>(HttpStatus.CREATED.value(), "회원가입 성공", null));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ResponseDto<String>> createMember(HttpServletResponse response) throws Exception {
+        memberService.logout(response);
+        log.info("------------------------------------------로그아웃 완료------------------------------------------");
+        return ResponseEntity.status(HttpStatus.CREATED.value())
+                .body(new ResponseDto<>(HttpStatus.CREATED.value(), "로그아웃 성공", null));
     }
 }
