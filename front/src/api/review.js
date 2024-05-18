@@ -16,15 +16,23 @@ function registReview(review, success, fail) {
 }
 
 function getModifyReview(reviewid, success, fail) {
-  local.get(`api/review/modify/${reviewid}`).then(success).catch(fail);
+  local.get(`api/review/${reviewid}`).then(success).catch(fail);
 }
 
-function modifyReview(review, success, fail) {
-  local.put(`api/review`, JSON.stringify(review)).then(success).catch(fail);
+function modifyReview(review, reviewid, success, fail) {
+  local.put(`api/review/${reviewid}`, JSON.stringify(review)).then(success).catch(fail);
 }
 
 function deleteReview(reviewid, success, fail) {
   local.delete(`api/review/${reviewid}`).then(success).catch(fail);
+}
+
+function createLike(reviewid, success, fail) {
+  local.post(`api/like/${reviewid}`).then(success).catch(fail);
+}
+
+function deleteLike(reviewid, success, fail) {
+  local.delete(`api/like/${reviewid}`).then(success).catch(fail);
 }
 
 export {
@@ -34,4 +42,6 @@ export {
   getModifyReview,
   modifyReview,
   deleteReview,
+  createLike,
+  deleteLike
 };
