@@ -1,14 +1,10 @@
 <script setup>
 import { loginMember } from '@/api/auth';
 import { ref } from 'vue';
-import { useRoute, useRouter } from "vue-router";
 
 import googleIcon from '@/assets/google_login.svg';
 import kakaoIcon from '@/assets/kakao_login.svg';
 import naverIcon from '@/assets/naver_login.svg';
-
-const route = useRoute();
-const router = useRouter();
 
 const member = ref({
     memberId: "",
@@ -21,7 +17,9 @@ function onSubmit() {
         member.value,
         (response) => {
             if (response.status == 200) {
-                router.replace({ name: 'main' })
+                localStorage.setItem('isLogin', true);
+                location.reload();
+                location.href = '/';
             }
         },
         (error) => {
