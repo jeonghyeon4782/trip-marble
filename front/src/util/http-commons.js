@@ -27,10 +27,12 @@ function localAxios() {
           console.log("엑세스 토큰 재 발급" + response.data);
           return axios(originalRequest);
         } catch (refreshTokenError) {
+          localStorage.setItem('isLogin', false);
           console.log(error.response.data.msg)
           let msg = "로그인 필요";
           alert(msg)
-          router.replace({ name: "login" });
+          location.reload();
+          location.href = '/auth';
           return Promise.reject(refreshTokenError);
         }
       }
