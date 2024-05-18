@@ -1,19 +1,20 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import { listReview } from "@/api/review.js";
+import { listReview,updateHits } from "@/api/review.js";
 
 
 import ReviewListItem from '@/components/review/item/ReviewListItem.vue';
 
 const reviews = ref([]);
-const currentPage = ref(1);
+const currentPage = ref(0);
 const totalPage = ref(0);
 const { VITE_ARTICLE_LIST_SIZE } = import.meta.env;
 const param = ref({
-    pgno: currentPage.value,
-    spp: VITE_ARTICLE_LIST_SIZE,
+    pageno: currentPage.value,
+    pagesize: VITE_ARTICLE_LIST_SIZE,
     key: "",
     word: "",
+    order: ""
 });
 
 onMounted(() => {
@@ -25,10 +26,12 @@ const getReviewList = () => {
     listReview(
         param.value,
         ({ data }) => {
+            console.log(data.msg)
             console.log(data);
-            reviews.value = data.reviews;
-            currentPage.value = data.currentPage;
-            totalPage.value = data.totalPageCount;
+            console.log(data.data.reviewInfos);
+            reviews.value = data.data.reviewInfos;
+            currentPage.value = data.data.page;
+            totalPage.value = data.data.total;
         },
         (error) => {
             console.log(error);
@@ -36,14 +39,32 @@ const getReviewList = () => {
     );
 };
 
+function incrementHits(reviewid) {
+    updateHits(
+        reviewid,
+        (response) => {
+            if (response.status == 200) {
+                review.value.hits++;
+            }
+        },
+        (error) => {
+            console.log(error);
+        }
+    );
+}
+
 </script>
 
 <template>
     <div>
         리뷰 게시판이야
     </div>
+    <div>
+        <RouterLink :to="{ name: 'review-write' }">write</RouterLink>
+    </div>
     <div class="review-grid">
-        <ReviewListItem v-for="review in reviews" :key="review.reviewId" :review="review"></ReviewListItem>
+        <ReviewListItem v-for="review in reviews" :key="review.reviewId" :review="review" @increment-hits="incrementHits">
+        </ReviewListItem>
     </div>
 </template>
 

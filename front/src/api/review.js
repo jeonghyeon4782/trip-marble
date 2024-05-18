@@ -35,6 +35,10 @@ function deleteLike(reviewid, success, fail) {
   local.delete(`api/like/${reviewid}`).then(success).catch(fail);
 }
 
+function updateHits(reviewid, success, fail) {
+  local.patch(`api/review/${reviewid}`).then(success).catch(fail);
+}
+
 export {
   listReview,
   detailReview,
@@ -43,5 +47,6 @@ export {
   modifyReview,
   deleteReview,
   createLike,
-  deleteLike
+  deleteLike,
+  updateHits
 };
