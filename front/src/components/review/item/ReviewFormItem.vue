@@ -17,11 +17,11 @@ const review = ref({
     attractionInfoId: '',
 });
 
-const attractions = ref( [
-      { attractionInfoId: 1, name: '어트렉션1', location: '위치1', created_at: '2024-05-18' },
-      { attractionInfoId: 2, name: '어트렉션2', location: '위치2', created_at: '2024-05-19' },
-      // 기존의 어트렉션 데이터...
-    ])
+const attractions = ref([
+    { attractionInfoId: 1, name: '어트렉션1', location: '위치1', created_at: '2024-05-18' },
+    { attractionInfoId: 2, name: '어트렉션2', location: '위치2', created_at: '2024-05-19' },
+    // 기존의 어트렉션 데이터...
+])
 
 
 if (props.type == "modify") {
@@ -67,7 +67,7 @@ watch(
 watch(
     () => review.value.attractionInfoId,
     (value) => {
-        if (value=="") {
+        if (value == "") {
             attractionErrMsg.value = "어트렉션을 선택해주세요."
         } else attractionErrMsg.value = ""
     },
@@ -79,7 +79,7 @@ function onSubmit() {
         alert(titleErrMsg.value)
     } else if (contentErrMsg.value) {
         alert(contentErrMsg.value)
-    } else if(attractionErrMsg.value){
+    } else if (attractionErrMsg.value) {
         alert(attractionErrMsg.value)
     } else {
         props.type === "regist" ? writeReview() : updateReivew()
@@ -107,13 +107,14 @@ function updateReivew() {
     console.log(review.value.reviewId + "번 리뷰 수정 요청", review.value)
     modifyReview(
         review.value,
+        review.value.reviewId,
+        imageUrl,
         (response) => {
             let msg = "리뷰수정 처리시 문제 발생했습니다."
             if (response.status == 201) msg = "리뷰정보 수정이 완료되었습니다."
             alert(msg)
-            const reviewId = response.data.reviewId;
+            const reviewId = response.data.data.reviewId;
             moveDetail(reviewId)
-
         },
         (error) => console.log(error)
     )
@@ -147,7 +148,7 @@ const handleImageUpload = (event) => {
             </div>
             <div class="form-group">
                 <label for="content">내용</label>
-                <textarea id="content" v-model="review.content" rows="6" ></textarea>
+                <textarea id="content" v-model="review.content" rows="6"></textarea>
             </div>
             <!-- <div class="form-group">
                 <label for="address">어트렉션 추가</label>
@@ -155,10 +156,11 @@ const handleImageUpload = (event) => {
             </div> -->
             <div class="form-group">
                 <label for="attractionList">어트렉션 목록</label>
-                <select id="attractionList" v-model="review.attractionInfoId" >
+                <select id="attractionList" v-model="review.attractionInfoId">
                     <option disabled value="">어트렉션을 선택하세요</option>
-                    <option v-for="(attraction, index) in attractions" :key="index" :value="attraction.attractionInfoId">
-                       이름: {{ attraction.name }} | 위치: {{attraction.location }} |  생성일: {{ attraction.created_at }}
+                    <option v-for="(attraction, index) in attractions" :key="index"
+                        :value="attraction.attractionInfoId">
+                        이름: {{ attraction.name }} | 위치: {{ attraction.location }} | 생성일: {{ attraction.created_at }}
                     </option>
                 </select>
             </div>
@@ -203,7 +205,8 @@ const handleImageUpload = (event) => {
 }
 
 .form-group input,
-.form-group textarea, #attractionList {
+.form-group textarea,
+#attractionList {
     width: 97%;
     padding: 10px;
     border: 1px solid #ccc;

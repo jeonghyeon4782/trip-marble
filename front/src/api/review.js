@@ -20,7 +20,7 @@ function registReview(review, file, success, fail) {
   }
   console.log("reviewjs formData", formData);
 
-  local.post(`api/review`, formData,{
+  local.post(`api/review`, formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
@@ -31,8 +31,19 @@ function getModifyReview(reviewid, success, fail) {
   local.get(`api/review/${reviewid}`).then(success).catch(fail);
 }
 
-function modifyReview(review, reviewid, success, fail) {
-  local.put(`api/review/${reviewid}`, JSON.stringify(review)).then(success).catch(fail);
+function modifyReview(review, reviewid, file, success, fail) {
+  const formData = new FormData();
+  formData.append('review', new Blob([JSON.stringify(review)], { type: 'application/json' }));
+  if (file) {
+    formData.append('file', file);
+  }
+  console.log("reviewjs formData", formData);
+
+  local.put(`api/review/${reviewid}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }).then(success).catch(fail);
 }
 
 function deleteReview(reviewid, success, fail) {
