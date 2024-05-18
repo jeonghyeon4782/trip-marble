@@ -6,6 +6,7 @@ import com.dj.trip.domain.comment.dto.request.ModifyCommentRequest;
 import com.dj.trip.domain.comment.service.CommentService;
 import com.dj.trip.global.dto.ResponseDto;
 import com.dj.trip.global.util.JWTUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -19,11 +20,10 @@ public class CommentController {
     private final JWTUtil jwtUtil;
 
     @PostMapping
-    public ResponseDto<?> createComment(@RequestHeader("Authorization") String tokenHeader,
+    public ResponseDto<?> createComment(HttpServletRequest request,
                                         @RequestBody CreateCommentRequest createCommentRequest
     ) {
-        String token = tokenHeader.substring(7);
-        String memberId = jwtUtil.getMeberId(token);
+        String memberId = jwtUtil.getMemberIdByToken(request);
         commentService.createComment(createCommentRequest, memberId);
         return new ResponseDto<>(HttpStatus.CREATED.value(), "댓글 작성 성공", null);
     }
@@ -38,21 +38,19 @@ public class CommentController {
 
     @PutMapping({"{commentid}"})
     public ResponseDto<?> modifyReview(@PathVariable("commentid") int commentId,
-                                       @RequestHeader("Authorization") String tokenHeader,
+                                       HttpServletRequest request,
                                        @RequestBody ModifyCommentRequest modifyCommentRequest
     ) {
-        String token = tokenHeader.substring(7);
-        String memberId = jwtUtil.getMeberId(token);
+        String memberId = jwtUtil.getMemberIdByToken(request);
         commentService.modifyComment(commentId, modifyCommentRequest, memberId);
         return new ResponseDto<>(HttpStatus.CREATED.value(), "댓글 수정 완료", null);
     }
 
     @DeleteMapping({"{commentid}"})
     public ResponseDto<?> deleteReview(@PathVariable("commentid") int commentId,
-                                       @RequestHeader("Authorization") String tokenHeader
+                                       HttpServletRequest request
     ) {
-        String token = tokenHeader.substring(7);
-        String memberId = jwtUtil.getMeberId(token);
+        String memberId = jwtUtil.getMemberIdByToken(request);
         commentService.deleteComment(commentId, memberId);
         return new ResponseDto<>(HttpStatus.NO_CONTENT.value(), "댓글 삭제 완료", null);
     }

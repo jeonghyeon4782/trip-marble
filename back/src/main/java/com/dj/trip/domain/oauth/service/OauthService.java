@@ -33,8 +33,11 @@ public class OauthService {
         OauthMember oauthMember = oauthMemberClientComposite.fetch(oauthLoginRequest.oauthServerType(), oauthLoginRequest.code());
 
         // 해당 OauthMember가 저장 되어 있지 않으면, 저장을 요청 후 해당 OauthMember 정보를 받아온다.
-        OauthMember savedMember = oauthMemberMapper.selectOauthMemberByOauthServerTypeAndEmail(oauthMember)
-                .orElseGet(() -> oauthMemberMapper.selectOauthMemberByOauthId(oauthMemberMapper.insertOauthMember(oauthMember)));
+        OauthMember savedMember = oauthMemberMapper.selectOauthMemberByOauthServerTypeAndEmail(oauthMember);
+        if (savedMember == null) {
+            oauthMemberMapper.insertOauthMember(oauthMember);
+            savedMember = oauthMemberMapper.selectOauthMemberByOauthServerTypeAndEmail(oauthMember);
+        }
 
         // 등록된 유저인지 확인
         Optional<Member> optionalMember = memberMapper.selectMemberByOauthServerTypeAndEmail(savedMember);

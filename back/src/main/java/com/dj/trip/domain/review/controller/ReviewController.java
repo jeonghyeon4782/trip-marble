@@ -3,11 +3,16 @@ package com.dj.trip.domain.review.controller;
 import com.dj.trip.domain.review.dto.request.CreateReviewRequest;
 import com.dj.trip.domain.review.dto.request.GetReviewsRequest;
 import com.dj.trip.domain.review.dto.request.ModifyReviewRequest;
+import com.dj.trip.domain.review.dto.response.CreateReviewResponse;
 import com.dj.trip.domain.review.service.ReviewService;
 import com.dj.trip.global.dto.ResponseDto;
+import com.dj.trip.global.security.exception.AccessTokenException;
 import com.dj.trip.global.util.JWTUtil;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,60 +25,57 @@ public class ReviewController {
     private final JWTUtil jwtUtil;
 
     @PostMapping
-    public ResponseDto<?> createReview(@RequestHeader("Authorization") String tokenHeader,
-                                       @RequestPart(value = "review") CreateReviewRequest reviewRequest,
-                                       @RequestPart(value = "file", required = false) MultipartFile file
+    public ResponseEntity<ResponseDto<?>> createReview(HttpServletRequest request,
+                                                                          @RequestPart(value = "review") CreateReviewRequest reviewRequest,
+                                                                          @RequestPart(value = "file", required = false) MultipartFile file
     ) {
-        String token = tokenHeader.substring(7);
-        String memberId = jwtUtil.getMeberId(token);
-        return new ResponseDto<>(HttpStatus.CREATED.value(), "리뷰 작성 성공",
-                reviewService.createReview(reviewRequest, memberId, file));
+        String memberId = jwtUtil.getMemberIdByToken(request);
+        return ResponseEntity.status(HttpStatus.CREATED.value()).body(new ResponseDto<>(HttpStatus.CREATED.value(), "리뷰 작성 성공",
+                reviewService.createReview(reviewRequest, memberId, file)));
     }
 
     @GetMapping({"{reviewid}"})
-    public ResponseDto<?> getReview(@RequestHeader("Authorization") String tokenHeader,
+    public ResponseEntity<ResponseDto<?>> getReview(HttpServletRequest request,
                                     @PathVariable("reviewid") int reviewId
     ) {
-        String token = tokenHeader.substring(7);
-        String memberId = jwtUtil.getMeberId(token);
-        return new ResponseDto<>(HttpStatus.OK.value(), "리뷰 요청 성공",
-                reviewService.getReview(reviewId, memberId));
+        String memberId=jwtUtil.getMemberIdByToken(request);
+        return  ResponseEntity.status(HttpStatus.OK.value()).body(new ResponseDto<>(HttpStatus.OK.value(), "리뷰 요청 성공",
+                reviewService.getReview(reviewId, memberId)));
     }
 
     @GetMapping
-    public ResponseDto<?> getReviews(@ModelAttribute GetReviewsRequest getReviewsRequest
+    public ResponseEntity<ResponseDto<?>> getReviews(@ModelAttribute GetReviewsRequest getReviewsRequest
     ) {
-        return new ResponseDto<>(HttpStatus.OK.value(), "리뷰들 요청 성공",
-                reviewService.getReviews(getReviewsRequest));
+        return  ResponseEntity.status(HttpStatus.OK.value()).body(new ResponseDto<>(HttpStatus.OK.value(), "리뷰들 요청 성공",
+                reviewService.getReviews(getReviewsRequest)));
     }
 
     @PutMapping({"{reviewid}"})
-    public ResponseDto<?> modifyReview(@PathVariable("reviewid") int reviewId,
-                                       @RequestHeader("Authorization") String tokenHeader,
+    public ResponseEntity<ResponseDto<?>> modifyReview(@PathVariable("reviewid") int reviewId,
+                                       HttpServletRequest request,
                                        @RequestPart(value = "review") ModifyReviewRequest modigyReviewRequest,
                                        @RequestPart(value = "file", required = false) MultipartFile file
     ) {
-        String token = tokenHeader.substring(7);
-        String memberId = jwtUtil.getMeberId(token);
-        return new ResponseDto<>(HttpStatus.CREATED.value(), "리뷰 수정 완료",
-                reviewService.modifyReview(reviewId, modigyReviewRequest, memberId, file));
+        String memberId = jwtUtil.getMemberIdByToken(request);
+        return  ResponseEntity.status(HttpStatus.CREATED.value()).body(new ResponseDto<>(HttpStatus.CREATED.value(), "리뷰 수정 완료",
+                reviewService.modifyReview(reviewId, modigyReviewRequest, memberId, file)));
     }
 
     @DeleteMapping({"{reviewid}"})
-    public ResponseDto<?> deleteReview(@PathVariable("reviewid") int reviewId,
-                                       @RequestHeader("Authorization") String tokenHeader
+    public ResponseEntity<ResponseDto<?>> deleteReview(@PathVariable("reviewid") int reviewId,
+                                       HttpServletRequest request
     ) {
-        String token = tokenHeader.substring(7);
-        String memberId = jwtUtil.getMeberId(token);
+        String memberId = jwtUtil.getMemberIdByToken(request);
         reviewService.deleteReview(reviewId, memberId);
-        return new ResponseDto<>(HttpStatus.NO_CONTENT.value(), "리뷰 삭제 완료", null);
+        return  ResponseEntity.status(HttpStatus.NO_CONTENT.value()).body(
+                new ResponseDto<>(HttpStatus.NO_CONTENT.value(), "리뷰 삭제 완료", null));
     }
 
     @PatchMapping("{reviewid}")
-    public ResponseDto<?> updateHits(@PathVariable("reviewid") int reviewId,
-                                     @RequestHeader("Authorization") String tokenHeader
+    public ResponseEntity<ResponseDto<?>> updateHits(@PathVariable("reviewid") int reviewId
     ) {
         reviewService.updateHits(reviewId);
-        return new ResponseDto<>(HttpStatus.OK.value(), "조회수 증가 완료", null);
+        return  ResponseEntity.status(HttpStatus.OK.value()).body(
+                new ResponseDto<>(HttpStatus.OK.value(), "조회수 증가 완료", null));
     }
 }
