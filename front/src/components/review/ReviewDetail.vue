@@ -109,8 +109,8 @@ function subLikes() {
         <div class="link">
             <RouterLink :to="{ name: 'review-list' }">Back to Posts</RouterLink>
             <span class="user-link">
-                <RouterLink :to="{ name: 'review-modify' }" v-if="isWriteByMe">modify</RouterLink>
-                <a @click="onDeleteReview" v-if="isWriteByMe">delete</a>
+                <RouterLink :to="{ name: 'review-modify' }" v-if="review.isWriteByMe">modify</RouterLink>
+                <a @click="onDeleteReview" v-if="review.isWriteByMe">delete</a>
             </span>
         </div>
 
