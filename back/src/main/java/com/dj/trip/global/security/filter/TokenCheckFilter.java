@@ -31,7 +31,7 @@ public class TokenCheckFilter extends OncePerRequestFilter {
             return;
         }
 
-        if ("GET".equalsIgnoreCase(request.getMethod()) && path.startsWith("/api/review")) {
+        if ("GET".equalsIgnoreCase(request.getMethod()) && path.startsWith("/api/review") && request.getCookies()==null) {
             filterChain.doFilter(request, response);
             return;
         }
