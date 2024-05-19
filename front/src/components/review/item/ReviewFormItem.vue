@@ -8,7 +8,8 @@ const route = useRoute()
 
 const props = defineProps({ type: String })
 
-const imageUrl = ref({})
+const file = ref({})
+const preView = ref(null)
 
 const review = ref({
     reviewId: 0,
@@ -30,7 +31,8 @@ if (props.type == "modify") {
     getModifyReview(
         reviewid,
         ({ data }) => {
-            review.value = data.data
+            review.value = data.data;
+            preView.value = data.data.reviewImageUrl;
         },
         (error) => {
             console.log(error)
@@ -90,7 +92,7 @@ function writeReview() {
     console.log("리뷰 등록 요청", review.value)
     registReview(
         review.value,
-        imageUrl,
+        file.value,
         (response) => {
             let msg = "리뷰등록 처리시 문제 발생했습니다."
             console.log(response)
@@ -108,7 +110,7 @@ function updateReivew() {
     modifyReview(
         review.value,
         review.value.reviewId,
-        imageUrl,
+        file.value,
         (response) => {
             let msg = "리뷰수정 처리시 문제 발생했습니다."
             if (response.status == 201) msg = "리뷰정보 수정이 완료되었습니다."
@@ -128,12 +130,11 @@ function moveDetail(reviewId) {
 
 // 이미지 업로드 처리
 const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    review.value.imageUrl = file;
-    review.value.imageUrl = URL.createObjectURL(file);
+    file.value = event.target.files[0];
+    preView.value = URL.createObjectURL(file.value);
 };
 
-function goBack(){
+function goBack() {
     router.go(-1);
 }
 
@@ -143,7 +144,7 @@ function goBack(){
     <a @click="goBack">Back to Posts</a>
     <div class="item">
         <div class="review-image">
-            <img v-if="review.imageUrl" :src="review.imageUrl" :alt="imageAlt">
+            <img v-if="preView" :src="preView" :alt="imageAlt">
         </div>
         <form @submit.prevent="onSubmit">
             <div class="form-group">
@@ -154,10 +155,6 @@ function goBack(){
                 <label for="content">내용</label>
                 <textarea id="content" v-model="review.content" rows="6"></textarea>
             </div>
-            <!-- <div class="form-group">
-                <label for="address">어트렉션 추가</label>
-                <input type="text" id="address" v-model="review.address">
-            </div> -->
             <div class="form-group">
                 <label for="attractionList">어트렉션 목록</label>
                 <select id="attractionList" v-model="review.attractionInfoId">
