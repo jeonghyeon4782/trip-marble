@@ -50,7 +50,8 @@ public class ImageService implements ImageServiceUtils {
                 || ext.equals("HEIC")
                 || ext.equals("jpeg")
                 || ext.equals("png")
-                || ext.equals("heic"))) {
+                || ext.equals("heic")
+                || ext.equals("gif"))) {
             throw BadFileExtensionException.EXCEPTION;
         }
 

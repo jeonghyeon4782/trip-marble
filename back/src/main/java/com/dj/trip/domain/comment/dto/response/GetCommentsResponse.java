@@ -7,6 +7,7 @@ import java.util.List;
 public record GetCommentsResponse(
         List<CommentInfo> comments,
         int page,
-        int commentTotal
+        int pageTotal,
+        int total
 ) {
 }

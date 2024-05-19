@@ -9,12 +9,17 @@
     </insert>
 
     <select id="selectComments" parameterType="CommentsDao" resultType="CommentInfo">
-        select c.comment_id, m.nickname, m.image_url, c.content, c.create_date
+        select c.comment_id,
+               m.nickname,
+               m.image_url,
+               c.content,
+               c.create_date,
+               if(c.member_id = #{memberId}, true, false) as isWriteByMe
         from comment c
-        join member m
-        on c.member_id = m.member_id
-        where review_id = #{reviewId}
-        limit #{start}, #{pageSize}
+                 join member m
+                      on c.member_id = m.member_id
+        where review_id = #{reviewId} limit #{start}
+            , #{pageSize}
     </select>
 
     <select id="getTotalCommentsCount" parameterType="CommentsDao" resultType="int">
