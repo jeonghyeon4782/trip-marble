@@ -2,10 +2,20 @@ import { localAxios } from "@/util/http-commons";
 
 const local = localAxios();
 
-
-
 function listReview(param, success, fail) {
-  local.get(`api/review`, { params: param }).then(success).catch(fail);
+
+  const baseUrl = 'api/review';
+  let query = `?pageno=${param.pageno}&pagesize=${param.pagesize}&keyword=${encodeURIComponent(param.keyword)}&order=${param.order}`;
+
+  param.sidos.forEach(sido => {
+    query += `&sidos=${sido}`;
+  });
+
+  const url = `${baseUrl}${query}`;
+
+  console.log(url);
+
+  local.get(url).then(success).catch(fail);
 }
 
 function detailReview(reviewid, success, fail) {
