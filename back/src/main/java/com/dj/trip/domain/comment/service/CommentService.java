@@ -8,7 +8,7 @@ import com.dj.trip.domain.comment.dto.response.GetCommentsResponse;
 public interface CommentService {
     void createComment(CreateCommentRequest createCommentRequest, String memberId);
 
-    GetCommentsResponse getComments(int reviewId, GetCommentsRequest getCommentsRequest);
+    GetCommentsResponse getComments(int reviewId, GetCommentsRequest getCommentsRequest, String memberId);
 
     void modifyComment(int commentId, ModifyCommentRequest modifyCommentRequest, String memberId);
 

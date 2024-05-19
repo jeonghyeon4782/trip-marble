@@ -16,5 +16,6 @@ public class CommentInfo {
     private String nickname;
     private String imageUrl;
     private String content;
-    private Timestamp create_date;
+    private Timestamp createDate;
+    private boolean isWriteByMe;
 }

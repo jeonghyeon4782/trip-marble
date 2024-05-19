@@ -35,16 +35,22 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public GetCommentsResponse getComments(int reviewId, GetCommentsRequest getCommentsRequest) {
+    public GetCommentsResponse getComments(int reviewId, GetCommentsRequest getCommentsRequest, String memberId) {
         CommentsDao commentsDao = CommentsDao.getComments(
                 reviewId,
+                memberId,
                 getCommentsRequest.pagesize(),
-                getCommentsRequest.pagesize() * getCommentsRequest.pageno()
+                getCommentsRequest.pagesize() * (getCommentsRequest.pageno() - 1)
         );
         List<CommentInfo> comments = commentMapper.selectComments(commentsDao);
-        int page = getCommentsRequest.pageno() + 1;
+
+        int page = getCommentsRequest.pageno();
         int total = commentMapper.getTotalCommentsCount(commentsDao);
-        return new GetCommentsResponse(comments, page, total);
+        int totalPage = total / getCommentsRequest.pagesize();
+        if (total % getCommentsRequest.pagesize() != 0) {
+            totalPage++;
+        }
+        return new GetCommentsResponse(comments, page, totalPage, total);
     }
 
     @Override
@@ -65,7 +71,7 @@ public class CommentServiceImpl implements CommentService {
                 commentId,
                 memberId
         );
-        if(commentMapper.deleteComment(comment)==0){
+        if (commentMapper.deleteComment(comment) == 0) {
             throw new InsufficientAuthenticationException("잘못된 요청");
         }
     }
