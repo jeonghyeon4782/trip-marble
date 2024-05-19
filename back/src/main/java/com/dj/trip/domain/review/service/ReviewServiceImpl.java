@@ -80,11 +80,11 @@ public class ReviewServiceImpl implements ReviewService {
     public GetReviewsResponse getReviews(GetReviewsRequest getReviewsRequest) {
         ReviewsDao reviewsDao = ReviewsDao
                 .getReviews(
-                        getReviewsRequest.key(),
-                        getReviewsRequest.word(),
+                        getReviewsRequest.keyword(),
+                        getReviewsRequest.sidos(),
                         getReviewsRequest.order(),
                         getReviewsRequest.pagesize(),
-                        getReviewsRequest.pageno() * getReviewsRequest.pagesize()
+                        (getReviewsRequest.pageno() - 1) * getReviewsRequest.pagesize()
                 );
         List<ReviewInfo> reviews = reviewMapper.selectReviews(reviewsDao);
 
@@ -97,9 +97,13 @@ public class ReviewServiceImpl implements ReviewService {
             }
         }
 
-        int page = getReviewsRequest.pageno() + 1;
+        int page = getReviewsRequest.pageno();
         int total = reviewMapper.getTotalReviewsCount(reviewsDao);
-        return new GetReviewsResponse(reviews, page, total);
+        int totalPage = total / getReviewsRequest.pagesize();
+        if (total % getReviewsRequest.pagesize() != 0) {
+            totalPage++;
+        }
+        return new GetReviewsResponse(reviews, page, totalPage);
     }
 
     @Override

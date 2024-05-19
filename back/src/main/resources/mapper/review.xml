@@ -45,23 +45,29 @@
         having r.review_id = #{reviewId}
     </select>
 
-    <sql id="search">
-        <if test="word != null and word != ''">
-            <if test="key == 'keyword'">
-                and title like concat('%', #{word}, '%')
-                or content like concat('%', #{word}, '%')
-            </if>
-            <if test="key == 'sido'">
-                and ${key} = concat(#{word}, '%')
-            </if>
+    <sql id="searchByKeyword">
+        <if test="keyword != null and keyword != ''">
+            (
+            title like concat('%', #{keyword}, '%')
+            or content like concat('%', #{keyword}, '%')
+            )
         </if>
     </sql>
 
-    <sql id="order">
-        <if test="key == 'like'">
+    <sql id="searchBySidoId">
+        <if test="sidos != null and sidos.size() > 0">
+            and s.sido_id in
+            <foreach item="sido_id" collection="sidos" open="(" separator="," close=")">
+                #{sido_id}
+            </foreach>
+        </if>
+    </sql>
+
+    <sql id="searchOrder">
+        <if test="order == 'like'">
             order by likes desc
         </if>
-        <if test="key != 'like'">
+        <if test="order != 'like'">
             order by r.review_id desc
         </if>
     </sql>
@@ -75,19 +81,29 @@
         on r.member_id=m.member_id
         left join member_board_like l
         on r.review_id=l.review_id
+        join attraction_info a
+        on r.attraction_info_id = a.attraction_info_id
+        join sido s
+        on a.sido_id = s.sido_id
         <where>
-            <include refid="search"></include>
+            <include refid="searchByKeyword"></include>
+            <include refid="searchBySidoId"></include>
         </where>
         group by r.review_id
-        <include refid="order"></include>
+        <include refid="searchOrder"></include>
         limit #{start}, #{pageSize}
     </select>
 
     <select id="getTotalReviewsCount" parameterType="ReviewsDao" resultType="int">
         select count(review_id)
-        from review
+        from review r
+        join attraction_info a
+        on r.attraction_info_id = a.attraction_info_id
+        join sido s
+        on a.sido_id = s.sido_id
         <where>
-            <include refid="search"></include>
+            <include refid="searchByKeyword"></include>
+            <include refid="searchBySidoId"></include>
         </where>
     </select>
 
