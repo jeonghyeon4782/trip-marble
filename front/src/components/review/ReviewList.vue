@@ -5,9 +5,10 @@ import { listReview, updateHits } from "@/api/review.js";
 
 import ReviewListItem from '@/components/review/item/ReviewListItem.vue';
 import SearchBarItem from '@/components/review/item/SearchBarItem.vue';
+import PageNavigation from '@/components/common/PageNavigation.vue'
 
 const reviews = ref([]);
-const currentPage = ref(0);
+const currentPage = ref(1);
 const totalPage = ref(0);
 const { VITE_ARTICLE_LIST_SIZE } = import.meta.env;
 const param = ref({
@@ -34,6 +35,14 @@ function updateParam(keyword, order, sidos) {
     getReviewList();
 };
 
+const onPageChange = (val) => {
+    console.log(val + "번 페이지로 이동 요청");
+    currentPage.value = val;
+    param.value.pageno = val;
+    getReviewList();
+};
+
+
 const getReviewList = () => {
     console.log("서버에 review 목록 요청", param.value);
     listReview(
@@ -57,7 +66,7 @@ function incrementHits(reviewid) {
         reviewid,
         (response) => {
             if (response.status == 200) {
-                review.value.hits++;
+                reviews.value.hits++;
             }
         },
         (error) => {
@@ -80,6 +89,10 @@ function incrementHits(reviewid) {
             @increment-hits="incrementHits">
         </ReviewListItem>
     </div>
+    <div>
+        <PageNavigation :current-page="currentPage" :total-page="totalPage" @pageChange="onPageChange"></PageNavigation>
+    </div>
+
 </template>
 
 <style scoped>
