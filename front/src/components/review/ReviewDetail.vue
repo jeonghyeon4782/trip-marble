@@ -18,6 +18,8 @@ const { reviewid } = route.params;
 
 const review = ref({});
 
+const comments = ref({});
+
 onMounted(() => {
     getReview();
 })
@@ -99,6 +101,10 @@ function subLikes() {
 
 }
 
+function updateComments(newCount) {
+    comments.value = newCount;
+}
+
 </script>
 
 <template>
@@ -135,12 +141,12 @@ function subLikes() {
                 <p class="review-description">{{ review.content }}</p>
                 <div class="review-info">
                     <span>Likes: {{ review.likes }}</span>
-                    <span>Comments: {{ review.comments }}</span>
+                    <span>Comments: {{ comments }}</span>
                     <span>Views: {{ review.hits }}</span>
                 </div>
             </div>
         </div>
-        <CommentListItem />
+        <CommentListItem @update-comment-count="updateComments" :reviewId="reviewid" />
     </div>
 </template>
 
