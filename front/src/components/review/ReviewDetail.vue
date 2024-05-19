@@ -104,17 +104,12 @@ function subLikes() {
 function updateComments(newCount) {
     comments.value = newCount;
 }
-
-function goBack(){
-    router.go(-1);
-}
-
 </script>
 
 <template>
     <div class="container">
         <div class="link">
-            <a @click="goBack">Back to Posts</a>
+            <RouterLink :to="{ name: 'review-list' }">Back to Posts</RouterLink>
             <span class="user-link">
                 <RouterLink :to="{ name: 'review-modify' }" v-if="review.isWriteByMe">modify</RouterLink>
                 <a @click="onDeleteReview" v-if="review.isWriteByMe">delete</a>
