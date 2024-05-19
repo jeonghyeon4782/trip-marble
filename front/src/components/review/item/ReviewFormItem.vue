@@ -133,10 +133,14 @@ const handleImageUpload = (event) => {
     review.value.imageUrl = URL.createObjectURL(file);
 };
 
+function goBack(){
+    router.go(-1);
+}
+
 </script>
 
 <template>
-    <RouterLink :to="{ name: 'review-list' }">Back to Posts</RouterLink>
+    <a @click="goBack">Back to Posts</a>
     <div class="item">
         <div class="review-image">
             <img v-if="review.imageUrl" :src="review.imageUrl" :alt="imageAlt">

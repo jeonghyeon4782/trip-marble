@@ -42,9 +42,6 @@ oauthMember(
 </script>
 
 <template>
-    <div>
-        리다이렉트
-    </div>
 </template>
 
 <style scoped></style>

@@ -1,7 +1,6 @@
 <script setup>
 import defaultImage from '@/assets/defaultImage.jpg'
 import { ref, defineProps, onMounted, watch, computed } from 'vue';
-import { useRoute, useRouter } from "vue-router";
 import moment from 'moment-timezone';
 import { listComment, registComment, modifyComment, deleteComment } from "@/api/comment.js";
 

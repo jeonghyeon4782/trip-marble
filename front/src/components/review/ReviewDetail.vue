@@ -105,15 +105,16 @@ function updateComments(newCount) {
     comments.value = newCount;
 }
 
+function goBack(){
+    router.go(-1);
+}
+
 </script>
 
 <template>
-    <div>
-        상세 게시판이야
-    </div>
     <div class="container">
         <div class="link">
-            <RouterLink :to="{ name: 'review-list' }">Back to Posts</RouterLink>
+            <a @click="goBack">Back to Posts</a>
             <span class="user-link">
                 <RouterLink :to="{ name: 'review-modify' }" v-if="review.isWriteByMe">modify</RouterLink>
                 <a @click="onDeleteReview" v-if="review.isWriteByMe">delete</a>
@@ -135,7 +136,7 @@ function updateComments(newCount) {
                         </a>
                         <span class="review-date">{{ review.createDate }}</span>
                     </div>
-                    <img :src="favoriteIcon" class="favorite-icon" @click="favoriteClick">
+                    <img v-if="!review.isWriteByMe" :src="favoriteIcon" class="favorite-icon" @click="favoriteClick">
                 </div>
                 <img :src="review.reviewImageUrl" v-if="review.reviewImageUrl" class="review-image">
                 <p class="review-description">{{ review.content }}</p>
