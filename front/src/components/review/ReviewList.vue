@@ -10,6 +10,7 @@ import PageNavigation from '@/components/common/PageNavigation.vue'
 const reviews = ref([]);
 const currentPage = ref(1);
 const totalPage = ref(0);
+const isLogin = ref({});
 const { VITE_ARTICLE_LIST_SIZE } = import.meta.env;
 const param = ref({
     pageno: currentPage.value,
@@ -20,6 +21,11 @@ const param = ref({
 });
 
 onMounted(() => {
+    if (localStorage.getItem('isLogin') == "true") {
+        isLogin.value = true;
+    } else {
+        isLogin.value = false;
+    }
     getReviewList();
 })
 
@@ -81,8 +87,8 @@ function incrementHits(reviewid) {
     <div>
         <SearchBarItem @search="updateParam" />
     </div>
-    <div>
-        <RouterLink :to="{ name: 'review-write' }">write</RouterLink>
+    <div class="write-link">
+        <RouterLink  v-if="isLogin" :to="{ name: 'review-write' }">write</RouterLink>
     </div>
     <div class="review-grid">
         <ReviewListItem v-for="review in reviews" :key="review.reviewId" :review="review"
@@ -100,5 +106,10 @@ function incrementHits(reviewid) {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
+}
+.write-link{
+    font-size: 20px;
+    margin: 10px;
+    text-align: right;
 }
 </style>

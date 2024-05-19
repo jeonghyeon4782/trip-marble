@@ -3,7 +3,6 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from "vue-router";
 import { logoutMember } from '@/api/auth';
 
-const router = useRouter();
 const isLogin = ref({});
 
 onMounted(() => {
@@ -45,7 +44,7 @@ function logout() {
             <RouterLink :to="{ name: 'main' }">
                 <p>Home</p>
             </RouterLink>
-            <RouterLink :to="{ name: 'review-list' }">
+            <RouterLink v-if="isLogin" :to="{ name: 'review-list' }">
                 <p>Board</p>
             </RouterLink>
             <RouterLink :to="{ name: 'review-list' }">
@@ -62,7 +61,7 @@ function logout() {
             <a v-else @click="logout">
                 <p>Logout</p>
             </a>
-            <RouterLink :to="{ name: 'main' }">
+            <RouterLink v-if="isLogin" :to="{ name: 'main' }">
                 <p>Mypage</p>
             </RouterLink>
         </div>
