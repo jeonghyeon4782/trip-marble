@@ -3,7 +3,6 @@ import { ref, onMounted } from 'vue';
 import { useRouter } from "vue-router";
 import { logoutMember } from '@/api/auth';
 
-const router = useRouter();
 const isLogin = ref({});
 
 onMounted(() => {
@@ -45,7 +44,7 @@ function logout() {
             <RouterLink :to="{ name: 'main' }">
                 <p>Home</p>
             </RouterLink>
-            <RouterLink :to="{ name: 'review-list' }">
+            <RouterLink v-if="isLogin" :to="{ name: 'review-list' }">
                 <p>Board</p>
             </RouterLink>
             <RouterLink :to="{ name: 'review-list' }">
@@ -59,10 +58,10 @@ function logout() {
             <RouterLink v-if="!isLogin" :to="{ name: 'auth' }">
                 <p>Login</p>
             </RouterLink>
-            <a @click="logout">
+            <a v-else @click="logout">
                 <p>Logout</p>
             </a>
-            <RouterLink :to="{ name: 'main' }">
+            <RouterLink v-if="isLogin" :to="{ name: 'main' }">
                 <p>Mypage</p>
             </RouterLink>
         </div>
@@ -73,34 +72,22 @@ function logout() {
 <style scoped>
 .fixed-header {
     position: fixed;
-    /* 화면 상단에 고정 */
     top: 0;
-    /* 위쪽 여백 없이 고정 */
     left: 0;
-    /* 왼쪽에 고정 */
     width: 100%;
-    /* 너비 100% */
     height: 10%;
     padding: 0px 30px;
-    /* 패딩 추가 */
     z-index: 999;
-    /* 다른 요소 위에 표시 */
 }
 
 .fixed-nav {
     position: fixed;
-    /* 화면 상단에 고정 */
     top: 10%;
-    /* 헤더의 높이만큼 아래로 이동 */
     left: 0;
-    /* 왼쪽에 고정 */
     width: 100%;
-    /* 너비 100% */
     height: 5%;
     padding: 10px;
-    /* 패딩 추가 */
     z-index: 999;
-    /* 다른 요소 위에 표시 */
     font-size: 20px;
 }
 
@@ -137,5 +124,6 @@ nav a {
     color: white;
     text-decoration: none;
     margin: 0 40px;
+    cursor: pointer;
 }
 </style>

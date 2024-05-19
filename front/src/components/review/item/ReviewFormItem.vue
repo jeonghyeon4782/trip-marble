@@ -8,13 +8,21 @@ const route = useRoute()
 
 const props = defineProps({ type: String })
 
+const file = ref({})
+const preView = ref(null)
+
 const review = ref({
-    reviewId: 1,
-    title: '리뷰 제목',
-    content: '리뷰 내용을 작성해 주세요.',
+    reviewId: 0,
+    title: '',
+    content: '',
     attractionInfoId: '',
-    imageUrl: null
 });
+
+const attractions = ref([
+    { attractionInfoId: 1, name: '어트렉션1', location: '위치1', created_at: '2024-05-18' },
+    { attractionInfoId: 2, name: '어트렉션2', location: '위치2', created_at: '2024-05-19' },
+    // 기존의 어트렉션 데이터...
+])
 
 
 if (props.type == "modify") {
@@ -23,7 +31,8 @@ if (props.type == "modify") {
     getModifyReview(
         reviewid,
         ({ data }) => {
-            review.value = data
+            review.value = data.data;
+            preView.value = data.data.reviewImageUrl;
         },
         (error) => {
             console.log(error)
@@ -33,6 +42,8 @@ if (props.type == "modify") {
 
 const titleErrMsg = ref("")
 const contentErrMsg = ref("")
+const attractionErrMsg = ref("")
+
 watch(
     () => review.value.title,
     (value) => {
@@ -43,6 +54,7 @@ watch(
     },
     { immediate: true }
 )
+
 watch(
     () => review.value.content,
     (value) => {
@@ -54,27 +66,39 @@ watch(
     { immediate: true }
 )
 
-function onSubmit() {
-    // event.preventDefault();
+watch(
+    () => review.value.attractionInfoId,
+    (value) => {
+        if (value == "") {
+            attractionErrMsg.value = "어트렉션을 선택해주세요."
+        } else attractionErrMsg.value = ""
+    },
+    { immediate: true }
+)
 
+function onSubmit() {
     if (titleErrMsg.value) {
         alert(titleErrMsg.value)
     } else if (contentErrMsg.value) {
         alert(contentErrMsg.value)
+    } else if (attractionErrMsg.value) {
+        alert(attractionErrMsg.value)
     } else {
         props.type === "regist" ? writeReview() : updateReivew()
     }
 }
 
 function writeReview() {
-    console.log("리뷰 등록 요청", reivew.value)
+    console.log("리뷰 등록 요청", review.value)
     registReview(
-        article.value,
+        review.value,
+        file.value,
         (response) => {
             let msg = "리뷰등록 처리시 문제 발생했습니다."
+            console.log(response)
             if (response.status == 201) msg = "리뷰등록이 완료되었습니다."
             alert(msg)
-            const reviewId = response.data.reviewid;
+            const reviewId = response.data.data.reviewId;
             moveDetail(reviewId)
         },
         (error) => console.log(error)
@@ -85,13 +109,14 @@ function updateReivew() {
     console.log(review.value.reviewId + "번 리뷰 수정 요청", review.value)
     modifyReview(
         review.value,
+        review.value.reviewId,
+        file.value,
         (response) => {
             let msg = "리뷰수정 처리시 문제 발생했습니다."
             if (response.status == 201) msg = "리뷰정보 수정이 완료되었습니다."
             alert(msg)
-            const reviewId = response.data.reviewId;
+            const reviewId = response.data.data.reviewId;
             moveDetail(reviewId)
-
         },
         (error) => console.log(error)
     )
@@ -105,30 +130,42 @@ function moveDetail(reviewId) {
 
 // 이미지 업로드 처리
 const handleImageUpload = (event) => {
-    const file = event.target.files[0];
-    review.value.imageUrl = file;
-    review.value.imageUrl = URL.createObjectURL(file);
+    file.value = event.target.files[0];
+    preView.value = URL.createObjectURL(file.value);
 };
+
+function goBack() {
+    router.go(-1);
+}
+
 </script>
 
 <template>
+    <a @click="goBack">Back to Posts</a>
     <div class="item">
         <div class="review-image">
-            <img v-if="review.imageUrl" :src="review.imageUrl" :alt="imageAlt">
+            <img v-if="preView" :src="preView" :alt="imageAlt">
         </div>
         <form @submit.prevent="onSubmit">
             <div class="form-group">
                 <label for="title">제목</label>
-                <input type="text" id="title" v-model="review.title" required>
+                <input type="text" id="title" v-model="review.title">
             </div>
             <div class="form-group">
                 <label for="content">내용</label>
-                <textarea id="content" v-model="review.content" rows="6" required></textarea>
+                <textarea id="content" v-model="review.content" rows="6"></textarea>
             </div>
             <div class="form-group">
-                <label for="address">어트렉션 추가</label>
-                <input type="text" id="address" v-model="review.address">
+                <label for="attractionList">어트렉션 목록</label>
+                <select id="attractionList" v-model="review.attractionInfoId">
+                    <option disabled value="">어트렉션을 선택하세요</option>
+                    <option v-for="(attraction, index) in attractions" :key="index"
+                        :value="attraction.attractionInfoId">
+                        이름: {{ attraction.name }} | 위치: {{ attraction.location }} | 생성일: {{ attraction.created_at }}
+                    </option>
+                </select>
             </div>
+            <!--  -->
             <div class="form-group">
                 <label for="image">이미지 추가</label>
                 <input type="file" id="image" accept="image/*" @change="handleImageUpload">
@@ -136,7 +173,6 @@ const handleImageUpload = (event) => {
             <button type="submit" class="btn">완료</button>
         </form>
     </div>
-
 </template>
 
 <style scoped>
@@ -170,7 +206,8 @@ const handleImageUpload = (event) => {
 }
 
 .form-group input,
-.form-group textarea {
+.form-group textarea,
+#attractionList {
     width: 97%;
     padding: 10px;
     border: 1px solid #ccc;

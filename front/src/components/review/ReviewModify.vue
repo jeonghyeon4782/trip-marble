@@ -4,9 +4,6 @@ import ReviewFormItem from '@/components/review/item/ReviewFormItem.vue';
 </script>
 
 <template>
-    <div>
-        수정 게시판이야
-    </div>
     <div class="container">
         <ReviewFormItem type="modify" />
     </div>
