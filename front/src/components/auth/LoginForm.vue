@@ -5,6 +5,17 @@ import { ref } from 'vue';
 import googleIcon from '@/assets/google_login.svg';
 import kakaoIcon from '@/assets/kakao_login.svg';
 import naverIcon from '@/assets/naver_login.svg';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+function showFindMemberId() {
+    router.push({ name: 'findid' });
+}
+
+function showFindPassword() {
+    router.push({ name: 'find-password' });
+}
 
 const member = ref({
     memberId: "",
@@ -57,6 +68,8 @@ function kakaoLogin() {
                     <input type="password" id="password" name="password" required v-model="member.password">
                 </div>
                 <button type="submit" class="btn">Login</button>
+                <button type="button" class="btn" @click="showFindMemberId">아이디 찾기</button>
+                <button type="button" class="btn" @click="showFindPassword">비밀번호 찾기</button>
             </form>
             <div class="icon-container">
                 <img :src="googleIcon" :alt="imageAlt" class="icon" @click="googleLogin">
@@ -105,6 +118,7 @@ section {
 }
 
 .btn {
+    margin-top: 10px;
     display: block;
     width: 100%;
     padding: 10px;

@@ -3,10 +3,10 @@
 
 <mapper namespace="com.dj.trip.domain.member.mapper.MemberMapper">
 
-    <select id="insertMember" parameterType="Member">
+    <insert id="insertMember" parameterType="Member">
         insert into member(member_id, password, nickname, email, role, oauth_server_type)
         values (#{memberId}, #{password}, #{nickname}, #{email}, #{role}, #{oauthServiceType})
-    </select>
+    </insert>
 
     <select id="selectMemberByMemberId" parameterType="String" resultType="Member">
         select member_id, password, nickname, email, role
@@ -14,9 +14,36 @@
         where member_Id = #{memberId}
     </select>
 
+    <select id="selectMemberByNickname" parameterType="String" resultType="Member">
+        select member_id, password, nickname, email, role
+        from member
+        where nickname = #{nickname}
+    </select>
+
+    <select id="selectMemberByEmail" parameterType="String" resultType="Member">
+        select member_id, password, nickname, email, role
+        from member
+        where email = #{email}
+    </select>
+
     <select id="selectMemberByOauthServerTypeAndEmail" parameterType="Member">
         select member_id, oauth_server_type, email
         from member
         where email = #{email} and oauth_server_type = #{oauthServerType}
     </select>
+
+    <select id="selectMemberByMemberIdAndEmail" resultType="Member">
+        select member_id, password, nickname, email, role
+        from member
+        where member_Id = #{memberId}
+        and email = #{email}
+    </select>
+
+    <update id="updateMember">
+        update member
+        set password = #{password},
+            nickname = #{nickname},
+            image_url = #{imageUrl}
+        where member_id = #{memberId}
+    </update>
 </mapper>

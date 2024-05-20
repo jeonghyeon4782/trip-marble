@@ -22,13 +22,13 @@ public class ScoreController {
 
     @GetMapping("/{sidoId}")
     public ResponseDto<List<GetScoreResponseDto>> getScore(@PathVariable("sidoId") int sidoId, @RequestHeader("Authorization") String tokenHeader) {
-        String memberId = jwtUtil.getMeberId(tokenHeader.substring(7));
+        String memberId = jwtUtil.getMemberId(tokenHeader.substring(7));
         return new ResponseDto<>(HttpStatus.OK.value(), "점수 조회 성공", scoreService.getScore(sidoId, memberId));
     }
 
     @PutMapping("/{sidoId}")
     public ResponseDto<String> updateScore(@PathVariable("sidoId") int sidoId, @RequestHeader("Authorization") String tokenHeader, @RequestBody UpdateScoreRequestDto updateScoreRequestDto) {
-        String memberId = jwtUtil.getMeberId(tokenHeader.substring(7));
+        String memberId = jwtUtil.getMemberId(tokenHeader.substring(7));
         scoreService.updateScore(sidoId, memberId, updateScoreRequestDto.getPlusScore());
         return new ResponseDto<>(HttpStatus.OK.value(), "점수 올리기 성공", null);
     }

@@ -1,7 +1,14 @@
 package com.dj.trip.domain.member.service;
 
+import com.dj.trip.domain.mail.MailVo;
+import com.dj.trip.domain.mail.mapper.MailMapper;
+import com.dj.trip.domain.mail.service.MailService;
+import com.dj.trip.domain.mail.service.MailServiceImpl;
 import com.dj.trip.domain.member.Member;
+import com.dj.trip.domain.member.dto.AuthenticationEmailResponseDto;
 import com.dj.trip.domain.member.dto.CreateMemberRequestDto;
+import com.dj.trip.domain.member.dto.FindMemberIdRequestDto;
+import com.dj.trip.domain.member.dto.FindPasswordRequestDto;
 import com.dj.trip.domain.member.mapper.MemberMapper;
 import com.dj.trip.global.util.JWTUtil;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.net.http.HttpResponse;
+import java.security.SecureRandom;
 
 @Service
 @Log4j2
@@ -21,6 +29,8 @@ public class MemberServiceImpl implements MemberService {
     private final MemberMapper memberMapper;
     private final BCryptPasswordEncoder encoder;
     private final ModelMapper modelMapper;
+    private final MailService mailService;
+    private final MailMapper mailMapper;
     private final JWTUtil jwtUtil;
 
     // 회원가입
@@ -32,10 +42,80 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public boolean duplicateCheckMemberId(String memberId) throws Exception {
+        Member member = memberMapper.selectMemberByMemberId(memberId);
+        return member == null;
+    }
+
+    @Override
+    public boolean duplicateCheckNickname(String nickname) throws Exception {
+        Member member = memberMapper.selectMemberByNickname(nickname);
+        return member == null;
+    }
+
+    @Override
+    public AuthenticationEmailResponseDto authenticationEmail(String email) throws Exception {
+        if (memberMapper.selectMemberByEmail(email) != null) {
+            return null;
+        }
+        String key = mailService.generateRandomCode();
+        mailService.sendMessage(email, "<두정> 이메일 인증 인증번호입니다.", "인증번호는 " + key + "입니다.");
+        mailMapper.insertMail(new MailVo(email, key, null));
+        return new AuthenticationEmailResponseDto(email, key);
+    }
+
+    @Override
     public void logout(HttpServletResponse response) {
         jwtUtil.setHeaderAccessTokenEmpty(response);
         jwtUtil.setHeaderRefreshTokenEmpty(response);
     }
 
+    @Override
+    public String findMemberId(String email) {
+        if (memberMapper.selectMemberByEmail(email) == null) return null;
+        return memberMapper.selectMemberByEmail(email).getMemberId();
+    }
 
+    @Override
+    public boolean findPassword(FindPasswordRequestDto findPasswordRequestDto) throws Exception{
+        Member findMember = memberMapper.selectMemberByMemberIdAndEmail(findPasswordRequestDto.getMemberId(), findPasswordRequestDto.getEmail());
+        if (findMember == null) return false;
+        CreateMemberRequestDto dto = modelMapper.map(findMember, CreateMemberRequestDto.class);
+        String newPassword = generatePassword();
+        dto.setPassword(encoder.encode(newPassword));
+
+        // 이메일 전송
+        mailService.sendMessage(findMember.getEmail(), "<두정> 새로운 비밀번호입니다.", "비밀번호는 " + newPassword + "입니다.");
+
+        // 업데이트
+        memberMapper.updateMember(modelMapper.map(dto, Member.class));
+
+        return true;
+    }
+
+    public static String generatePassword() {
+        int length = 10; // 비밀번호 길이 (10자 이상 20자 이하)
+        String upperCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        String lowerCaseLetters = "abcdefghijklmnopqrstuvwxyz";
+        String numbers = "0123456789";
+        String specialChars = "@_!*$%#";
+        String allChars = upperCaseLetters + lowerCaseLetters + numbers + specialChars;
+        SecureRandom secureRandom = new SecureRandom();
+        StringBuilder password = new StringBuilder();
+        password.append(upperCaseLetters.charAt(secureRandom.nextInt(upperCaseLetters.length())));
+        password.append(lowerCaseLetters.charAt(secureRandom.nextInt(lowerCaseLetters.length())));
+        password.append(numbers.charAt(secureRandom.nextInt(numbers.length())));
+        password.append(specialChars.charAt(secureRandom.nextInt(specialChars.length())));
+        for (int i = 4; i < length; i++) {
+            password.append(allChars.charAt(secureRandom.nextInt(allChars.length())));
+        }
+        char[] passwordArray = password.toString().toCharArray();
+        for (int i = 0; i < passwordArray.length; i++) {
+            int randomIndex = secureRandom.nextInt(passwordArray.length);
+            char temp = passwordArray[i];
+            passwordArray[i] = passwordArray[randomIndex];
+            passwordArray[randomIndex] = temp;
+        }
+        return new String(passwordArray);
+    }
 }
