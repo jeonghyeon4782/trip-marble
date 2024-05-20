@@ -9,6 +9,7 @@ import PageNavigation from '@/components/common/PageNavigation.vue'
 const props = defineProps({ reviewId: Number });
 const emit = defineEmits(['update-comment-count'])
 
+const isLogin = ref({});
 const comments = ref({});
 const inputComment = ref({
   reviewId: props.reviewId,
@@ -26,6 +27,12 @@ const param = ref({
 
 
 onMounted(() => {
+
+  if (localStorage.getItem('isLogin') == "true") {
+    isLogin.value = true;
+  } else {
+    isLogin.value = false;
+  }
   getCommentList();
 })
 
@@ -206,13 +213,16 @@ function onDeleteComment(commentId) {
         </div>
       </div>
 
-      <div>
+      <div v-if="total==0">
+        <p>댓글이 비어있어</p>
+      </div>
+      <div v-else>
         <PageNavigation :current-page="currentPage" :total-page="totalPage" @pageChange="onPageChange">
         </PageNavigation>
       </div>
 
       <!-- 댓글 작성 폼 -->
-      <form class="comment-form" @submit="onSubmit">
+      <form v-if="isLogin" class="comment-form" @submit="onSubmit">
         <textarea class="comment-input" placeholder="댓글을 입력하세요" v-model="inputComment.content"></textarea>
         <button type="submit" class="comment-button">댓글 작성</button>
       </form>
@@ -225,10 +235,6 @@ section {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-
-.container {
-  /* 폼 스타일 생략 */
 }
 
 .login-link {

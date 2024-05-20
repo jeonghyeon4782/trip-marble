@@ -4,8 +4,8 @@
 <mapper namespace="com.dj.trip.domain.member.mapper.MemberMapper">
 
     <select id="insertMember" parameterType="Member">
-        insert into member(member_id, password, nickname, email, role)
-        values (#{memberId}, #{password}, #{nickname}, #{email}, #{role})
+        insert into member(member_id, password, nickname, email, role, oauth_server_type)
+        values (#{memberId}, #{password}, #{nickname}, #{email}, #{role}, #{oauthServiceType})
     </select>
 
     <select id="selectMemberByMemberId" parameterType="String" resultType="Member">

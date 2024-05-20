@@ -88,7 +88,7 @@ function incrementHits(reviewid) {
         <SearchBarItem @search="updateParam" />
     </div>
     <div class="write-link">
-        <RouterLink  v-if="isLogin" :to="{ name: 'review-write' }">write</RouterLink>
+        <RouterLink v-if="isLogin" :to="{ name: 'review-write' }">write</RouterLink>
     </div>
     <div class="review-grid">
         <ReviewListItem v-for="review in reviews" :key="review.reviewId" :review="review"
@@ -107,7 +107,8 @@ function incrementHits(reviewid) {
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
 }
-.write-link{
+
+.write-link {
     font-size: 20px;
     margin: 10px;
     text-align: right;

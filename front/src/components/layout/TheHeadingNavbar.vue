@@ -35,7 +35,7 @@ function logout() {
 
     <header class="fixed-header">
         <!-- Header Content Here -->
-        <h1>This is the Header</h1>
+        <h1>DJ TRIP</h1>
     </header>
 
     <nav class="fixed-nav">
@@ -47,7 +47,7 @@ function logout() {
             <RouterLink v-if="isLogin" :to="{ name: 'review-list' }">
                 <p>Board</p>
             </RouterLink>
-            <RouterLink :to="{ name: 'review-list' }">
+            <RouterLink :to="{ name: 'review' }">
                 <p>Review</p>
             </RouterLink>
             <RouterLink :to="{ name: 'review-list' }">
@@ -61,7 +61,7 @@ function logout() {
             <a v-else @click="logout">
                 <p>Logout</p>
             </a>
-            <RouterLink v-if="isLogin" :to="{ name: 'main' }">
+            <RouterLink v-if="isLogin" :to="{ name: 'mypage' }">
                 <p>Mypage</p>
             </RouterLink>
         </div>
@@ -86,6 +86,8 @@ function logout() {
     left: 0;
     width: 100%;
     height: 5%;
+    display: flex;
+    justify-content: space-between;
     padding: 10px;
     z-index: 999;
     font-size: 20px;
@@ -104,14 +106,12 @@ nav {
 }
 
 .center {
-    width: 80%;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .left {
-    width: 20%;
     display: flex;
     align-items: center;
 }
@@ -125,5 +125,8 @@ nav a {
     text-decoration: none;
     margin: 0 40px;
     cursor: pointer;
+    height: 100%;
+    display: flex;
+    align-items: center;
 }
 </style>

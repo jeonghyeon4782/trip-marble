@@ -10,7 +10,7 @@ import static java.util.Locale.ENGLISH;
 @Getter
 public enum OauthServerType {
 
-    GOOGLE, KAKAO;
+    GOOGLE, KAKAO, GENERAL;
 
     @JsonCreator
     public static OauthServerType fromName(String type) {
