@@ -4,7 +4,6 @@
 
 <template>
     <div>
-        <div>리뷰 게시판</div>
         <router-view></router-view>
     </div>
 </template>

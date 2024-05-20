@@ -12,9 +12,14 @@ function registMember(member, success, fail) {
     local.post(`/auth/register`, JSON.stringify(member)).then(success).catch(fail);
 }
 
-function oauthMember(requestData, success, fail){
+function oauthMember(requestData, success, fail) {
     console.log("authjs member", requestData);
-    local.post('http://localhost:8080/auth/login/social', JSON.stringify(requestData)).then(success).catch(fail);
+    local.post('/auth/login/social', JSON.stringify(requestData)).then(success).catch(fail);
+}
+
+function logoutMember(success, fail) {
+    console.log("authjs logout");
+    local.post('/auth/logout').then(success).catch(fail);
 }
 
 function duplicateCheckMemberId(requestData, success, fail){
@@ -51,4 +56,6 @@ export {
     resendAuthenticationKey,
     deleteAuthenticationKey,
     checkAuthenticationKey
+    oauthMember,
+    logoutMember
 };

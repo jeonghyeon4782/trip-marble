@@ -1,11 +1,14 @@
 <script setup>
 import { ref, onMounted, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { deleteReview, detailReview, createLike, deleteLike } from "@/api/review";
 
 import favorite from '@/assets/favorite.svg';
 import favoriteFill from '@/assets/favorite_fill.svg';
 import location from '@/assets/location.svg';
-import { deleteReview, detailReview } from "@/api/review";
+import defaultImage from '@/assets/defaultImage.jpg';
+
+import CommentListItem from '@/components/review/item/CommentListItem.vue';
 
 
 const route = useRoute();
@@ -14,6 +17,8 @@ const router = useRouter();
 const { reviewid } = route.params;
 
 const review = ref({});
+
+const comments = ref({});
 
 onMounted(() => {
     getReview();
@@ -25,7 +30,8 @@ const getReview = () => {
         reviewid,
         ({ data }) => {
             console.log(data);
-            review.value = data;
+            review.value = data.data;
+            console.log(review);
         },
         (error) => {
             console.log(error);
@@ -54,21 +60,59 @@ const favoriteIcon = computed(() => {
 })
 
 function favoriteClick() {
+
+    if (review.value.isCheckLike) {
+        subLikes()
+    } else {
+        addLikes()
+    }
+
+    console.log(review.value.isCheckLike, review.value.likes)
     review.value.isCheckLike = !review.value.isCheckLike;
 }
 
+function addLikes() {
+    createLike(
+        reviewid,
+        (response) => {
+            console.log(response)
+            if (response.status == 201) {
+                review.value.likes++;
+            }
+        },
+        (error) => {
+            console.log(error);
+        }
+    );
+}
+
+function subLikes() {
+    deleteLike(
+        reviewid,
+        (response) => {
+            if (response.status == 204) {
+                review.value.likes--;
+            }
+        },
+        (error) => {
+            console.log(error);
+        }
+    );
+
+}
+
+function updateComments(newCount) {
+    comments.value = newCount;
+}
 </script>
 
 <template>
-    <div>
-        상세 게시판이야
-    </div>
     <div class="container">
         <div class="link">
             <RouterLink :to="{ name: 'review-list' }">Back to Posts</RouterLink>
             <span class="user-link">
-                <RouterLink :to="{ name: 'review-modify' }">modify</RouterLink>
-                <a :to="{ name: 'review-list' }" @click="onDeleteReview">delete</a>
+                <RouterLink :to="{ name: 'review-modify' }" v-if="review.isWriteByMe">modify</RouterLink>
+                <a @click="onDeleteReview" v-if="review.isWriteByMe">delete</a>
             </span>
         </div>
 
@@ -78,23 +122,27 @@ function favoriteClick() {
                 <h2 class="review-title">{{ review.title }}</h2>
                 <div class="top-info">
                     <div class="review-profile">
-                        <img :src="review.profileImageUrl" class="profile-image">
+                        <img :src="review.profileImageUrl ? review.profileImageUrl : defaultImage"
+                            class="profile-image">
                         <span class="username">{{ review.nickname }}</span>
-                        <img :src="location" class="location-icon">
-                        <span class="location-text">{{ review.attractionName }}</span>
+                        <a>
+                            <img :src="location" class="location-icon">
+                            <span class="location-text">{{ review.attractionName }}</span>
+                        </a>
                         <span class="review-date">{{ review.createDate }}</span>
                     </div>
-                    <img :src="favoriteIcon" class="favorite-icon" @click="favoriteClick">
+                    <img v-if="!review.isWriteByMe" :src="favoriteIcon" class="favorite-icon" @click="favoriteClick">
                 </div>
-                <img :src="review.reviewImageUrl" class="review-image">
+                <img :src="review.reviewImageUrl" v-if="review.reviewImageUrl" class="review-image">
                 <p class="review-description">{{ review.content }}</p>
                 <div class="review-info">
                     <span>Likes: {{ review.likes }}</span>
-                    <span>Comments: {{ review.comments }}</span>
+                    <span>Comments: {{ comments }}</span>
                     <span>Views: {{ review.hits }}</span>
                 </div>
             </div>
         </div>
+        <CommentListItem @update-comment-count="updateComments" :reviewId="reviewid" />
     </div>
 </template>
 
@@ -138,9 +186,11 @@ function favoriteClick() {
 
 .review-profile {
     display: flex;
-    text-align: center;
+    /* text-align: center; */
+    align-items: center;
     margin-left: 10px;
 }
+
 
 .profile-image {
     width: 30px;
@@ -188,7 +238,9 @@ function favoriteClick() {
 
 .review-description {
     font-size: 1.2rem;
-    margin-bottom: 20px;
+    margin: 20px 0;
+    height: 500px;
+    overflow-y: auto;
 }
 
 .review-image {

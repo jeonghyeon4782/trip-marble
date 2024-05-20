@@ -4,6 +4,7 @@ import com.dj.trip.domain.mail.service.MailServiceImpl;
 import com.dj.trip.domain.member.dto.*;
 import com.dj.trip.domain.member.service.MemberService;
 import com.dj.trip.global.dto.ResponseDto;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -54,6 +55,15 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
                 .body(new ResponseDto<>(HttpStatus.BAD_REQUEST.value(), "중복된 닉네임 입니다.", null));
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<ResponseDto<String>> createMember(HttpServletResponse response) throws Exception {
+        memberService.logout(response);
+        log.info("------------------------------------------로그아웃 완료------------------------------------------");
+        return ResponseEntity.status(HttpStatus.CREATED.value())
+                .body(new ResponseDto<>(HttpStatus.CREATED.value(), "로그아웃 성공", null));
+    }
+}
 
     // 이메일 인증
     @PostMapping("/authentication-email")

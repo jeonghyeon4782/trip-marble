@@ -2,6 +2,7 @@ package com.dj.trip.domain.member.service;
 
 import com.dj.trip.domain.member.dto.AuthenticationEmailResponseDto;
 import com.dj.trip.domain.member.dto.CreateMemberRequestDto;
+import jakarta.servlet.http.HttpServletResponse;
 
 public interface MemberService {
     // 회원가입
@@ -12,4 +13,6 @@ public interface MemberService {
     boolean duplicateCheckNickname(String nickname) throws Exception;
     // 이메일 중복 검사
     AuthenticationEmailResponseDto authenticationEmail(String email) throws Exception;
+
+    void logout(HttpServletResponse response);
 }

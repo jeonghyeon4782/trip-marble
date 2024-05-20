@@ -83,9 +83,27 @@ public class JWTUtil {
         response.addCookie(accessTokenCookie);
     }
 
+    public void setHeaderAccessTokenEmpty(HttpServletResponse response) {
+        Cookie accessTokenCookie = new Cookie("DJTRIP_TOKEN", "");
+        accessTokenCookie.setMaxAge(0);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setHttpOnly(true);
+
+        response.addCookie(accessTokenCookie);
+    }
+
     public void setHeaderRefreshToken(HttpServletResponse response, String refreshToken) {
         Cookie refreshTokenCookie = new Cookie("DJTRIP_REFRESH_TOKEN", refreshToken);
         refreshTokenCookie.setMaxAge(604800);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setHttpOnly(true);
+
+        response.addCookie(refreshTokenCookie);
+    }
+
+    public void setHeaderRefreshTokenEmpty(HttpServletResponse response) {
+        Cookie refreshTokenCookie = new Cookie("DJTRIP_REFRESH_TOKEN", "");
+        refreshTokenCookie.setMaxAge(0);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setHttpOnly(true);
 

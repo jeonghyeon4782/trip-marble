@@ -1,34 +1,65 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import { listReview } from "@/api/review.js";
+import { listReview, updateHits } from "@/api/review.js";
 
 
 import ReviewListItem from '@/components/review/item/ReviewListItem.vue';
+import SearchBarItem from '@/components/review/item/SearchBarItem.vue';
+import PageNavigation from '@/components/common/PageNavigation.vue'
 
 const reviews = ref([]);
 const currentPage = ref(1);
 const totalPage = ref(0);
+const isLogin = ref({});
 const { VITE_ARTICLE_LIST_SIZE } = import.meta.env;
 const param = ref({
-    pgno: currentPage.value,
-    spp: VITE_ARTICLE_LIST_SIZE,
-    key: "",
-    word: "",
+    pageno: currentPage.value,
+    pagesize: VITE_ARTICLE_LIST_SIZE,
+    keyword: "",
+    order: "",
+    sidos: []
 });
 
 onMounted(() => {
+    if (localStorage.getItem('isLogin') == "true") {
+        isLogin.value = true;
+    } else {
+        isLogin.value = false;
+    }
     getReviewList();
 })
+
+function updateParam(keyword, order, sidos) {
+    param.value.keyword = keyword;
+    param.value.order = order;
+    param.value.sidos = [];
+    sidos.forEach((sido) => {
+        param.value.sidos.push(Number(sido));
+    });
+
+    console.log(param.value.sidos);
+    getReviewList();
+};
+
+const onPageChange = (val) => {
+    console.log(val + "번 페이지로 이동 요청");
+    currentPage.value = val;
+    param.value.pageno = val;
+    getReviewList();
+};
+
 
 const getReviewList = () => {
     console.log("서버에 review 목록 요청", param.value);
     listReview(
         param.value,
         ({ data }) => {
+            console.log(data.msg)
             console.log(data);
-            reviews.value = data.reviews;
-            currentPage.value = data.currentPage;
-            totalPage.value = data.totalPageCount;
+            console.log(data.data.reviewInfos);
+            reviews.value = data.data.reviewInfos;
+            currentPage.value = data.data.page;
+            totalPage.value = data.data.total;
         },
         (error) => {
             console.log(error);
@@ -36,15 +67,38 @@ const getReviewList = () => {
     );
 };
 
+function incrementHits(reviewid) {
+    updateHits(
+        reviewid,
+        (response) => {
+            if (response.status == 200) {
+                reviews.value.hits++;
+            }
+        },
+        (error) => {
+            console.log(error);
+        }
+    );
+}
+
 </script>
 
 <template>
     <div>
-        리뷰 게시판이야
+        <SearchBarItem @search="updateParam" />
+    </div>
+    <div class="write-link">
+        <RouterLink  v-if="isLogin" :to="{ name: 'review-write' }">write</RouterLink>
     </div>
     <div class="review-grid">
-        <ReviewListItem v-for="review in reviews" :key="review.reviewId" :review="review"></ReviewListItem>
+        <ReviewListItem v-for="review in reviews" :key="review.reviewId" :review="review"
+            @increment-hits="incrementHits">
+        </ReviewListItem>
     </div>
+    <div>
+        <PageNavigation :current-page="currentPage" :total-page="totalPage" @pageChange="onPageChange"></PageNavigation>
+    </div>
+
 </template>
 
 <style scoped>
@@ -52,5 +106,10 @@ const getReviewList = () => {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
+}
+.write-link{
+    font-size: 20px;
+    margin: 10px;
+    text-align: right;
 }
 </style>
