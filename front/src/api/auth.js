@@ -17,8 +17,38 @@ function oauthMember(requestData, success, fail){
     local.post('http://localhost:8080/auth/login/social', JSON.stringify(requestData)).then(success).catch(fail);
 }
 
+function duplicateCheckMemberId(requestData, success, fail){
+    local.post('http://localhost:8080/auth/duplicate-check-id', JSON.stringify(requestData)).then(success).catch(fail);
+}
+
+function duplicateCheckNickname(requestData, success, fail){
+    local.post('http://localhost:8080/auth/duplicate-check-nickname', JSON.stringify(requestData)).then(success).catch(fail);
+}
+
+function authenticationEmail(requestData, success, fail){
+    local.post('http://localhost:8080/auth/authentication-email', JSON.stringify(requestData)).then(success).catch(fail);
+}
+
+function resendAuthenticationKey(requestData, success, fail){
+    local.post('http://localhost:8080/auth/mail/resend-authentication-key', JSON.stringify(requestData)).then(success).catch(fail);
+}
+
+function deleteAuthenticationKey(requestData, success, fail){
+    local.post('http://localhost:8080/auth/mail/delete-authentication-key', JSON.stringify(requestData)).then(success).catch(fail);
+}
+
+function checkAuthenticationKey(requestData, success, fail){
+    local.post('http://localhost:8080/auth/mail/check-authentication-key', JSON.stringify(requestData)).then(success).catch(fail);
+}
+
 export {
     loginMember,
     registMember,
-    oauthMember
+    oauthMember,
+    duplicateCheckMemberId,
+    duplicateCheckNickname,
+    authenticationEmail,
+    resendAuthenticationKey,
+    deleteAuthenticationKey,
+    checkAuthenticationKey
 };

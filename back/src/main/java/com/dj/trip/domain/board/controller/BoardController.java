@@ -22,7 +22,7 @@ public class BoardController {
     public ResponseDto<GetBoardResponseDto> getBoard(@PathVariable("sidoId") int sidoId, @RequestHeader("Authorization") String tokenHeader) {
         return new ResponseDto<>(HttpStatus.OK.value(), "보드판 조회 성공", boardService.getBoard(GetBoardRequestDto.builder()
                 .sidoId(sidoId)
-                .memberId(jwtUtil.getMeberId(tokenHeader)).
+                .memberId(jwtUtil.getMemberId(tokenHeader)).
                 build()));
     }
 
@@ -39,13 +39,13 @@ public class BoardController {
 
     @PostMapping("/dice")
     public ResponseDto<DiceResponseDto> rollDice(@RequestBody DiceRequestDto diceRequestDto, @RequestHeader("Authorization") String tokenHeader) {
-        String memberId = jwtUtil.getMeberId(tokenHeader.substring(7));
+        String memberId = jwtUtil.getMemberId(tokenHeader.substring(7));
         return new ResponseDto<>(HttpStatus.NO_CONTENT.value(), "주사위 굴리기 성공", boardService.rollDice(diceRequestDto, memberId));
     }
     
     @PutMapping("/gold-card")
     public ResponseDto<GoldCardResponseDto> drawGoldCard(@RequestBody GoldCardRequestDto goldCardRequestDto, @RequestHeader("Authorization") String tokenHeader) {
-        String memberId = jwtUtil.getMeberId(tokenHeader.substring(7));
+        String memberId = jwtUtil.getMemberId(tokenHeader.substring(7));
         goldCardRequestDto.setMemberId(memberId);
         return new ResponseDto<>(HttpStatus.NO_CONTENT.value(), "황금열쇠 성공", boardService.goldCard(goldCardRequestDto));
     }

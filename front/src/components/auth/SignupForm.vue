@@ -1,7 +1,16 @@
 <script setup>
-import { registMember } from '@/api/auth';
-import { ref, watch } from 'vue';
+import {
+  registMember,
+  duplicateCheckMemberId,
+  duplicateCheckNickname,
+  authenticationEmail,
+  resendAuthenticationKey,
+  deleteAuthenticationKey,
+  checkAuthenticationKey,
+} from "@/api/auth";
+import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import Swal from "sweetalert2";
 
 const route = useRoute();
 const router = useRouter();
@@ -15,7 +24,7 @@ const member = ref({
   repassword: "",
   nickname: "",
   email: "",
-  oauthServiceType: "GENERAL"
+  oauthServiceType: "GENERAL",
 });
 
 if (email) {
@@ -26,40 +35,41 @@ if (oauthServerType) {
   member.value.oauthServiceType = oauthServerType;
 }
 
-const memberIdErrMsg = ref("")
-const nicknameErrMsg = ref("")
-const emailErrMsg = ref("")
-const passwordErrMsg = ref("")
+const memberIdErrMsg = ref("");
+const nicknameErrMsg = ref("");
+const emailErrMsg = ref("");
+const passwordErrMsg = ref("");
 
 watch(
   () => member.value.memberId,
   (value) => {
-    let len = value.length
+    let len = value.length;
     const regex = /^[a-z0-9]+$/;
 
     if (len < 6 || len > 12) {
-      memberIdErrMsg.value = "아이디는 6자 이상 12자 이하입니다"
+      memberIdErrMsg.value = "아이디는 6자 이상 12자 이하입니다";
     } else if (!regex.test(value)) {
-      memberIdErrMsg.value = "아이디는 영어 소문자와 숫자로만 허용되며, 공백이 없어야 합니다."
-    }
-    else memberIdErrMsg.value = ""
+      memberIdErrMsg.value =
+        "아이디는 영어 소문자와 숫자로만 허용되며, 공백이 없어야 합니다.";
+    } else memberIdErrMsg.value = "";
   },
   { immediate: true }
-)
+);
 watch(
   () => member.value.nickname,
   (value) => {
-    let len = value.length
+    let len = value.length;
     const regex = /^[a-zA-Z가-힣0-9]*$/;
 
     if (len < 3 || len > 10) {
-      nicknameErrMsg.value = "닉네임은 3자 이상 10자 이하입니다."
+      nicknameErrMsg.value = "닉네임은 3자 이상 10자 이하입니다.";
     } else if (!regex.test(value)) {
-      nicknameErrMsg.value = "닉네임은 영어 소문자, 대문자, 한글, 숫자로만 이루어져야 하며, 공백이 없어야 합니다."
-    } else nicknameErrMsg.value = ""
+      nicknameErrMsg.value =
+        "닉네임은 영어 소문자, 대문자, 한글, 숫자로만 이루어져야 하며, 공백이 없어야 합니다.";
+    } else nicknameErrMsg.value = "";
   },
   { immediate: true }
-)
+);
 watch(
   () => member.value.email,
   (value) => {
@@ -67,65 +77,249 @@ watch(
     const regex = /^[^\s]+$/;
 
     if (len == 0 || len > 500) {
-      emailErrMsg.value = "이메일을 확인해 주세요!!!"
+      emailErrMsg.value = "이메일을 확인해 주세요!!!";
     } else if (!regex.test(value)) {
       emailErrMsg.value = "이메일에 공백을 포함할 수 없습니다.";
-    } else emailErrMsg.value = ""
+    } else emailErrMsg.value = "";
   },
   { immediate: true }
-)
+);
 
 watch(
   [() => member.value.password, () => member.value.repassword],
   ([password, repassword]) => {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@_!*$%#])[A-Za-z\d@_!*$%#]{8,}$/;
+    const regex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@_!*$%#])[A-Za-z\d@_!*$%#]{8,}$/;
 
     if (password != repassword) {
-      console.log(password, repassword)
+      console.log(password, repassword);
       passwordErrMsg.value = "비밀번호가 서로 다릅니다.";
     } else if (password.length < 10 || password.length > 20) {
       passwordErrMsg.value = "비밀번호는 10자 이상 20자 이하입니다.";
     } else if (!regex.test(password)) {
-      passwordErrMsg.value = "비밀번호는 영어 소문자, 대문자, 숫자, 특수 문자(@ _ ! * $ % #)를 모두 포함하여 8자 이상이어야 합니다."
-    }
-    else {
+      passwordErrMsg.value =
+        "비밀번호는 영어 소문자, 대문자, 숫자, 특수 문자(@ _ ! * $ % #)를 모두 포함하여 8자 이상이어야 합니다.";
+    } else {
       passwordErrMsg.value = "";
     }
   },
   { immediate: true }
 );
 
-
 function onSubmit() {
   if (memberIdErrMsg.value) {
-    alert(memberIdErrMsg.value)
+    alert(memberIdErrMsg.value);
   } else if (nicknameErrMsg.value) {
-    alert(nicknameErrMsg.value)
+    alert(nicknameErrMsg.value);
   } else if (emailErrMsg.value) {
-    alert(emailErrMsg.value)
+    alert(emailErrMsg.value);
   } else if (passwordErrMsg.value) {
-    alert(passwordErrMsg.value)
+    alert(passwordErrMsg.value);
   } else {
-    signup()
+    signup();
   }
-
 }
 
 function signup() {
-  console.log("회원가입 요청", member.value)
+  console.log("회원가입 요청", member.value);
   registMember(
     member.value,
     (response) => {
-      let msg = "회원가입 처리시 문제 발생했습니다."
+      let msg = "회원가입 처리시 문제 발생했습니다.";
       if (response.status == 201) {
-        msg = "회원가입이 완료되었습니다."
-        router.replace({ name: 'login' })
+        msg = "회원가입이 완료되었습니다.";
+        router.replace({ name: "login" });
       }
-      alert(msg)
+      alert(msg);
     },
     (error) => console.log(error)
-  )
+  );
 }
+
+// 중복검사 여부
+const isDuplicateCheckMemberId = ref(false);
+const isDuplicateCheckNickname = ref(false);
+// 이메일 인증 여부
+const isAuthenticationEmail = ref(false);
+
+const duplicateCheckSwal = (icon, title, text) => {
+  Swal.fire({
+    icon: icon,
+    title: title,
+    text: text,
+  });
+};
+
+const onDuplicateCheckMemberId = () => {
+  if (!isDuplicateCheckMemberId.value) {
+    duplicateCheckMemberId(
+      member.value.memberId,
+      (response) => {
+        duplicateCheckSwal("success", "아이디 중복검사", response.data.msg);
+        isDuplicateCheckMemberId.value = true;
+      },
+      (error) =>
+        duplicateCheckSwal("error", "아이디 중복검사", error.response.data.msg)
+    );
+  } else {
+    isDuplicateCheckMemberId.value = false;
+  }
+};
+
+const onDuplicateCheckNickname = () => {
+  if (!isDuplicateCheckNickname.value) {
+    duplicateCheckNickname(
+      member.value.nickname,
+      (response) => {
+        duplicateCheckSwal("success", "닉네임 중복검사", response.data.msg);
+        isDuplicateCheckNickname.value = true;
+      },
+      (error) =>
+        duplicateCheckSwal("error", "닉네임 중복검사", error.response.data.msg)
+    );
+  } else {
+    isDuplicateCheckNickname.value = false;
+  }
+};
+
+let timerInterval;
+
+const onAuthenticationEmail = () => {
+  authenticationEmail(
+    member.value.email,
+    (response) => {
+      let startTime = new Date().getTime(); // 타이머 시작 시간
+      let remainingTime = 300; // 5분 타이머 (300 초)
+      let timerInterval;
+      let verificationError = false; 
+
+      const updateTimer = () => {
+        const currentTime = new Date().getTime(); // 현재 시간
+        const elapsedTime = Math.floor((currentTime - startTime) / 1000); // 경과 시간 (초)
+        remainingTime = Math.max(0, 300 - elapsedTime); // 남은 시간 계산
+        const timerElement = document.getElementById("timer");
+        if (timerElement) {
+          timerElement.textContent = remainingTime;
+        }
+        if (remainingTime <= 0) {
+          clearInterval(timerInterval);
+        }
+      };
+
+      const resendButtonCallback = () => {
+        // 재전송 버튼 클릭 시
+        resendAuthenticationKey(
+          member.value.email,
+          (response) => {
+            const newKey = response.data.data;
+            console.log(newKey);
+            startTime = new Date().getTime(); // 시작 시간 업데이트
+            remainingTime = 300; // 타이머 초기화
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+            verificationError = false;
+
+            Swal.update({
+              html: `
+                인증번호를 입력해주세요.<br/><br/>
+                남은 시간: <b id="timer">${remainingTime}</b> 초<br/><br/>
+                <div style="display: flex; align-items: center;">
+                  <input type="text" id="verification-code" class="swal2-input" placeholder="인증번호 입력" style="flex: 1; margin-right: 10px;">
+                  <button id="resend-button" class="swal2-confirm swal2-styled">재발송</button>
+                </div>
+                ${verificationError ? '<div id="error-message" style="color: red;">인증번호가 틀립니다.</div>' : ''}
+              `,
+            });
+            addResendButtonListener();
+          },
+          (error) => {
+            console.error("재전송 에러 발생");
+          }
+        );
+      };
+
+      const addResendButtonListener = () => {
+        const resendButton = document.getElementById("resend-button");
+        if (resendButton) {
+          resendButton.addEventListener("click", resendButtonCallback);
+        }
+      };
+
+      Swal.fire({
+        title: "이메일 인증",
+        html: `
+          인증번호를 입력해주세요.<br/><br/>
+          남은 시간: <b id="timer">${remainingTime}</b> 초<br/><br/>
+          <div style="display: flex; align-items: center;">
+            <input type="text" id="verification-code" class="swal2-input" placeholder="인증번호 입력" style="flex: 1; margin-right: 10px;">
+            <button id="resend-button" class="swal2-confirm swal2-styled">재발송</button>
+          </div>
+          ${verificationError ? '<div id="error-message" style="color: red;">인증번호가 틀립니다.</div>' : ''}
+        `,
+        icon: "success",
+        showCancelButton: true,
+        confirmButtonText: "확인",
+        cancelButtonText: "취소",
+        didOpen: () => {
+          // 타이머 설정
+          timerInterval = setInterval(updateTimer, 1000);
+          addResendButtonListener();
+        },
+        preConfirm: () => {
+          // 확인 버튼 클릭 시 이벤트 처리
+          const verificationCode = document.getElementById("verification-code").value;
+          return new Promise((resolve, reject) => {
+            checkAuthenticationKey(
+              {
+                email: member.value.email,
+                key: verificationCode,
+              },
+              (response) => {
+                console.log(response.data.data);
+                resolve();
+              },
+              (error) => {
+                if (error.response.data.data == 1) {
+                  verificationError = true;
+                  Swal.update({
+                    html: `
+                      인증번호를 입력해주세요.<br/><br/>
+                      남은 시간: <b id="timer">${remainingTime}</b> 초<br/><br/>
+                      <div style="display: flex; align-items: center;">
+                        <input type="text" id="verification-code" class="swal2-input" placeholder="인증번호 입력" style="flex: 1; margin-right: 10px;">
+                        <button id="resend-button" class="swal2-confirm swal2-styled">재발송</button>
+                      </div>
+                      <div id="error-message" style="color: red;">인증번호가 틀립니다.</div>
+                    `,
+                  });
+                  addResendButtonListener();
+                  reject(new Error("인증번호가 틀립니다."));
+                } else if (error.response.data.data == 2) {
+                  duplicateCheckSwal("error", "이메일 인증", "만료된 인증번호 입니다.");
+                  reject(new Error("만료된 인증번호 입니다."));
+                }
+              }
+            );
+          });
+        },
+      }).then((result) => {
+        if (result.isDismissed) {
+          // 취소 버튼을 클릭 시
+          deleteAuthenticationKey(
+            member.value.email,
+            (response) => {
+              console.log(response.data.msg);
+            },
+            (error) => console.log(error.response.data.msg)
+          );
+        }
+      });
+    },
+    (error) => {
+      duplicateCheckSwal("error", "이메일 인증", error.response.data.msg);
+    }
+  );
+};
 
 </script>
 
@@ -136,24 +330,74 @@ function signup() {
       <form @submit.prevent="onSubmit">
         <div class="form-group">
           <label for="id">아이디</label>
-          <input type="text" id="id" name="id" required v-model="member.memberId">
+          <input
+            type="text"
+            id="id"
+            name="id"
+            required
+            v-model="member.memberId"
+            :disabled="isDuplicateCheckMemberId"
+          />
+          <button @click.prevent="onDuplicateCheckMemberId">
+            {{ isDuplicateCheckMemberId ? "아이디 수정" : "아이디 중복검사" }}
+          </button>
         </div>
         <div class="form-group">
           <label for="nickname">닉네임</label>
-          <input type="text" id="nickname" name="nickname" required v-model="member.nickname">
+          <input
+            type="text"
+            id="nickname"
+            name="nickname"
+            required
+            v-model="member.nickname"
+            :disabled="isDuplicateCheckNickname"
+          />
+          <button @click.prevent="onDuplicateCheckNickname">
+            {{ isDuplicateCheckNickname ? "닉네임 수정" : "닉네임 중복검사" }}
+          </button>
         </div>
         <div class="form-group">
           <label for="email">이메일</label>
-          <input type="email" id="email" name="email" required v-if="!email" v-model="member.email">
-          <input type="email" id="email" name="email" required v-else :value="email" disabled>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            v-if="!email"
+            v-model="member.email"
+          />
+          <input
+            type="email"
+            id="email"
+            name="email"
+            required
+            v-else
+            :value="email"
+            disabled
+          />
+          <button v-if="!email" @click.prevent="onAuthenticationEmail">
+            이메일 인증
+          </button>
         </div>
         <div class="form-group">
           <label for="password">비밀번호</label>
-          <input type="password" id="password" name="password" required v-model="member.password">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            v-model="member.password"
+          />
         </div>
         <div class="form-group">
           <label for="confirm_password">비밀번호 확인</label>
-          <input type="password" id="confirm_password" name="confirm_password" required v-model="member.repassword">
+          <input
+            type="password"
+            id="confirm_password"
+            name="confirm_password"
+            required
+            v-model="member.repassword"
+          />
         </div>
         <button type="submit" class="btn">회원가입</button>
       </form>
@@ -170,7 +414,7 @@ function signup() {
   padding: 20px;
   background-color: #fff;
   border-radius: 5px;
-  box-shadow: 0 0 10px #F1F1F6;
+  box-shadow: 0 0 10px #f1f1f6;
 }
 
 .container h2 {
@@ -199,14 +443,14 @@ function signup() {
   padding: 10px;
   border: none;
   border-radius: 5px;
-  background-color: #E1CCEC;
+  background-color: #e1ccec;
   color: #fff;
   text-align: center;
   cursor: pointer;
 }
 
 .btn:hover {
-  background-color: #E3EFFA;
+  background-color: #e3effa;
 }
 
 .back-link {

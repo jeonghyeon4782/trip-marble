@@ -14,6 +14,18 @@
         where member_Id = #{memberId}
     </select>
 
+    <select id="selectMemberByNickname" parameterType="String" resultType="Member">
+        select member_id, password, nickname, email, role
+        from member
+        where nickname = #{nickname}
+    </select>
+
+    <select id="selectMemberByEmail" parameterType="String" resultType="Member">
+        select member_id, password, nickname, email, role
+        from member
+        where email = #{email}
+    </select>
+
     <select id="selectMemberByOauthServerTypeAndEmail" parameterType="Member">
         select member_id, oauth_server_type, email
         from member
