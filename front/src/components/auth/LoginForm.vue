@@ -70,9 +70,7 @@ function kakaoLogin() {
 <style scoped>
 section {
     margin: 0 auto;
-    /**/
     width: 27%;
-    /**/
     display: felx;
     justify-content: center;
 }
