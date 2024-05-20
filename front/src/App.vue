@@ -1,24 +1,29 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import TheHeadingNavbar from '@/components/layout/TheHeadingNavbar.vue';
+import TheFooter from '@/components/layout/TheFooter.vue';
 
 </script>
 
 <template>
+  <TheHeadingNavbar />
   <div class="main">
-    <TheHeadingNavbar />
     <RouterView class="main-view"/>
   </div>
+  <TheFooter/>
 </template>
 
 <style scoped>
 .main{
   height: auto;
-  width: 1200px;
+  width: 100vw;
+  margin-top: 15%;
+  margin-bottom: 10%;
+  grid-template-columns: 1fr 1fr;
 }
 
 .main-view{
-  margin-top: 200px;
-  height: auto;
+    width: 80%;
+    margin: auto;
 }
 </style>
