@@ -1,14 +1,17 @@
 package com.dj.trip.domain.member.service;
 
+import com.dj.trip.domain.image.service.ImageServiceUtils;
 import com.dj.trip.domain.mail.MailVo;
 import com.dj.trip.domain.mail.mapper.MailMapper;
 import com.dj.trip.domain.mail.service.MailService;
 import com.dj.trip.domain.mail.service.MailServiceImpl;
 import com.dj.trip.domain.member.Member;
+import com.dj.trip.domain.member.MemberInfo;
 import com.dj.trip.domain.member.dto.AuthenticationEmailResponseDto;
 import com.dj.trip.domain.member.dto.CreateMemberRequestDto;
 import com.dj.trip.domain.member.dto.FindMemberIdRequestDto;
 import com.dj.trip.domain.member.dto.FindPasswordRequestDto;
+import com.dj.trip.domain.member.dto.response.GetMemberResponse;
 import com.dj.trip.domain.member.mapper.MemberMapper;
 import com.dj.trip.global.util.JWTUtil;
 import jakarta.servlet.http.HttpServletResponse;
@@ -32,6 +35,7 @@ public class MemberServiceImpl implements MemberService {
     private final MailService mailService;
     private final MailMapper mailMapper;
     private final JWTUtil jwtUtil;
+    private final ImageServiceUtils imageServiceUtils;
 
     // 회원가입
     @Override
@@ -77,7 +81,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public boolean findPassword(FindPasswordRequestDto findPasswordRequestDto) throws Exception{
+    public boolean findPassword(FindPasswordRequestDto findPasswordRequestDto) throws Exception {
         Member findMember = memberMapper.selectMemberByMemberIdAndEmail(findPasswordRequestDto.getMemberId(), findPasswordRequestDto.getEmail());
         if (findMember == null) return false;
         CreateMemberRequestDto dto = modelMapper.map(findMember, CreateMemberRequestDto.class);
@@ -91,6 +95,28 @@ public class MemberServiceImpl implements MemberService {
         memberMapper.updateMember(modelMapper.map(dto, Member.class));
 
         return true;
+    }
+
+    @Override
+    public GetMemberResponse getMember(String memberId) {
+        MemberInfo memberInfo = memberMapper.selectMemberInfoByMemberId(memberId);
+        String imageUrl = null;
+
+        if (memberInfo != null) {
+            if (memberInfo.imageUrl() != null) {
+                imageUrl = imageServiceUtils.getImageUrl(memberInfo.imageUrl());
+            }
+
+        return new GetMemberResponse(
+                memberInfo.memberId(),
+                memberInfo.nickname(),
+                memberInfo.email(),
+                imageUrl,
+                memberInfo.reviews(),
+                memberInfo.score()
+        );
+        }
+        return null;
     }
 
     public static String generatePassword() {
