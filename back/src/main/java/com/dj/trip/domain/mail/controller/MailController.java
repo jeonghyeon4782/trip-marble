@@ -39,6 +39,7 @@ public class MailController {
     @PostMapping("/check-authentication-key")
     public ResponseEntity<ResponseDto<Integer>> checkAuthenticationKey(@RequestBody CheckAuthenticationKeyRequestDto checkAuthenticationKeyRequestDto) throws Exception{
         int result = mailService.checkAuthenticationKey(checkAuthenticationKeyRequestDto);
+        System.out.println("result : " + result);
         if (result == 0) {
             return ResponseEntity.status(HttpStatus.OK.value())
                     .body(new ResponseDto<>(HttpStatus.OK.value(), "이메일 인증이 완료되었습니다.", 0));

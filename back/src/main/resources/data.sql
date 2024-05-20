@@ -126,7 +126,7 @@ CREATE TABLE `mail`
 (
     `email`           varchar(50) NOT NULL,
     `key`             varchar(10) NOT NULL,
-    `expiration_date` timestamp DEFAULT (CURRENT_TIMESTAMP + INTERVAL 5 MINUTE),
+    `expiration_date` timestamp DEFAULT (CURRENT_TIMESTAMP + INTERVAL 30 second ),
     PRIMARY KEY (`email`)
 );
 

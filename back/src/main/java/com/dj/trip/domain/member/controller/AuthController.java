@@ -1,6 +1,7 @@
 package com.dj.trip.domain.member.controller;
 
 import com.dj.trip.domain.mail.service.MailServiceImpl;
+import com.dj.trip.domain.member.Member;
 import com.dj.trip.domain.member.dto.*;
 import com.dj.trip.domain.member.service.MemberService;
 import com.dj.trip.global.dto.ResponseDto;
@@ -38,9 +39,11 @@ public class AuthController {
     @PostMapping("/duplicate-check-id")
     public ResponseEntity<ResponseDto<String>> duplicateCheckMemberId(@Valid @RequestBody DuplicateCheckMemberIdRequestDto dto) throws Exception {
         if (memberService.duplicateCheckMemberId(dto.getMemberId())) {
+            log.info("------------------------------------------아이디 중복검사 완료------------------------------------------");
             return ResponseEntity.status(HttpStatus.OK.value())
                     .body(new ResponseDto<>(HttpStatus.OK.value(), "사용 가능한 아이디입니다.", null));
         }
+        log.error("------------------------------------------아이디 중복검사 실패------------------------------------------");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
                 .body(new ResponseDto<>(HttpStatus.BAD_REQUEST.value(), "중복된 아이디 입니다.", null));
     }
@@ -49,9 +52,11 @@ public class AuthController {
     @PostMapping("/duplicate-check-nickname")
     public ResponseEntity<ResponseDto<String>> duplicateCheckNickname(@Valid @RequestBody DuplicateCheckNicknameRequestDto dto) throws Exception {
         if (memberService.duplicateCheckNickname(dto.getNickname())) {
+            log.info("------------------------------------------닉네임 중복검사 완료------------------------------------------");
             return ResponseEntity.status(HttpStatus.OK.value())
                     .body(new ResponseDto<>(HttpStatus.OK.value(), "사용 가능한 닉네임입니다.", null));
         }
+        log.error("------------------------------------------닉네임 중복검사 실패------------------------------------------");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
                 .body(new ResponseDto<>(HttpStatus.BAD_REQUEST.value(), "중복된 닉네임 입니다.", null));
     }
@@ -63,7 +68,6 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED.value())
                 .body(new ResponseDto<>(HttpStatus.CREATED.value(), "로그아웃 성공", null));
     }
-}
 
     // 이메일 인증
     @PostMapping("/authentication-email")
@@ -75,5 +79,29 @@ public class AuthController {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
                 .body(new ResponseDto<>(HttpStatus.BAD_REQUEST.value(), "중복된 이메일 입니다.", null));
+    }
+
+    // 아이디 찾기
+    @PostMapping("/find-memberId")
+    public ResponseEntity<ResponseDto<String>> findMemberId(@Valid @RequestBody FindMemberIdRequestDto findMemberIdRequestDto) throws Exception{
+        String memberId = memberService.findMemberId(findMemberIdRequestDto.getEmail());
+        if (memberId != null) {
+            return ResponseEntity.status(HttpStatus.OK.value())
+                    .body(new ResponseDto<>(HttpStatus.OK.value(), "아이디 찾기 성공!!", memberId));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
+                .body(new ResponseDto<>(HttpStatus.BAD_REQUEST.value(), "해당하는 아이디가 없습니다.", null));
+    }
+
+    // 비밀번호 찾기
+    @PostMapping("/find-password")
+    public ResponseEntity<ResponseDto<String>> findPassword(@RequestBody FindPasswordRequestDto findPasswordRequestDto) throws Exception{
+        System.out.println(findPasswordRequestDto);
+        if (memberService.findPassword(findPasswordRequestDto)) {
+            return ResponseEntity.status(HttpStatus.OK.value())
+                    .body(new ResponseDto<>(HttpStatus.OK.value(), "당신의 이메일에 변경된 비밀번호를 보냈습니다.", null));
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST.value())
+                .body(new ResponseDto<>(HttpStatus.BAD_REQUEST.value(), "해당하는 아이디 또는 이메일이 없습니다.", null));
     }
 }

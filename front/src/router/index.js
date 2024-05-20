@@ -61,7 +61,12 @@ const router = createRouter({
           path: "signup",
           name: "signup",
           component: () => import("@/components/auth/SignupForm.vue"),
-        }
+        }, 
+        {
+          path: "findid",
+          name: "findid",
+          component: () => import("@/components/auth/FindIdForm.vue"),
+        },
       ]
     },
     {
@@ -87,7 +92,17 @@ const router = createRouter({
           path: "signup",
           name: "signup",
           component: () => import("@/components/auth/SignupForm.vue"),
-        }
+        },
+        {
+          path: "findid",
+          name: "findid",
+          component: () => import("@/components/auth/FindIdForm.vue"),
+        },
+        {
+          path: "find-password",
+          name: "find-password",
+          component: () => import("@/components/auth/FindPasswordForm.vue"),
+        },
       ]
     }
 

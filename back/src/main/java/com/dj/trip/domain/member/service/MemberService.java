@@ -1,7 +1,10 @@
 package com.dj.trip.domain.member.service;
 
+import com.dj.trip.domain.member.Member;
 import com.dj.trip.domain.member.dto.AuthenticationEmailResponseDto;
 import com.dj.trip.domain.member.dto.CreateMemberRequestDto;
+import com.dj.trip.domain.member.dto.FindMemberIdRequestDto;
+import com.dj.trip.domain.member.dto.FindPasswordRequestDto;
 import jakarta.servlet.http.HttpServletResponse;
 
 public interface MemberService {
@@ -13,6 +16,10 @@ public interface MemberService {
     boolean duplicateCheckNickname(String nickname) throws Exception;
     // 이메일 중복 검사
     AuthenticationEmailResponseDto authenticationEmail(String email) throws Exception;
-
+    // 로그아웃
     void logout(HttpServletResponse response);
+    // 아이디 찾기
+    String findMemberId(String email);
+    // 비밀번호 찾기
+    boolean findPassword(FindPasswordRequestDto findPasswordRequestDto) throws Exception;
 }

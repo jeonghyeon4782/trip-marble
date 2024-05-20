@@ -108,14 +108,21 @@ watch(
 
 function onSubmit() {
   if (memberIdErrMsg.value) {
-    alert(memberIdErrMsg.value);
+    showSwal("error", "회원가입 오류", memberIdErrMsg.value);
   } else if (nicknameErrMsg.value) {
-    alert(nicknameErrMsg.value);
+    showSwal("error", "회원가입 오류", nicknameErrMsg.value);
   } else if (emailErrMsg.value) {
-    alert(emailErrMsg.value);
+    showSwal("error", "회원가입 오류", emailErrMsg.value);
   } else if (passwordErrMsg.value) {
-    alert(passwordErrMsg.value);
-  } else {
+    showSwal("error", "회원가입 오류", passwordErrMsg.value);
+  } else if(!isDuplicateCheckMemberId.value) {
+    showSwal("error", "회원가입 오류", "아이디 중복검사를 해주세요.");
+  } else if(!isDuplicateCheckNickname.value) {
+    showSwal("error", "회원가입 오류", "닉네임 중복검사를 해주세요.");
+  } else if(!isAuthenticationEmail.value) {
+    showSwal("error", "회원가입 오류", "이메일 인증을 해주세요.");
+  }
+  else {
     signup();
   }
 }
@@ -142,7 +149,7 @@ const isDuplicateCheckNickname = ref(false);
 // 이메일 인증 여부
 const isAuthenticationEmail = ref(false);
 
-const duplicateCheckSwal = (icon, title, text) => {
+const showSwal = (icon, title, text) => {
   Swal.fire({
     icon: icon,
     title: title,
@@ -155,11 +162,11 @@ const onDuplicateCheckMemberId = () => {
     duplicateCheckMemberId(
       member.value.memberId,
       (response) => {
-        duplicateCheckSwal("success", "아이디 중복검사", response.data.msg);
+        showSwal("success", "아이디 중복검사", response.data.msg);
         isDuplicateCheckMemberId.value = true;
       },
       (error) =>
-        duplicateCheckSwal("error", "아이디 중복검사", error.response.data.msg)
+      showSwal("error", "아이디 중복검사", error.response.data.msg)
     );
   } else {
     isDuplicateCheckMemberId.value = false;
@@ -171,27 +178,25 @@ const onDuplicateCheckNickname = () => {
     duplicateCheckNickname(
       member.value.nickname,
       (response) => {
-        duplicateCheckSwal("success", "닉네임 중복검사", response.data.msg);
+        showSwal("success", "닉네임 중복검사", response.data.msg);
         isDuplicateCheckNickname.value = true;
       },
       (error) =>
-        duplicateCheckSwal("error", "닉네임 중복검사", error.response.data.msg)
+      showSwal("error", "닉네임 중복검사", error.response.data.msg)
     );
   } else {
     isDuplicateCheckNickname.value = false;
   }
 };
 
-let timerInterval;
-
 const onAuthenticationEmail = () => {
+  let timerInterval;
   authenticationEmail(
     member.value.email,
     (response) => {
       let startTime = new Date().getTime(); // 타이머 시작 시간
       let remainingTime = 300; // 5분 타이머 (300 초)
       let timerInterval;
-      let verificationError = false; 
 
       const updateTimer = () => {
         const currentTime = new Date().getTime(); // 현재 시간
@@ -217,7 +222,6 @@ const onAuthenticationEmail = () => {
             remainingTime = 300; // 타이머 초기화
             clearInterval(timerInterval);
             timerInterval = setInterval(updateTimer, 1000);
-            verificationError = false;
 
             Swal.update({
               html: `
@@ -227,7 +231,6 @@ const onAuthenticationEmail = () => {
                   <input type="text" id="verification-code" class="swal2-input" placeholder="인증번호 입력" style="flex: 1; margin-right: 10px;">
                   <button id="resend-button" class="swal2-confirm swal2-styled">재발송</button>
                 </div>
-                ${verificationError ? '<div id="error-message" style="color: red;">인증번호가 틀립니다.</div>' : ''}
               `,
             });
             addResendButtonListener();
@@ -254,7 +257,6 @@ const onAuthenticationEmail = () => {
             <input type="text" id="verification-code" class="swal2-input" placeholder="인증번호 입력" style="flex: 1; margin-right: 10px;">
             <button id="resend-button" class="swal2-confirm swal2-styled">재발송</button>
           </div>
-          ${verificationError ? '<div id="error-message" style="color: red;">인증번호가 틀립니다.</div>' : ''}
         `,
         icon: "success",
         showCancelButton: true,
@@ -267,40 +269,41 @@ const onAuthenticationEmail = () => {
         },
         preConfirm: () => {
           // 확인 버튼 클릭 시 이벤트 처리
-          const verificationCode = document.getElementById("verification-code").value;
-          return new Promise((resolve, reject) => {
-            checkAuthenticationKey(
-              {
-                email: member.value.email,
-                key: verificationCode,
-              },
-              (response) => {
-                console.log(response.data.data);
-                resolve();
-              },
-              (error) => {
-                if (error.response.data.data == 1) {
-                  verificationError = true;
-                  Swal.update({
-                    html: `
-                      인증번호를 입력해주세요.<br/><br/>
-                      남은 시간: <b id="timer">${remainingTime}</b> 초<br/><br/>
-                      <div style="display: flex; align-items: center;">
-                        <input type="text" id="verification-code" class="swal2-input" placeholder="인증번호 입력" style="flex: 1; margin-right: 10px;">
-                        <button id="resend-button" class="swal2-confirm swal2-styled">재발송</button>
-                      </div>
-                      <div id="error-message" style="color: red;">인증번호가 틀립니다.</div>
-                    `,
-                  });
-                  addResendButtonListener();
-                  reject(new Error("인증번호가 틀립니다."));
-                } else if (error.response.data.data == 2) {
-                  duplicateCheckSwal("error", "이메일 인증", "만료된 인증번호 입니다.");
-                  reject(new Error("만료된 인증번호 입니다."));
-                }
+          const verificationCode =
+            document.getElementById("verification-code").value;
+          checkAuthenticationKey(
+            {
+              email: member.value.email,
+              key: verificationCode,
+            },
+            (response) => {
+              showSwal("success", "이메일 인증", "인증 완료!!");
+              isAuthenticationEmail.value = true;
+            },
+            (error) => {
+              if (error.response.data.data == 1) {
+                Swal.update({
+                  html: `
+              인증번호를 입력해주세요.<br/><br/>
+              남은 시간: <b id="timer">${remainingTime}</b> 초<br/><br/>
+              <div style="display: flex; align-items: center;">
+                <input type="text" id="verification-code" class="swal2-input" placeholder="인증번호 입력" style="flex: 1; margin-right: 10px;">
+                <button id="resend-button" class="swal2-confirm swal2-styled">재발송</button>
+              </div>
+              <div id="error-message" style="color: red;">인증번호가 틀렸습니다.</div>
+            `,
+                });
+                addResendButtonListener();
+              } else if (error.response.data.data == 2) {
+                showSwal(
+                  "error",
+                  "이메일 인증",
+                  "만료된 인증번호 입니다."
+                );
               }
-            );
-          });
+            }
+          );
+          return false;
         },
       }).then((result) => {
         if (result.isDismissed) {
@@ -316,11 +319,10 @@ const onAuthenticationEmail = () => {
       });
     },
     (error) => {
-      duplicateCheckSwal("error", "이메일 인증", error.response.data.msg);
+      showSwal("error", "이메일 인증", error.response.data.msg);
     }
   );
 };
-
 </script>
 
 <template>
@@ -375,7 +377,10 @@ const onAuthenticationEmail = () => {
             :value="email"
             disabled
           />
-          <button v-if="!email" @click.prevent="onAuthenticationEmail">
+          <button
+            v-if="email || !isAuthenticationEmail"
+            @click.prevent="onAuthenticationEmail"
+          >
             이메일 인증
           </button>
         </div>

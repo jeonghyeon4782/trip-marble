@@ -23,4 +23,10 @@ public interface MemberMapper {
 
     // 이메일로 유저 조회
     Member selectMemberByEmail(String email);
+    
+    // 아이디, 이메일로 유저조회
+    Member selectMemberByMemberIdAndEmail(String memberId, String email);
+
+    // 유정 정보 수정
+    void updateMember(Member member);
 }

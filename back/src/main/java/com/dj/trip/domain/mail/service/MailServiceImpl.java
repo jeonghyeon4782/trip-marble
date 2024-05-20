@@ -70,11 +70,11 @@ public class MailServiceImpl implements MailService{
         MailVo mailvo = mailMapper.selectMailByEmail(checkAuthenticationKeyRequestDto.getEmail());
         LocalDateTime expirationDateTime = LocalDateTime.parse(mailvo.getExpirationDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         LocalDateTime currentDateTime = LocalDateTime.now();
-        if (!Objects.equals(mailvo.getKey(), checkAuthenticationKeyRequestDto.getKey())) {
-            return 1;   // 인증번호가 같지 않을 경우
-        }
         if (currentDateTime.isAfter(expirationDateTime)) {
             return 2; // 만료된 인증번호인 경우
+        }
+        if (!Objects.equals(mailvo.getKey(), checkAuthenticationKeyRequestDto.getKey())) {
+            return 1;   // 인증번호가 같지 않을 경우
         }
         mailMapper.deleteMailByEmail(checkAuthenticationKeyRequestDto.getEmail());
         return 0;   // 인증 완료인 경우

@@ -46,6 +46,14 @@ function checkAuthenticationKey(requestData, success, fail){
     local.post('http://localhost:8080/auth/mail/check-authentication-key', JSON.stringify(requestData)).then(success).catch(fail);
 }
 
+function findMemberId(requestData, success, fail){
+    local.post('http://localhost:8080/auth/find-memberId', JSON.stringify(requestData)).then(success).catch(fail);
+}
+
+function findPassword(requestData, success, fail){
+    local.post('http://localhost:8080/auth/find-password', JSON.stringify(requestData)).then(success).catch(fail);
+}
+
 export {
     loginMember,
     registMember,
@@ -55,7 +63,8 @@ export {
     authenticationEmail,
     resendAuthenticationKey,
     deleteAuthenticationKey,
-    checkAuthenticationKey
-    oauthMember,
-    logoutMember
+    checkAuthenticationKey,
+    logoutMember,
+    findPassword,
+    findMemberId
 };
