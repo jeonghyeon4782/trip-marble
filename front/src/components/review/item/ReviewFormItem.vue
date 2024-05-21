@@ -1,6 +1,7 @@
 <script setup>
 import { getModifyReview, modifyReview, registReview } from '@/api/review';
-import { ref, watch } from 'vue';
+import { listAttractionInfo } from "@/api/attractionInfo";
+import { ref, watch,onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 const router = useRouter()
@@ -10,6 +11,10 @@ const props = defineProps({ type: String })
 
 const file = ref({})
 const preView = ref(null)
+
+onMounted(() => {
+  getboardLogs();
+})
 
 const review = ref({
     reviewId: 0,
@@ -23,6 +28,8 @@ const attractions = ref([
     { attractionInfoId: 2, name: '어트렉션2', location: '위치2', created_at: '2024-05-19' },
     // 기존의 어트렉션 데이터...
 ])
+
+const boardLogs = ref({});
 
 
 if (props.type == "modify") {
@@ -87,6 +94,21 @@ function onSubmit() {
         props.type === "regist" ? writeReview() : updateReivew()
     }
 }
+
+const getboardLogs = () => {
+    console.log("board log 요청");
+    listAttractionInfo(
+        ({ data }) => {
+            console.log(data);
+            boardLogs.value = data.data;
+            console.log(boardLogs);
+        },
+        (error) => {
+            console.log(error);
+        }
+    );
+};
+
 
 function writeReview() {
     console.log("리뷰 등록 요청", review.value)
@@ -156,12 +178,12 @@ function goBack() {
                 <textarea id="content" v-model="review.content" rows="6"></textarea>
             </div>
             <div class="form-group">
-                <label for="attractionList">어트렉션 목록</label>
+                <label for="attractionList">보드 기록 목록</label>
                 <select id="attractionList" v-model="review.attractionInfoId">
-                    <option disabled value="">어트렉션을 선택하세요</option>
-                    <option v-for="(attraction, index) in attractions" :key="index"
-                        :value="attraction.attractionInfoId">
-                        이름: {{ attraction.name }} | 위치: {{ attraction.location }} | 생성일: {{ attraction.created_at }}
+                    <option disabled value="">리뷰를 작성할 보드 기록을 선택하세요</option>
+                    <option v-for="(boardLogs, index) in boardLogs" :key="index"
+                        :value="boardLogs.attractionInfoId">
+                        이름: {{ boardLogs.name }} | 위치: {{ boardLogs.sidoName }} | 생성일: {{ boardLogs.createDate }}
                     </option>
                 </select>
             </div>
