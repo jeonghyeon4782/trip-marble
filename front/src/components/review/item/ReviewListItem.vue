@@ -38,6 +38,8 @@ function incrementHits() {
   border-radius: 10px;
   overflow: hidden;
   height: 450px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .item img {
