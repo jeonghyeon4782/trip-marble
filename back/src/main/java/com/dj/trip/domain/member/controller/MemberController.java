@@ -56,7 +56,4 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT.value()).body(
                 new ResponseDto<>(HttpStatus.NO_CONTENT.value(), "회원 삭제 완료", null));
     }
-
-    // 회원 탈퇴, log 목록,
-    // 메인 화면
 }

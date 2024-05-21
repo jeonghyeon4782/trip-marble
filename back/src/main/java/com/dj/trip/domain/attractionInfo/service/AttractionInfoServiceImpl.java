@@ -1,6 +1,7 @@
 package com.dj.trip.domain.attractionInfo.service;
 
 import com.dj.trip.domain.attractionInfo.dto.GetAttarctionInfoResponseDto;
+import com.dj.trip.domain.attractionInfo.dto.response.GetAttractionInfoByMemberIdResponse;
 import com.dj.trip.domain.attractionInfo.mapper.AttractionInfoMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -17,5 +18,10 @@ public class AttractionInfoServiceImpl implements AttractionInfoService {
     @Override
     public GetAttarctionInfoResponseDto getAttractionInfoNowLocation(int memberBoardMapId) {
         return modelMapper.map(attractionInfoMapper.selectAttractionInfoByMemberBoardMapId(memberBoardMapId), GetAttarctionInfoResponseDto.class);
+    }
+
+    @Override
+    public GetAttractionInfoByMemberIdResponse getAttractionInfoByMemberId(String memberId) {
+        return attractionInfoMapper.selectAttractionInfoByMemberId(memberId);
     }
 }
