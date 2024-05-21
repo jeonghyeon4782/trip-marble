@@ -36,4 +36,6 @@ public interface MemberService {
     GetMemberByPasswordResponse getMemberByPassword(String memberId, String password);
 
     void modifyMember(String memberId, ModifyMemberRequest modigyMemberRequest, MultipartFile file);
+
+    void deleteMember(String password, String memberId);
 }

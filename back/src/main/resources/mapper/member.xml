@@ -90,4 +90,16 @@
         email = #{email}
         where member_id = #{memberId}
     </update>
+
+    <select id="getPassword" parameterType="String" resultType="String">
+        select password
+        from member
+        where member_Id = #{memberId}
+    </select>
+
+    <delete id="deleteMember" parameterType="String">
+        delete
+        from member
+        where member_id = #{memberId};
+    </delete>
 </mapper>

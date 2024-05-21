@@ -177,6 +177,14 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
+    @Override
+    public void deleteMember(String password, String memberId) {
+        if (!encoder.matches(password, memberMapper.getPassword(memberId))) {
+            throw new InsufficientAuthenticationException("잘못된 요청");
+        }
+        memberMapper.deleteMember(memberId);
+    }
+
     public static String generatePassword() {
         int length = 10; // 비밀번호 길이 (10자 이상 20자 이하)
         String upperCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

@@ -38,4 +38,7 @@ public interface MemberMapper {
     int modifyMember(Member member);
 
     String getImageUrl(String memberId);
+
+    String getPassword(String memberId);
+    int deleteMember(String memberId);
 }

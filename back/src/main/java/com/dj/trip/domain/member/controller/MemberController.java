@@ -44,6 +44,19 @@ public class MemberController {
     ) {
         String memberId = jwtUtil.getMemberIdByToken(request);
         memberService.modifyMember(memberId, modigyMemberRequest, file);
-        return ResponseEntity.status(HttpStatus.CREATED.value()).body(new ResponseDto<>(HttpStatus.CREATED.value(), "리뷰 수정 완료", null));
+        return ResponseEntity.status(HttpStatus.CREATED.value()).body(new ResponseDto<>(HttpStatus.CREATED.value(), "회원 정보 수정 완료", null));
     }
+
+    @DeleteMapping({"{password}"})
+    public ResponseEntity<ResponseDto<?>> deleteReview(@PathVariable("password") String password,
+                                                       HttpServletRequest request
+    ) {
+        String memberId = jwtUtil.getMemberIdByToken(request);
+        memberService.deleteMember(password, memberId);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT.value()).body(
+                new ResponseDto<>(HttpStatus.NO_CONTENT.value(), "회원 삭제 완료", null));
+    }
+
+    // 회원 탈퇴, log 목록,
+    // 메인 화면
 }
