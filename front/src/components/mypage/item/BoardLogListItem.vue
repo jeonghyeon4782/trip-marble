@@ -2,43 +2,39 @@
 import { defineProps, defineEmits } from 'vue';
 import defaultImage from '@/assets/defaultImage.jpg'
 
-const props = defineProps({ review: Object });
+const props = defineProps({ boardLog: Object });
 
-const emit = defineEmits(['increment-hits'])
+const imageAlt = "Post Image";
 
-
-function incrementHits() {
-  console.log("reviewId", props.review.reviewId)
-  emit('increment-hits', props.review.reviewId);
-}
 </script>
 
 <template>
-  <RouterLink :to="{ name: 'review-view', params: { reviewid: review.reviewId } }" @click="incrementHits">
-    <div class="item">
-      <img :src="review.reviewImageUrl ? review.reviewImageUrl : defaultImage" :alt="imageAlt">
+    <!-- <RouterLink :to="{ name: 'review-view', params: { reviewid: review.reviewId } }" @click="incrementHits"> -->
+    <div class="item" >
+      {{ boardLog.isWrite }}
+      <img :src="boardLog.imageUrl ? boardLog.imageUrl : defaultImage" :alt="imageAlt">
       <div class="item-content">
         <div class="item-profile">
-          <img :src="review.profileImageUrl ? review.profileImageUrl : defaultImage" class="profile-image">
-          <span>{{ review.nickname }}</span>
+          <span>{{ boardLog.sidoName }}</span>
         </div>
-        <h3 class="item-title">{{ review.title }}</h3>
+        <h3 class="item-title">{{ boardLog.name }}</h3>
         <div class="item-info">
-          <span>Likes: {{ review.likes }}</span>
-          <span>Views: {{ review.hits }}</span>
+          <span>Date: {{ boardLog.createDate }}</span>
         </div>
       </div>
     </div>
-  </RouterLink>
+  <!-- </RouterLink> -->
 </template>
 
 <style scoped>
+
 .item {
   background-color: #F1F1F6;
   border-radius: 10px;
   overflow: hidden;
   height: 450px;
   border: 1px solid #ccc;
+  border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 

@@ -31,7 +31,10 @@ oauthMember(
                     }
                 });
             } else {
-                router.replace({ name: 'main' });
+                localStorage.setItem('isLogin', true);
+                // router.replace({ name: 'main' });
+                location.reload();
+                location.href = '/';
             }
         }
     },
