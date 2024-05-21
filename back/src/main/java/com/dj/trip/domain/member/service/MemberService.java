@@ -3,9 +3,11 @@ package com.dj.trip.domain.member.service;
 import com.dj.trip.domain.member.dto.AuthenticationEmailResponseDto;
 import com.dj.trip.domain.member.dto.CreateMemberRequestDto;
 import com.dj.trip.domain.member.dto.FindPasswordRequestDto;
+import com.dj.trip.domain.member.dto.request.ModifyMemberRequest;
 import com.dj.trip.domain.member.dto.response.GetMemberByPasswordResponse;
 import com.dj.trip.domain.member.dto.response.GetMemberResponse;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface MemberService {
     // 회원가입
@@ -32,4 +34,6 @@ public interface MemberService {
     GetMemberResponse getMember(String memberId);
 
     GetMemberByPasswordResponse getMemberByPassword(String memberId, String password);
+
+    void modifyMember(String memberId, ModifyMemberRequest modigyMemberRequest, MultipartFile file);
 }

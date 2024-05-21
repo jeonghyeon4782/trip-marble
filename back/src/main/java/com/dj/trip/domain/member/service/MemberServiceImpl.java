@@ -9,6 +9,7 @@ import com.dj.trip.domain.member.MemberInfo;
 import com.dj.trip.domain.member.dto.AuthenticationEmailResponseDto;
 import com.dj.trip.domain.member.dto.CreateMemberRequestDto;
 import com.dj.trip.domain.member.dto.FindPasswordRequestDto;
+import com.dj.trip.domain.member.dto.request.ModifyMemberRequest;
 import com.dj.trip.domain.member.dto.response.GetMemberByPasswordResponse;
 import com.dj.trip.domain.member.dto.response.GetMemberResponse;
 import com.dj.trip.domain.member.mapper.MemberMapper;
@@ -20,6 +21,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.security.SecureRandom;
 
@@ -122,7 +124,7 @@ public class MemberServiceImpl implements MemberService {
     public GetMemberByPasswordResponse getMemberByPassword(String memberId, String password) {
         MemberInfo memberInfo = memberMapper.selectMemberPswInfoByMemberId(memberId);
 
-        if (memberInfo == null && encoder.matches(password, memberInfo.getPassword())) {
+        if (memberInfo == null && !encoder.matches(password, memberInfo.getPassword())) {
             throw new InsufficientAuthenticationException("잘못된 요청");
         }
 
@@ -138,6 +140,41 @@ public class MemberServiceImpl implements MemberService {
                 imageUrl,
                 memberInfo.getPassword()
         );
+    }
+
+    @Override
+    public void modifyMember(String memberId, ModifyMemberRequest modigyMemberRequest, MultipartFile file) {
+        String fileName = null;
+        if (file != null) {
+            fileName = imageServiceUtils.upload(file);
+        }
+
+        String password = null;
+        System.out.println("password= " + " " + modigyMemberRequest.password());
+        if (!modigyMemberRequest.password().isEmpty()) {
+            password = encoder.encode(modigyMemberRequest.password());
+        }
+
+        Member member = Member
+                .modifyMember(
+                        memberId,
+                        modigyMemberRequest.nickname(),
+                        modigyMemberRequest.email(),
+                        password,
+                        fileName
+                );
+
+        if (fileName != null) {
+            // 해당 id의 이미지 이름으로 삭제 요청
+            String image_url = memberMapper.getImageUrl(memberId);
+            if (image_url != null) {
+                imageServiceUtils.deleteImage(image_url);
+            }
+        }
+
+        if (memberMapper.modifyMember(member) == 0) {
+            throw new InsufficientAuthenticationException("잘못된 요청");
+        }
     }
 
     public static String generatePassword() {

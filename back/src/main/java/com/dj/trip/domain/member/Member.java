@@ -25,4 +25,14 @@ public class Member {
                 .password(password)
                 .build();
     }
+
+    public static Member modifyMember(String memberId, String nickname, String email, String password, String imageUrl) {
+        return Member.builder()
+                .memberId(memberId)
+                .nickname(nickname)
+                .email(email)
+                .password(password)
+                .imageUrl(imageUrl)
+                .build();
+    }
 }

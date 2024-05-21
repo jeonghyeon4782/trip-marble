@@ -34,4 +34,8 @@ public interface MemberMapper {
     MemberInfo selectMemberInfoByMemberId(String memberId);
 
     MemberInfo selectMemberPswInfoByMemberId(String member);
+
+    int modifyMember(Member member);
+
+    String getImageUrl(String memberId);
 }

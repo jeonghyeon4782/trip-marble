@@ -29,20 +29,21 @@
     <select id="selectMemberByOauthServerTypeAndEmail" parameterType="Member">
         select member_id, oauth_server_type, email
         from member
-        where email = #{email} and oauth_server_type = #{oauthServerType}
+        where email = #{email}
+          and oauth_server_type = #{oauthServerType}
     </select>
 
     <select id="selectMemberByMemberIdAndEmail" resultType="Member">
         select member_id, password, nickname, email, role
         from member
         where member_Id = #{memberId}
-        and email = #{email}
+          and email = #{email}
     </select>
 
     <update id="updateMember">
         update member
-        set password = #{password},
-            nickname = #{nickname},
+        set password  = #{password},
+            nickname  = #{nickname},
             image_url = #{imageUrl}
         where member_id = #{memberId}
     </update>
@@ -71,4 +72,22 @@
         from member
         where member_Id = #{memberId}
     </select>
+
+    <select id="getImageUrl" parameterType="String" resultType="String">
+        select image_url
+        from member
+        where member_Id = #{memberId}
+    </select>
+
+    <update id="modifyMember" parameterType="member">
+        update member
+        set
+        <if test="password != null and password != ''">
+            password = #{password},
+        </if>
+        nickname = #{nickname},
+        image_url = #{imageUrl},
+        email = #{email}
+        where member_id = #{memberId}
+    </update>
 </mapper>

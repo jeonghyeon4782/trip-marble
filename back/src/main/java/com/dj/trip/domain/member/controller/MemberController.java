@@ -1,5 +1,6 @@
 package com.dj.trip.domain.member.controller;
 
+import com.dj.trip.domain.member.dto.request.ModifyMemberRequest;
 import com.dj.trip.domain.member.service.MemberService;
 import com.dj.trip.global.dto.ResponseDto;
 import com.dj.trip.global.util.JWTUtil;
@@ -7,10 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/member")
@@ -36,5 +35,15 @@ public class MemberController {
         return ResponseEntity.status(HttpStatus.OK.value()).body(
                 new ResponseDto<>(HttpStatus.OK.value(), "회원 수정 정보 요청 성공",
                         memberService.getMemberByPassword(memberId, password)));
+    }
+
+    @PutMapping
+    public ResponseEntity<ResponseDto<?>> modifyMember(HttpServletRequest request,
+                                                       @RequestPart(value = "member") ModifyMemberRequest modigyMemberRequest,
+                                                       @RequestPart(value = "file", required = false) MultipartFile file
+    ) {
+        String memberId = jwtUtil.getMemberIdByToken(request);
+        memberService.modifyMember(memberId, modigyMemberRequest, file);
+        return ResponseEntity.status(HttpStatus.CREATED.value()).body(new ResponseDto<>(HttpStatus.CREATED.value(), "리뷰 수정 완료", null));
     }
 }
