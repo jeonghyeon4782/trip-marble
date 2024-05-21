@@ -124,7 +124,7 @@ public class MemberServiceImpl implements MemberService {
     public GetMemberByPasswordResponse getMemberByPassword(String memberId, String password) {
         MemberInfo memberInfo = memberMapper.selectMemberPswInfoByMemberId(memberId);
 
-        if (memberInfo == null && !encoder.matches(password, memberInfo.getPassword())) {
+        if (memberInfo == null || !encoder.matches(password, memberInfo.getPassword())) {
             throw new InsufficientAuthenticationException("잘못된 요청");
         }
 
