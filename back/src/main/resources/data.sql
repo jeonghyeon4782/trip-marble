@@ -57,7 +57,7 @@ CREATE TABLE `review`
     `update_date`        timestamp              DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (`review_id`),
     FOREIGN KEY (`attraction_info_id`) REFERENCES `attraction_info` (`attraction_info_id`),
-    FOREIGN KEY (`member_id`) REFERENCES `member` (`member_id`)
+    FOREIGN KEY (`member_id`) REFERENCES `member` (`member_id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `comment`
@@ -68,8 +68,8 @@ CREATE TABLE `comment`
     `content`     varchar(300) NOT NULL,
     `create_date` timestamp DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`comment_id`),
-    FOREIGN KEY (`review_id`) REFERENCES `review` (`review_id`),
-    FOREIGN KEY (`member_id`) REFERENCES `member` (`member_id`)
+    FOREIGN KEY (`review_id`) REFERENCES `review` (`review_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`member_id`) REFERENCES `member` (`member_id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `member_board_log`
@@ -96,8 +96,8 @@ CREATE TABLE `member_board_like`
     `review_id`            int         NOT NULL,
     `member_id`            varchar(12) NOT NULL,
     PRIMARY KEY (`member_board_like_id`),
-    FOREIGN KEY (`review_id`) REFERENCES `review` (`review_id`),
-    FOREIGN KEY (`member_id`) REFERENCES `member` (`member_id`)
+    FOREIGN KEY (`review_id`) REFERENCES `review` (`review_id`) ON DELETE CASCADE,
+    FOREIGN KEY (`member_id`) REFERENCES `member` (`member_id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `score`
@@ -108,7 +108,7 @@ CREATE TABLE `score`
     `score`     int         NULL,
     PRIMARY KEY (`score_id`),
     FOREIGN KEY (`sido_id`) REFERENCES `sido` (`sido_id`),
-    FOREIGN KEY (`member_id`) REFERENCES `member` (`member_id`)
+    FOREIGN KEY (`member_id`) REFERENCES `member` (`member_id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `restaurant`
@@ -130,12 +130,6 @@ CREATE TABLE `mail`
     PRIMARY KEY (`email`)
 );
 
-insert into sido (name)
-values ('서울');
-insert into attraction_info (sido_id, name, addr, url, latitude, longitude)
-VALUES (1, 'test', '서울주소', 'https://seoulismuseum.kr/data/cn/246/img/2022_04_002.jpg',
-        37.51799330000000000, 126.95764780000000000);
-
 INSERT INTO `sido` (`name`)
 VALUES ('서울특별시'),
        ('부산광역시'),
@@ -154,6 +148,10 @@ VALUES ('서울특별시'),
        ('경상북도'),
        ('경상남도'),
        ('제주특별자치도');
+
+insert into attraction_info (sido_id, name, addr, url, latitude, longitude)
+VALUES (1, 'test', '서울주소', 'https://seoulismuseum.kr/data/cn/246/img/2022_04_002.jpg',
+        37.51799330000000000, 126.95764780000000000);
 
 -- 서울특별시
 INSERT INTO `attraction_info` (`sido_id`, `name`, `addr`, `url`, `latitude`, `longitude`, `description`)
