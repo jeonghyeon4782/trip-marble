@@ -37,4 +37,17 @@
                  a.attraction_info_id,
                  s.sido_id limit 0,20
     </select>
+
+    <select id="selectTop4AttractionInfo" resultType="getTop4AttractionInfoResponse">
+        select a.url, a.name, s.name as sidoName
+        from attraction_info a
+                 left join review r
+                           on a.attraction_info_id = r.attraction_info_id
+                 left join member_board_like l
+                           on r.review_id = l.review_id
+                 join sido s
+                      on a.sido_id = s.sido_id
+        group by a.attraction_info_id
+        order by count(r.review_id) desc, count(l.member_board_like_id) desc limit 4
+    </select>
 </mapper>

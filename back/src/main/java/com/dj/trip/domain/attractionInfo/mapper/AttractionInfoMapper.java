@@ -16,4 +16,6 @@ public interface AttractionInfoMapper {
     AttractionInfoVo selectAttractionInfoByMemberBoardMapId(int memberBoardMapId);
 
     GetAttractionInfoByMemberIdResponse selectAttractionInfoByMemberId(String memberId);
+
+    List<AttractionInfoVo> selectTop4AttractionInfo();
 }

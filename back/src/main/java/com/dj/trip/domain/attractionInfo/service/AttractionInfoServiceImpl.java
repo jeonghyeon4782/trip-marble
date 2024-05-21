@@ -1,11 +1,14 @@
 package com.dj.trip.domain.attractionInfo.service;
 
+import com.dj.trip.domain.attractionInfo.AttractionInfoVo;
 import com.dj.trip.domain.attractionInfo.dto.GetAttarctionInfoResponseDto;
 import com.dj.trip.domain.attractionInfo.dto.response.GetAttractionInfoByMemberIdResponse;
 import com.dj.trip.domain.attractionInfo.mapper.AttractionInfoMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,5 +26,10 @@ public class AttractionInfoServiceImpl implements AttractionInfoService {
     @Override
     public GetAttractionInfoByMemberIdResponse getAttractionInfoByMemberId(String memberId) {
         return attractionInfoMapper.selectAttractionInfoByMemberId(memberId);
+    }
+
+    @Override
+    public List<AttractionInfoVo> getTop4AttractionInfo() {
+        return attractionInfoMapper.selectTop4AttractionInfo();
     }
 }
