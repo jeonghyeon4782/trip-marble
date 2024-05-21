@@ -32,4 +32,6 @@ public interface MemberMapper {
     void updateMember(Member member);
 
     MemberInfo selectMemberInfoByMemberId(String memberId);
+
+    MemberInfo selectMemberPswInfoByMemberId(String member);
 }

@@ -61,4 +61,14 @@
         group by m.member_id
         having m.member_Id = #{memberId}
     </select>
+
+    <select id="selectMemberPswInfoByMemberId" parameterType="String" resultType="MemberInfo">
+        select member_id,
+               nickname,
+               email,
+               image_url,
+               password
+        from member
+        where member_Id = #{memberId}
+    </select>
 </mapper>

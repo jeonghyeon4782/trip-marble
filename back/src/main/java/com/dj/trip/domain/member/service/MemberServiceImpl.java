@@ -4,13 +4,12 @@ import com.dj.trip.domain.image.service.ImageServiceUtils;
 import com.dj.trip.domain.mail.MailVo;
 import com.dj.trip.domain.mail.mapper.MailMapper;
 import com.dj.trip.domain.mail.service.MailService;
-import com.dj.trip.domain.mail.service.MailServiceImpl;
 import com.dj.trip.domain.member.Member;
 import com.dj.trip.domain.member.MemberInfo;
 import com.dj.trip.domain.member.dto.AuthenticationEmailResponseDto;
 import com.dj.trip.domain.member.dto.CreateMemberRequestDto;
-import com.dj.trip.domain.member.dto.FindMemberIdRequestDto;
 import com.dj.trip.domain.member.dto.FindPasswordRequestDto;
+import com.dj.trip.domain.member.dto.response.GetMemberByPasswordResponse;
 import com.dj.trip.domain.member.dto.response.GetMemberResponse;
 import com.dj.trip.domain.member.mapper.MemberMapper;
 import com.dj.trip.global.util.JWTUtil;
@@ -18,10 +17,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.net.http.HttpResponse;
 import java.security.SecureRandom;
 
 @Service
@@ -103,20 +102,42 @@ public class MemberServiceImpl implements MemberService {
         String imageUrl = null;
 
         if (memberInfo != null) {
-            if (memberInfo.imageUrl() != null) {
-                imageUrl = imageServiceUtils.getImageUrl(memberInfo.imageUrl());
+            if (memberInfo.getImageUrl() != null) {
+                imageUrl = imageServiceUtils.getImageUrl(memberInfo.getImageUrl());
             }
 
-        return new GetMemberResponse(
-                memberInfo.memberId(),
-                memberInfo.nickname(),
-                memberInfo.email(),
-                imageUrl,
-                memberInfo.reviews(),
-                memberInfo.score()
-        );
+            return new GetMemberResponse(
+                    memberInfo.getMemberId(),
+                    memberInfo.getNickname(),
+                    memberInfo.getEmail(),
+                    imageUrl,
+                    memberInfo.getReviews(),
+                    memberInfo.getScore()
+            );
         }
         return null;
+    }
+
+    @Override
+    public GetMemberByPasswordResponse getMemberByPassword(String memberId, String password) {
+        MemberInfo memberInfo = memberMapper.selectMemberPswInfoByMemberId(memberId);
+
+        if (memberInfo == null && encoder.matches(password, memberInfo.getPassword())) {
+            throw new InsufficientAuthenticationException("잘못된 요청");
+        }
+
+        String imageUrl = null;
+        if (memberInfo.getImageUrl() != null) {
+            imageUrl = imageServiceUtils.getImageUrl(memberInfo.getImageUrl());
+        }
+
+        return new GetMemberByPasswordResponse(
+                memberInfo.getMemberId(),
+                memberInfo.getNickname(),
+                memberInfo.getEmail(),
+                imageUrl,
+                memberInfo.getPassword()
+        );
     }
 
     public static String generatePassword() {

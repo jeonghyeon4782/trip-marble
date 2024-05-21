@@ -3,6 +3,7 @@ package com.dj.trip.domain.member.service;
 import com.dj.trip.domain.member.dto.AuthenticationEmailResponseDto;
 import com.dj.trip.domain.member.dto.CreateMemberRequestDto;
 import com.dj.trip.domain.member.dto.FindPasswordRequestDto;
+import com.dj.trip.domain.member.dto.response.GetMemberByPasswordResponse;
 import com.dj.trip.domain.member.dto.response.GetMemberResponse;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -29,4 +30,6 @@ public interface MemberService {
     boolean findPassword(FindPasswordRequestDto findPasswordRequestDto) throws Exception;
 
     GetMemberResponse getMember(String memberId);
+
+    GetMemberByPasswordResponse getMemberByPassword(String memberId, String password);
 }
