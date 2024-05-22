@@ -51,4 +51,15 @@
         group by a.attraction_info_id
         order by count(r.review_id) desc, count(l.member_board_like_id) desc limit 4
     </select>
+
+    <select id="selectReviewIdByBoardlogid" resultType="GetReviewIdResponse">
+        select r.review_id
+        from member_board_log as l
+                 join review as r
+                      on l.member_id = r.member_id
+        where l.member_id = #{memberId}
+          and l.member_board_log_id = #{boardlogid}
+        order by r.review_id desc limit 1
+    </select>
+
 </mapper>
