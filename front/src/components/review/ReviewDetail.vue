@@ -19,8 +19,14 @@ const { reviewid } = route.params;
 const review = ref({});
 
 const comments = ref({});
+const isLogin = ref({});
 
 onMounted(() => {
+    if (localStorage.getItem('isLogin') == "true") {
+        isLogin.value = true;
+    } else {
+        isLogin.value = false;
+    }
     getReview();
 })
 
@@ -131,7 +137,8 @@ function updateComments(newCount) {
                         </a>
                         <span class="review-date">{{ review.createDate }}</span>
                     </div>
-                    <img v-if="!review.isWriteByMe" :src="favoriteIcon" class="favorite-icon" @click="favoriteClick">
+                    <img v-if="!review.isWriteByMe && isLogin.value" :src="favoriteIcon" class="favorite-icon"
+                        @click="favoriteClick">
                 </div>
                 <img :src="review.reviewImageUrl" v-if="review.reviewImageUrl" class="review-image">
                 <p class="review-description">{{ review.content }}</p>

@@ -1,11 +1,11 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { logoutMember } from "@/api/auth";
-import { getSidoList } from "@/api/board";
+import {ref, onMounted} from "vue";
+import {useRouter} from "vue-router";
+import {logoutMember} from "@/api/auth";
+import {getSidoList} from "@/api/board";
 import Swal from "sweetalert2";
 
-import { createApp } from "vue";
+import {createApp} from "vue";
 
 const router = useRouter();
 const isLogin = ref({});
@@ -27,37 +27,37 @@ const showSwal = (icon, title, text) => {
 };
 
 function showBoardMain() {
-  router.push({ name: "board" });
+  router.push({name: "board"});
 }
 
 function logout() {
   console.log("로그아웃 요청");
   logoutMember(
-    (response) => {
-      if (response.status == 201) {
-        localStorage.setItem("isLogin", false);
-        location.reload();
-        location.href = "/auth";
+      (response) => {
+        if (response.status == 201) {
+          localStorage.setItem("isLogin", false);
+          location.reload();
+          location.href = "/auth";
+        }
+      },
+      (error) => {
+        console.log(error);
       }
-    },
-    (error) => {
-      console.log(error);
-    }
   );
 }
 
 const onGetSidoList = () => {
   getSidoList(
-    (response) => {
-      const sidoList = response.data.data;
-      Swal.fire({
-        title: "지역을 선택해주세요!",
-        html: sidoList
-          .map(
-            (sido) => `
-        <button 
-            class="sido-button" 
-            data-id="${sido.sidoId}" 
+      (response) => {
+        const sidoList = response.data.data;
+        Swal.fire({
+          title: "지역을 선택해주세요!",
+          html: sidoList
+              .map(
+                  (sido) => `
+        <button
+            class="sido-button"
+            data-id="${sido.sidoId}"
             style="margin: 5px; padding: 10px 20px; border-radius: 5px; border: none; background-color: #4CAF50; color: white; cursor: pointer;"
             onmouseover="this.style.backgroundColor='#45a049'"
             onmouseout="this.style.backgroundColor='#4CAF50'"
@@ -65,37 +65,37 @@ const onGetSidoList = () => {
             ${sido.name}
           </button>
         `
-          )
-          .join(""),
-        showCloseButton: true,
-        showConfirmButton: false,
-        focusConfirm: false,
-        allowOutsideClick: false,
-        didOpen: () => {
-          const buttons =
-            Swal.getHtmlContainer().querySelectorAll(".sido-button");
-          buttons.forEach((button) => {
-            button.addEventListener("click", () => {
-              const sidoId = button.getAttribute("data-id");
-              console.log(`선택된 sido의 id: ${sidoId}`);
-              Swal.fire({
-                title: "부루마블 시작!",
-                text: "즐거운 부루마블하세요🎉🎉",
-                imageUrl: "src/assets/welcome.jpg",
-                imageWidth: 400,
-                imageHeight: 200,
-                imageAlt: "환영",
-                confirmButtonText: "확인",
+              )
+              .join(""),
+          showCloseButton: true,
+          showConfirmButton: false,
+          focusConfirm: false,
+          allowOutsideClick: false,
+          didOpen: () => {
+            const buttons =
+                Swal.getHtmlContainer().querySelectorAll(".sido-button");
+            buttons.forEach((button) => {
+              button.addEventListener("click", () => {
+                const sidoId = button.getAttribute("data-id");
+                console.log(`선택된 sido의 id: ${sidoId}`);
+                Swal.fire({
+                  title: "부루마블 시작!",
+                  text: "즐거운 부루마블하세요🎉🎉",
+                  imageUrl: "src/assets/welcome.jpg",
+                  imageWidth: 400,
+                  imageHeight: 200,
+                  imageAlt: "환영",
+                  confirmButtonText: "확인",
+                });
+                showBoardMain();
               });
-              showBoardMain();
             });
-          });
-        },
-      });
-    },
-    (error) => {
-      console.log(error.response.data.msg);
-    }
+          },
+        });
+      },
+      (error) => {
+        console.log(error.response.data.msg);
+      }
   );
 };
 
@@ -116,11 +116,11 @@ function handleBoardClick() {
       <RouterLink :to="{ name: 'main' }">
         <p>Home</p>
       </RouterLink>
-      <a @click.prevent="handleBoardClick">Board</a>
+      <a v-if="isLogin" @click.prevent="handleBoardClick">Board</a>
       <RouterLink :to="{ name: 'review' }">
         <p>Review</p>
       </RouterLink>
-      <RouterLink :to="{ name: 'review-list' }">
+      <RouterLink :to="{ name: 'map' }">
         <p>Review</p>
       </RouterLink>
     </div>
@@ -131,7 +131,7 @@ function handleBoardClick() {
       <a v-else @click="logout">
         <p>Logout</p>
       </a>
-      <RouterLink v-if="isLogin" :to="{ name: 'main' }">
+      <RouterLink v-if="isLogin" :to="{ name: 'mypage' }">
         <p>Mypage</p>
       </RouterLink>
     </div>
