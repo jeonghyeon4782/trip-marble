@@ -26,8 +26,8 @@ const showSwal = (icon, title, text) => {
   });
 };
 
-function showBoardMain() {
-  router.push({ name: "board" });
+function showBoardMain(sidoId, imageId) {
+  router.push({ name: "board", params: { sidoId, imageId } });
 }
 
 function logout() {
@@ -77,17 +77,48 @@ const onGetSidoList = () => {
           buttons.forEach((button) => {
             button.addEventListener("click", () => {
               const sidoId = button.getAttribute("data-id");
-              console.log(`선택된 sido의 id: ${sidoId}`);
               Swal.fire({
-                title: "부루마블 시작!",
-                text: "즐거운 부루마블하세요🎉🎉",
-                imageUrl: "src/assets/welcome.jpg",
-                imageWidth: 400,
-                imageHeight: 200,
-                imageAlt: "환영",
-                confirmButtonText: "확인",
+                title: "캐릭터를 선택해주세요!",
+                html: `
+  <button class="image-button" data-id="1" style="margin: 5px; border: none; background: none;">
+    <img src="src/assets/서두나.png" style="border-radius: 50%; width: 100px; height: 100px; cursor: pointer;" alt="서두나">
+    <span style="display: block; text-align: center;">서두나</span>
+  </button>
+  <button class="image-button" data-id="2" style="margin: 5px; border: none; background: none;">
+    <img src="src/assets/박찬호.png" style="border-radius: 50%; width: 100px; height: 100px; cursor: pointer;" alt="박찬호">
+    <span style="display: block; text-align: center;">박찬호</span>
+  </button>
+  <button class="image-button" data-id="3" style="margin: 5px; border: none; background: none;">
+    <img src="src/assets/김태균.png" style="border-radius: 50%; width: 100px; height: 100px; cursor: pointer;" alt="김태균">
+    <span style="display: block; text-align: center;">김태균</span>
+  </button>
+`,
+
+                showCloseButton: true,
+                showConfirmButton: false,
+                focusConfirm: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                  const imageButtons =
+                    Swal.getHtmlContainer().querySelectorAll(".image-button");
+                  imageButtons.forEach((imageButton) => {
+                    imageButton.addEventListener("click", () => {
+                      const imageId = imageButton.getAttribute("data-id");
+                      Swal.close();
+                      Swal.fire({
+                        title: "부루마블 시작!",
+                        text: "즐거운 부루마블하세요🎉🎉",
+                        imageUrl: "src/assets/welcome.jpg",
+                        imageWidth: 400,
+                        imageHeight: 200,
+                        imageAlt: "환영",
+                        confirmButtonText: "확인",
+                      });
+                      showBoardMain(sidoId, imageId);
+                    });
+                  });
+                },
               });
-              showBoardMain();
             });
           });
         },
@@ -131,7 +162,7 @@ function handleBoardClick() {
       <a v-else @click="logout">
         <p>Logout</p>
       </a>
-      <RouterLink v-if="isLogin" :to="{ name: 'main' }">
+      <RouterLink v-if="isLogin" :to="{ name: 'mypage' }">
         <p>Mypage</p>
       </RouterLink>
     </div>

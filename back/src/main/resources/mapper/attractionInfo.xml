@@ -3,16 +3,17 @@
 
 <mapper namespace="com.dj.trip.domain.attractionInfo.mapper.AttractionInfoMapper">
     <select id="selectAttractionInfoListBySidoId" resultType="AttractionInfoVo">
-        select attraction_info_id, sido_id, name, addr, url, description, latitude, longitude
+        select attraction_info_id, sido_id, name, addr, url, latitude, longitude
         from attraction_info
         where sido_id = #{sidoId}
     </select>
 
     <select id="selectAttractionInfoByMemberBoardMapId" resultType="AttractionInfoVo">
-        select ai.attraction_info_id, ai.sido_id, ai.name, ai.addr, ai.url, ai.description, ai.latitude, ai.longitude
+        select ai.attraction_info_id, ai.sido_id, ai.name, ai.addr, ai.url, ad.overview as description ,ai.latitude, ai.longitude
         from member_board_map mbm
         join board b on mbm.member_board_map_id = b.member_board_map_id
         join attraction_info ai on b.attraction_info_id = ai.attraction_info_id
+        join attraction_description ad on ai.attraction_info_id = ad.attraction_description_id
         where mbm.member_board_map_id = #{memberBoardMapId}
         and b.location = mbm.now_location;
     </select>
