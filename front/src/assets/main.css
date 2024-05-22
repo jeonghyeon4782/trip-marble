@@ -21,3 +21,14 @@ a,
   }
 }
 
+.carousel__track {
+  /* transform: translateX(0px);
+  transition: all 0ms ease 0s;
+  width: 100%; */
+  display: flex;
+}
+
+.carousel__track li {
+  /* width: 100%; */
+}
+
