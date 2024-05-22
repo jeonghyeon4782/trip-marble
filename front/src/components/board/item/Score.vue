@@ -1,15 +1,17 @@
 <script setup>
 import axios from "axios";
-import { ref, onMounted } from "vue";
-
-const token =
-  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTU5MjQwNTEsImlhdCI6MTcxNTkwNjA1MSwibWVtYmVySWQiOiJzc2FmeTEyMyJ9.lp3-2yj9aThOIBwfaB5OVymKb9Gnl6aqkGKr35SKuiA";
-axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+import { ref, onMounted, defineProps } from "vue";
 
 const scoreList = ref([]);
 const myId = ref(null);
 const myScore = ref(null);
 const changedRows = ref([]);
+const props = defineProps({
+  sidoId: {
+    type: Number,
+    required: true,
+  },
+});
 
 const getScore = async (sidoId) => {
   try {
@@ -36,9 +38,9 @@ const getScore = async (sidoId) => {
 };
 
 onMounted(() => {
-  getScore(1);
+  getScore(props.sidoId);
   setInterval(() => {
-    getScore(1);
+    getScore(props.sidoId);
   }, 5000);
 });
 </script>

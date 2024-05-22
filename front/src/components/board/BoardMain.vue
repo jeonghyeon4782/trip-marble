@@ -6,9 +6,23 @@ import Dice from "./item/Dice.vue";
 import Horse from "./item/Horse.vue";
 import Score from "./item/Score.vue";
 import Swal from "sweetalert2";
+import { useRoute } from "vue-router";
+
+import { getBoard, getAttractionInfo, updateLocation, drawGoldCard, updateScore } from "@/api/board";
+
+import testImage from "@/assets/test.jpg";
+import doubleImage from "@/assets/double.jpg";
+import goldImage from "@/assets/gold-key.jpg";
+import startImage from "@/assets/start.jpg";
+import spaceGif from "@/assets/space.gif";
+import spaceImage from "@/assets/space-travel.jpg";
+import islandImage from "@/assets/island.jpg";
 
 let isFirst = false;
 const isRolling = ref(false);
+const route = useRoute();
+const sidoId = route.params.sidoId;
+const imageId = route.params.imageId;
 
 let attractionInfo = {
   name: "",
@@ -43,13 +57,13 @@ const horseTopArr = [
 
 const getRandCard = () => {
   return Math.round(Math.random() * 7 + 1);
-}
+};
 
 const spaceTravelSwal = () => {
   Swal.fire({
     title: "우주여행",
     text: "당신을 우주여행으로 초대합니다!",
-    imageUrl: "src/assets/space-travel.jpg",
+    imageUrl: spaceImage,
     input: "text",
     inputPlaceholder: "어디로 가고 싶으신가요??(0부터 27중 선택)",
     imageWidth: 400,
@@ -61,16 +75,16 @@ const spaceTravelSwal = () => {
       const destination = result.value;
       Swal.fire({
         title: "꽉 잡으세요...",
-        html: "<img src='src/assets/space.gif' width='400' height='400'>",
+        html: "<img src=spaceGif width='400' height='400'>",
         showConfirmButton: false,
         timer: 3000,
         didOpen: () => {
           Swal.showLoading();
         },
       }).then(() => {
-        updateLocation(destination);
+        onUpdateLocation(destination);
         if (21 > destination) {
-          updateScore(50);
+          onUpdateScore(50);
           startSwal();
         }
       });
@@ -78,29 +92,28 @@ const spaceTravelSwal = () => {
   });
 };
 
-const drawGoldCard = async () => {
-  try {
-    let index = getRandCard();
-    const data = {
+const onDrawGoldCard = () => {
+  let index = getRandCard();
+  drawGoldCard(
+    {
       memberBoardMapId: mapInfo.value.mapId,
       index: index,
-      sidoId: 1
-    };
-    const response = await axios.put(
-      `http://localhost:8080/api/board/gold-card`,
-      data
-    );
-    goldCardSwal(response.data.data.msg, response.data.data.nowLocation, index);
-  } catch (error) {
-    console.error("Error fetching score info:", error);
-  }
+      sidoId: sidoId,
+    },
+    (response) => {
+      goldCardSwal(response.data.data.msg, response.data.data.nowLocation, index);
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
 };
 
 const goldCardSwal = (msg, location, index) => {
   Swal.fire({
     title: "황금열쇠",
     html: msg,
-    imageUrl: "src/assets/gold-key.jpg",
+    imageUrl: goldImage,
     imageWidth: 250,
     imageHeight: 300,
     imageAlt: "황금 카드",
@@ -108,7 +121,7 @@ const goldCardSwal = (msg, location, index) => {
   }).then((result) => {
     if (result.isConfirmed) {
       if (index > 0 && index < 5) {
-        updateLocation(location);
+        onUpdateLocation(location);
       }
     }
   });
@@ -120,7 +133,7 @@ const islandSwal = (islandCnt) => {
     html: `아쉽게도 무인도네요..<br>${
       3 - islandCnt
     }턴동안 이동이 불가합니다.<br>Double이 나오면 탈출이 가능합니다!`,
-    imageUrl: "src/assets/island.jpg",
+    imageUrl: islandImage,
     imageWidth: 400,
     imageHeight: 250,
     imageAlt: "무인도",
@@ -132,7 +145,7 @@ const doubleSwal = () => {
   Swal.fire({
     title: "DOUBLE🎊🎊",
     html: "같은 숫자가 나오셨네요! 50점을 획득합니다!",
-    imageUrl: "src/assets/double.jpg",
+    imageUrl: doubleImage,
     imageWidth: 400,
     imageHeight: 250,
     imageAlt: "더블",
@@ -144,7 +157,7 @@ const startSwal = () => {
   Swal.fire({
     title: "완주🎊🎊",
     html: "벌써 한바퀴를 완주했습니다!<br>50점을 획득합니다!!",
-    imageUrl: "src/assets/start.jpg",
+    imageUrl: startImage,
     imageWidth: 400,
     imageHeight: 250,
     imageAlt: "완주",
@@ -156,7 +169,7 @@ const attractionInfoSwal = () => {
   Swal.fire({
     title: `${attractionInfo.name}`,
     html: `주소 : ${attractionInfo.addr}<br>상세 설명 : ${attractionInfo.description}`,
-    imageUrl: "src/assets/test.jpg",
+    imageUrl: attractionInfo.url,
     imageWidth: 400,
     imageHeight: 250,
     imageAlt: "관광지 사진",
@@ -166,26 +179,28 @@ const attractionInfoSwal = () => {
   });
 };
 
-onBeforeMount(async () => {
-  try {
-    const response = await axios.get("http://localhost:8080/api/board/1");
-    mapInfo.value.spaces = response.data.data.boardInfoVoList;
-    mapInfo.value.mapId = response.data.data.boardMemberMapId;
-    mapInfo.value.now = response.data.data.nowLocation;
-    mapInfo.value.island = response.data.data.island;
-    mapInfo.value.islandCnt = response.data.data.islandCnt;
-    horse.value.horseTop = horseTopArr[response.data.data.nowLocation];
-    horse.value.horseLeft = horseLeftArr[response.data.data.nowLocation];
-    if (mapInfo.value.now === 0) {
-      isFirst = true;
+onBeforeMount(() => {
+  getBoard(
+    sidoId,
+    (response) => {
+      mapInfo.value.spaces = response.data.data.boardInfoVoList;
+      mapInfo.value.mapId = response.data.data.boardMemberMapId;
+      mapInfo.value.now = response.data.data.nowLocation;
+      mapInfo.value.island = response.data.data.island;
+      mapInfo.value.islandCnt = response.data.data.islandCnt;
+      horse.value.horseTop = horseTopArr[response.data.data.nowLocation];
+      horse.value.horseLeft = horseLeftArr[response.data.data.nowLocation];
+      if (mapInfo.value.now === 0) {
+        isFirst = true;
+      }
+    },
+    (error) => {
+      console.log(error);
     }
-  } catch (error) {
-    console.error("Error fetching data:", error);
-  }
+  );
 });
 
-// 말 이동
-const moveHorse = (diceValues) => {
+const moveHorse = async (diceValues) => {
   isRolling.value = true;
   let moveCount = 0;
   const moveInterval = 500;
@@ -193,7 +208,7 @@ const moveHorse = (diceValues) => {
   const moveOneStep = () => {
     if (moveCount < diceValues[0] + diceValues[1]) {
       if (mapInfo.value.now === 0 && isFirst == false) {
-        updateScore(50);
+        onUpdateScore(50);
         startSwal();
       } else {
         isFirst = false;
@@ -208,7 +223,7 @@ const moveHorse = (diceValues) => {
       moveCount++;
       setTimeout(moveOneStep, moveInterval);
     } else {
-      setTimeout(() => {
+      setTimeout(async () => {
         if (
           diceValues[0] === diceValues[1] &&
           mapInfo.value.now !== 7 &&
@@ -220,7 +235,7 @@ const moveHorse = (diceValues) => {
           mapInfo.value.now !== 3
         ) {
           doubleSwal();
-          updateScore(50);
+          onUpdateScore(50);
         } else {
           if (mapInfo.value.now === 7) {
             islandSwal(diceValues[3]);
@@ -231,13 +246,12 @@ const moveHorse = (diceValues) => {
             mapInfo.value.now === 18 ||
             mapInfo.value.now === 3
           ) {
-            drawGoldCard();
+            onDrawGoldCard();
           } else if (mapInfo.value.now === 21) {
             spaceTravelSwal();
           } else {
-            getAttractionInfo().then(() => {
-              attractionInfoSwal();
-            });
+            await onGetAttractionInfo(mapInfo.value.mapId);
+            attractionInfoSwal();
           }
         }
       }, 1000);
@@ -247,65 +261,74 @@ const moveHorse = (diceValues) => {
   isRolling.value = false;
 };
 
-const getAttractionInfo = async () => {
-  try {
-    const response = await axios.get(
-      `http://localhost:8080/api/attraction-info/${mapInfo.value.mapId}`
+const onGetAttractionInfo = (mapId) => {
+  return new Promise((resolve, reject) => {
+    getAttractionInfo(
+      mapId,
+      (response) => {
+        attractionInfo.name = response.data.data.name;
+        attractionInfo.addr = response.data.data.addr;
+        attractionInfo.description = response.data.data.description;
+        attractionInfo.url = response.data.data.url;
+        resolve(); // 데이터가 성공적으로 가져와지면 프로미스를 resolve합니다.
+      },
+      (error) => {
+        console.error(error);
+        reject(error); // 에러 발생 시 프로미스를 reject합니다.
+      }
     );
-    attractionInfo.name = response.data.data.name;
-    attractionInfo.addr = response.data.data.addr;
-    attractionInfo.description = response.data.data.description;
-    attractionInfo.url = response.data.data.url;
-  } catch (error) {
-    console.error("Error fetching attraction info:", error);
-  }
+  });
 };
 
 // 위치 이동
-const updateLocation = async (newLocation) => {
-  try {
-    const data = {
+const onUpdateLocation = (newLocation) => {
+  updateLocation(
+    {
       location: newLocation,
       memberBoardMapId: mapInfo.value.mapId,
-    };
-    const response = await axios.put(
-      `http://localhost:8080/api/board/location`,
-      data
-    );
-    mapInfo.value.now = response.data.data.nowLocation;
-    horse.value.horseTop = horseTopArr[mapInfo.value.now];
-    horse.value.horseLeft = horseLeftArr[mapInfo.value.now];
-    if (mapInfo.value.now === 7) {
-      islandSwal(0);
-    } else if (
-      mapInfo.value.now === 9 ||
-      mapInfo.value.now === 12 ||
-      mapInfo.value.now === 25 ||
-      mapInfo.value.now === 18 ||
-      mapInfo.value.now === 3
-    ) {
-      drawGoldCard();
-    } else if (mapInfo.value.now === 21) {
-      spaceTravelSwal();
-    } else {
-      getAttractionInfo().then(() => {
-        attractionInfoSwal();
-      });
+    },
+    (response) => {
+      mapInfo.value.now = response.data.data.nowLocation;
+      horse.value.horseTop = horseTopArr[mapInfo.value.now];
+      horse.value.horseLeft = horseLeftArr[mapInfo.value.now];
+      if (mapInfo.value.now === 7) {
+        islandSwal(0);
+      } else if (
+        mapInfo.value.now === 9 ||
+        mapInfo.value.now === 12 ||
+        mapInfo.value.now === 25 ||
+        mapInfo.value.now === 18 ||
+        mapInfo.value.now === 3
+      ) {
+        onDrawGoldCard();
+      } else if (mapInfo.value.now === 21) {
+        spaceTravelSwal();
+      } else {
+        onGetAttractionInfo(mapInfo.value.mapId).then(() => {
+          attractionInfoSwal();
+        });
+      }
+    },
+    (error) => {
+      console.log(error);
     }
-  } catch (error) {
-    console.error("Error fetching attraction info:", error);
-  }
+  );
 };
 
-const updateScore = async (score) => {
-  try {
-    const data = {
+const onUpdateScore = (score) => {
+
+  updateScore(
+    sidoId,
+    {
       plusScore: score,
-    };
-    const response = await axios.put(`http://localhost:8080/api/score/1`, data);
-  } catch (error) {
-    console.error("Error fetching attraction info:", error);
-  }
+    },
+    (response) => {
+      console.log(response.data.msg);
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
 };
 </script>
 
@@ -319,7 +342,7 @@ const updateScore = async (score) => {
         transition: 'left 1s, top 1s, right 1s, bottom 1s',
       }"
     >
-      <Horse :now="mapInfo.now" />
+      <Horse :now="mapInfo.now" :imageId="imageId" />
     </div>
 
     <table>
@@ -342,10 +365,14 @@ const updateScore = async (score) => {
         <td class="center" colspan="6" rowspan="6">
           <div class="center-content">
             <div class="score-content">
-              <Score />
+              <Score :sidoId="sidoId"/>
             </div>
             <div class="dice-content">
-              <Dice :mapId="mapInfo.mapId" :isRolling="isRolling" @moveHorse="moveHorse" />
+              <Dice
+                :mapId="mapInfo.mapId"
+                :isRolling="isRolling"
+                @moveHorse="moveHorse"
+              />
             </div>
           </div>
         </td>

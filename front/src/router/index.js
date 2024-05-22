@@ -113,7 +113,7 @@ const router = createRouter({
       ]
     },
     {
-      path: "/board",
+      path: "/board/:sidoId/:imageId",
       name: "board",
       component: () => import("@/components/board/BoardMain.vue"),
     },
