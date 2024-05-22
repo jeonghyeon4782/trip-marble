@@ -22,8 +22,8 @@
     </insert>
 
     <insert id="insertBoard">
-        insert into board(member_board_map_id, attraction_info_id, location)
-        values (#{memberBoardMapId}, #{attractionInfoId}, #{location})
+            insert into board(member_board_map_id, attraction_info_id, location)
+            values (#{memberBoardMapId}, #{attractionInfoId}, #{location})
     </insert>
 
     <select id="selectBoardInfo" resultType="BoardInfoVo">

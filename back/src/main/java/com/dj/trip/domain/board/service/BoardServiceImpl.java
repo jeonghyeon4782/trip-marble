@@ -91,6 +91,7 @@ public class BoardServiceImpl implements BoardService {
             }
         } else {
             boardMapper.updateMemberBoardMap(diceRequestDto);
+            boardMapper.insertMemberBoardLog(memberId, diceRequestDto.getMemberBoardMapId(), boardMapper.selectNowLocationByMemberBoardMapId(diceRequestDto.getMemberBoardMapId()));
         }
         memberBoardMapVo = boardMapper.selectMemberBoardMapByMemberBoardMapId(diceRequestDto.getMemberBoardMapId());
         DiceResponseDto diceResponseDto = modelMapper.map(memberBoardMapVo, DiceResponseDto.class);
