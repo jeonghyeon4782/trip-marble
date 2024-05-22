@@ -9,9 +9,6 @@ import { getTopAttractionInfo } from "@/api/attractionInfo";
 import { listReview, updateHits } from "@/api/review.js";
 import { getSidoList } from "@/api/board.js";
 
-import seoulImage from '@/assets/Seoul-attractions-N-Seoul-Tower.jpg';
-import busanImage from '@/assets/busan.jpg'
-
 const router = useRouter();
 
 const carousel = ref(null);
@@ -216,24 +213,17 @@ function showBoardMain(sidoId, imageId) {
 .carousel-container {
     position: relative;
     width: 100%;
-    /* max-width: 1200px; */
     margin: 0 auto;
     overflow: hidden;
 }
 
 .carousel-slide {
     display: flex;
-    /* justify-content: center; */
-    /* align-items: center; */
     width: 100%;
     height: 400px;
-    /* Fixed height for the slide */
 }
 
 .carousel-image {
-    /* height: 00%; */
-    /* object-fit: ; */
-    /* Ensures the image covers the slide without distortion */
     cursor: pointer;
 }
 
@@ -286,7 +276,6 @@ function showBoardMain(sidoId, imageId) {
 .image-item {
     position: relative;
     width: 25%;
-    /* 각 이미지가 4개씩 가로로 배치되도록 25% 너비 */
 }
 
 .profile-image {
