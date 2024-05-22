@@ -110,6 +110,11 @@ const router = createRouter({
           name: "find-password",
           component: () => import("@/components/auth/FindPasswordForm.vue"),
         },
+        {
+          path: "write/:boardLogId",
+          name: "write-board-review",
+          component: () => import("@/components/mypage/BoardReviewWrite.vue"),
+        }
       ]
     },
     {
@@ -117,6 +122,24 @@ const router = createRouter({
       name: "board",
       component: () => import("@/components/board/BoardMain.vue"),
     },
+    {
+      path: '/map',
+      name: 'map',
+      // component: TheAuthView,
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import("@/views/TheMapView.vue"),
+      redirect: { name: "map-main" },
+      children: [
+        {
+          path: "main",
+          name: "map-main",
+          component: () => import("@/components/map/MemberMap.vue"),
+        },
+      ]
+    },
+
   ]
 })
 

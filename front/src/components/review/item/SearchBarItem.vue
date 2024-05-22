@@ -1,19 +1,15 @@
 <script setup>
-import { ref, watch, defineEmits } from 'vue';
+import { ref, watch, onMounted, defineEmits } from 'vue';
 
 const emit = defineEmits(['search'])
 
-const regions = ref([
-  { id: '1', name: '서울' },
-  { id: '2', name: '경기' },
-  { id: '3', name: '세종' },
-  { id: '4', name: '강원' },
-  { id: '5', name: '충청' },
-  { id: '6', name: '전북' },
-  { id: '7', name: '전라' },
-  { id: '8', name: '경상' },
-  { id: '9', name: '제주' }
-]);
+import { getSidoList } from "@/api/board.js";
+
+const sidos = ref([]);
+
+onMounted(() => {
+  getSidos();
+})
 
 const showFilterModal = ref(false);
 const keyword = ref('');
@@ -42,7 +38,7 @@ const setSortOrder = (order) => {
 };
 
 function setRegionId() {
-  if (selectedRegions.value.length === regions.value.length) {
+  if (selectedRegions.value.length === sidos.value.length) {
     regionId.value = [];
   } else {
     regionId.value = selectedRegions.value;
@@ -50,15 +46,29 @@ function setRegionId() {
 }
 
 const toggleAllRegions = () => {
-  if (selectedRegions.value.length === regions.value.length) {
+  if (selectedRegions.value.length === sidos.value.length) {
     selectedRegions.value = [];
   } else {
-    selectedRegions.value = regions.value.map(region => region.id);
+    selectedRegions.value = sidos.value.map(sido => sido.sidoId);
   }
 };
 
+const getSidos = () => {
+  console.log("sido 목록 요청");
+  getSidoList(
+    ({ data }) => {
+      console.log(data.msg)
+      console.log(data);
+      sidos.value = data.data;
+    },
+    (error) => {
+      console.log(error);
+    }
+  );
+};
+
 watch(selectedRegions, () => {
-  if (selectedRegions.value.length === regions.value.length) {
+  if (selectedRegions.value.length === sidos.value.length) {
     allCheckbox.value = true;
   } else {
     allCheckbox.value = false;
@@ -90,9 +100,9 @@ watch(selectedRegions, () => {
     <div class="filter-group">
       <input type="checkbox" id="all" value="전체" v-model="allCheckbox" @change="toggleAllRegions">
       <label for="all">전체</label><br>
-      <div v-for="region in regions" :key="region.id" class="checkbox-item">
-        <input type="checkbox" :id="region.id" :value="region.id" v-model="selectedRegions">
-        <label :for="region.id">{{ region.name }}</label><br>
+      <div v-for="sido in sidos" :key="sido.sidoId" class="checkbox-item">
+        <input type="checkbox" :id="sido.sidoId" :value="sido.sidoId" v-model="selectedRegions">
+        <label :for="sido.sidoId">{{ sido.name }}</label><br>
       </div>
     </div>
   </div>

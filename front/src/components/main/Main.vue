@@ -7,9 +7,6 @@ import { getTopAttractionInfo } from "@/api/attractionInfo";
 import { listReview, updateHits } from "@/api/review.js";
 import { getSidoList } from "@/api/board.js";
 
-import seoulImage from '@/assets/Seoul-attractions-N-Seoul-Tower.jpg';
-import busanImage from '@/assets/busan.jpg'
-
 const carousel = ref(null);
 const attractions = ref({});
 const reviews = ref([]);
