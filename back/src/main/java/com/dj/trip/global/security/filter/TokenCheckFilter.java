@@ -41,6 +41,11 @@ public class TokenCheckFilter extends OncePerRequestFilter {
             return;
         }
 
+        if ("GET".equalsIgnoreCase(request.getMethod()) && path.startsWith("/api/sido") && request.getCookies() == null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         log.info("------------------------------------------Token Check Filter------------------------------------------");
 
         try {
@@ -72,6 +77,10 @@ public class TokenCheckFilter extends OncePerRequestFilter {
             log.info("------------------------------------------BADTYPEJwtException------------------------------------------");
             throw new AccessTokenException(AccessTokenException.TOKEN_ERROR.BADTYPE);
         }*/
+
+        if (tokenStr == null) {
+            throw new AccessTokenException(AccessTokenException.TOKEN_ERROR.UNACCEPT);
+        }
 
         try {
             Map<String, Object> values = jwtUtil.validateToken(tokenStr);
