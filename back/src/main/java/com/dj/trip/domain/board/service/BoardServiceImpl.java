@@ -3,20 +3,22 @@ package com.dj.trip.domain.board.service;
 import com.dj.trip.domain.attractionInfo.AttractionInfoVo;
 import com.dj.trip.domain.attractionInfo.mapper.AttractionInfoMapper;
 import com.dj.trip.domain.board.BoardInfoVo;
-import com.dj.trip.domain.board.BoardVo;
 import com.dj.trip.domain.board.MemberBoardMapVo;
+import com.dj.trip.domain.board.BoardVo;
 import com.dj.trip.domain.board.dto.*;
 import com.dj.trip.domain.board.mapper.BoardMapper;
 import com.dj.trip.domain.score.mapper.ScoreMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class BoardServiceImpl implements BoardService {
 
     private final BoardMapper boardMapper;
