@@ -1,6 +1,8 @@
 <script setup>
 import defaultImage from '@/assets/defaultImage.jpg'
 import { ref, watch, onMounted } from 'vue';
+import { useRouter } from "vue-router";
+import Swal from "sweetalert2";
 
 
 import { getTopAttractionInfo } from "@/api/attractionInfo";
@@ -9,6 +11,8 @@ import { getSidoList } from "@/api/board.js";
 
 import seoulImage from '@/assets/Seoul-attractions-N-Seoul-Tower.jpg';
 import busanImage from '@/assets/busan.jpg'
+
+const router = useRouter();
 
 const carousel = ref(null);
 const attractions = ref({});
@@ -90,7 +94,7 @@ function incrementHits(reviewid) {
 
 const handleImageClick = (sidoId) => {
     console.log("해당 시도를 찾습니다." + sidoId);
-    // url 요청
+    onGetCharacterSelection(sidoId);
 };
 
 const nextSlide = () => {
@@ -104,6 +108,57 @@ const prevSlide = () => {
         carousel.value.prev();
     }
 };
+
+
+const onGetCharacterSelection = (sidoId) => {
+  Swal.fire({
+    title: "캐릭터를 선택해주세요!",
+    html: `
+      <button class="image-button" data-id="1" style="margin: 5px; border: none; background: none;">
+        <img src="src/assets/서두나.png" style="border-radius: 50%; width: 100px; height: 100px; cursor: pointer;" alt="서두나">
+        <span style="display: block; text-align: center;">서두나</span>
+      </button>
+      <button class="image-button" data-id="2" style="margin: 5px; border: none; background: none;">
+        <img src="src/assets/박찬호.png" style="border-radius: 50%; width: 100px; height: 100px; cursor: pointer;" alt="박찬호">
+        <span style="display: block; text-align: center;">박찬호</span>
+      </button>
+      <button class="image-button" data-id="3" style="margin: 5px; border: none; background: none;">
+        <img src="src/assets/김태균.png" style="border-radius: 50%; width: 100px; height: 100px; cursor: pointer;" alt="김태균">
+        <span style="display: block; text-align: center;">김태균</span>
+      </button>
+    `,
+    showCloseButton: true,
+    showConfirmButton: false,
+    focusConfirm: false,
+    allowOutsideClick: false,
+    didOpen: () => {
+      const imageButtons =
+        Swal.getHtmlContainer().querySelectorAll(".image-button");
+      imageButtons.forEach((imageButton) => {
+        imageButton.addEventListener("click", () => {
+          const imageId = imageButton.getAttribute("data-id");
+          Swal.close();
+          Swal.fire({
+            title: "부루마블 시작!",
+            text: "즐거운 부루마블하세요🎉🎉",
+            imageUrl: "src/assets/welcome.jpg",
+            imageWidth: 400,
+            imageHeight: 200,
+            imageAlt: "환영",
+            confirmButtonText: "확인",
+          });
+          showBoardMain(sidoId, imageId);
+        });
+      });
+    },
+  });
+};
+
+
+function showBoardMain(sidoId, imageId) {
+  router.push({ name: "board", params: { sidoId, imageId } });
+}
+
 
 
 </script>
