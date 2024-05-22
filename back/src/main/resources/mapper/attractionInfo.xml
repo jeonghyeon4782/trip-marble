@@ -36,7 +36,8 @@
         where b.member_id = #{memberId}
         group by b.member_board_log_id,
                  a.attraction_info_id,
-                 s.sido_id limit 0,20
+                 s.sido_id
+        order by b.member_board_log_id desc limit 0,20
     </select>
 
     <select id="selectTop4AttractionInfo" resultType="getTop4AttractionInfoResponse">
