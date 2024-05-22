@@ -22,18 +22,18 @@
         select b.member_board_log_id                   as boardLogId,
                a.attraction_info_id,
                a.name,
-               a.url,
+               a.url                                   as imageUrl,
                s.name                                  as sidoName,
                b.create_date,
                if(count(r.review_id) = 0, false, true) as isWrite
         from member_board_log b
                  join attraction_info a
-                      on b.attraction_info_id = b.attraction_info_id
+                      on b.attraction_info_id = a.attraction_info_id
                  join sido s
                       on a.sido_id = s.sido_id
                  left join review r
                            on a.attraction_info_id = r.attraction_info_id
-        where b.member_id = "sdf"
+        where b.member_id = #{memberId}
         group by b.member_board_log_id,
                  a.attraction_info_id,
                  s.sido_id limit 0,20

@@ -9,7 +9,7 @@ import java.util.List;
 public interface AttractionInfoService {
     GetAttarctionInfoResponseDto getAttractionInfoNowLocation(int memberBoardMapId);
 
-    GetAttractionInfoByMemberIdResponse getAttractionInfoByMemberId(String memberId);
+    List<GetAttractionInfoByMemberIdResponse> getAttractionInfoByMemberId(String memberId);
 
     List<AttractionInfoVo> getTop4AttractionInfo();
 }

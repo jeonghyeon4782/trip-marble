@@ -24,7 +24,7 @@ public class AttractionInfoServiceImpl implements AttractionInfoService {
     }
 
     @Override
-    public GetAttractionInfoByMemberIdResponse getAttractionInfoByMemberId(String memberId) {
+    public List<GetAttractionInfoByMemberIdResponse> getAttractionInfoByMemberId(String memberId) {
         return attractionInfoMapper.selectAttractionInfoByMemberId(memberId);
     }
 
