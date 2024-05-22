@@ -147,11 +147,11 @@ function handleBoardClick() {
       <RouterLink :to="{ name: 'main' }">
         <p>Home</p>
       </RouterLink>
-      <a @click.prevent="handleBoardClick">Board</a>
+      <a v-if="isLogin" @click.prevent="handleBoardClick">Board</a>
       <RouterLink :to="{ name: 'review' }">
         <p>Review</p>
       </RouterLink>
-      <RouterLink :to="{ name: 'review-list' }">
+      <RouterLink :to="{ name: 'map' }">
         <p>Review</p>
       </RouterLink>
     </div>
