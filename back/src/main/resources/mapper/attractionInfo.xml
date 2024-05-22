@@ -22,18 +22,18 @@
         select b.member_board_log_id                   as boardLogId,
                a.attraction_info_id,
                a.name,
-               a.url,
+               a.url                                   as imageUrl,
                s.name                                  as sidoName,
                b.create_date,
                if(count(r.review_id) = 0, false, true) as isWrite
         from member_board_log b
                  join attraction_info a
-                      on b.attraction_info_id = b.attraction_info_id
+                      on b.attraction_info_id = a.attraction_info_id
                  join sido s
                       on a.sido_id = s.sido_id
                  left join review r
                            on a.attraction_info_id = r.attraction_info_id
-        where b.member_id = "sdf"
+        where b.member_id = #{memberId}
         group by b.member_board_log_id,
                  a.attraction_info_id,
                  s.sido_id limit 0,20
@@ -51,4 +51,15 @@
         group by a.attraction_info_id
         order by count(r.review_id) desc, count(l.member_board_like_id) desc limit 4
     </select>
+
+    <select id="selectReviewIdByBoardlogid" resultType="GetReviewIdResponse">
+        select r.review_id
+        from member_board_log as l
+                 join review as r
+                      on l.member_id = r.member_id
+        where l.member_id = #{memberId}
+          and l.member_board_log_id = #{boardlogid}
+        order by r.review_id desc limit 1
+    </select>
+
 </mapper>

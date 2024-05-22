@@ -1,8 +1,10 @@
 package com.dj.trip.domain.attractionInfo.service;
 
+import com.dj.trip.domain.attractionInfo.Attraction;
 import com.dj.trip.domain.attractionInfo.AttractionInfoVo;
 import com.dj.trip.domain.attractionInfo.dto.GetAttarctionInfoResponseDto;
 import com.dj.trip.domain.attractionInfo.dto.response.GetAttractionInfoByMemberIdResponse;
+import com.dj.trip.domain.attractionInfo.dto.response.GetReviewIdResponse;
 import com.dj.trip.domain.attractionInfo.mapper.AttractionInfoMapper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -24,7 +26,7 @@ public class AttractionInfoServiceImpl implements AttractionInfoService {
     }
 
     @Override
-    public GetAttractionInfoByMemberIdResponse getAttractionInfoByMemberId(String memberId) {
+    public List<GetAttractionInfoByMemberIdResponse> getAttractionInfoByMemberId(String memberId) {
         return attractionInfoMapper.selectAttractionInfoByMemberId(memberId);
     }
 
@@ -32,4 +34,11 @@ public class AttractionInfoServiceImpl implements AttractionInfoService {
     public List<AttractionInfoVo> getTop4AttractionInfo() {
         return attractionInfoMapper.selectTop4AttractionInfo();
     }
+
+    @Override
+    public GetReviewIdResponse getReviewIdByBoardlogid(int boardlogid, String memberId) {
+        return attractionInfoMapper.selectReviewIdByBoardlogid(new Attraction(boardlogid,memberId));
+    }
+
+
 }

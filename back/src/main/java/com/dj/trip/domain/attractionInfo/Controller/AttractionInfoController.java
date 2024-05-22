@@ -41,4 +41,14 @@ public class AttractionInfoController {
                 new ResponseDto<>(HttpStatus.OK.value(), "사용자가 간 관광지 조회 성공",
                         attractionInfoService.getTop4AttractionInfo()));
     }
+
+    @GetMapping("/boardlogid/{boardlogid}")
+    public ResponseEntity<ResponseDto<?>> getReviewIdByBoardlogid(HttpServletRequest request,
+                                                                  @PathVariable("boardlogid") int boardlogid) {
+        String memberId = jwtUtil.getMemberIdByToken(request);
+        return ResponseEntity.status(HttpStatus.OK.value()).body(
+                new ResponseDto<>(HttpStatus.OK.value(), "사용자가 간 관광지 조회 성공",
+                        attractionInfoService.getReviewIdByBoardlogid(boardlogid, memberId)));
+    }
+
 }
