@@ -23,13 +23,13 @@ const review = ref({
     attractionInfoId: '',
 });
 
-const attractions = ref([
-    { attractionInfoId: 1, name: '어트렉션1', location: '위치1', created_at: '2024-05-18' },
-    { attractionInfoId: 2, name: '어트렉션2', location: '위치2', created_at: '2024-05-19' },
-    // 기존의 어트렉션 데이터...
-])
-
 const boardLogs = ref({});
+
+if(props.type =="boardReview"){
+    let { boardLogId } = route.params
+    console.log("boardReview",review.value.attractionInfoId, "boardLogId",boardLogId);
+    review.value.attractionInfoId=boardLogId;
+}
 
 
 if (props.type == "modify") {
@@ -181,9 +181,9 @@ function goBack() {
                 <label for="attractionList">보드 기록 목록</label>
                 <select id="attractionList" v-model="review.attractionInfoId">
                     <option disabled value="">리뷰를 작성할 보드 기록을 선택하세요</option>
-                    <option v-for="(boardLogs, index) in boardLogs" :key="index"
-                        :value="boardLogs.attractionInfoId">
-                        이름: {{ boardLogs.name }} | 위치: {{ boardLogs.sidoName }} | 생성일: {{ boardLogs.createDate }}
+                    <option v-for="boardLog in boardLogs" :key="boardLog.attractionInfoId"
+                        :value="boardLog.attractionInfoId">
+                        이름: {{ boardLog.name }} | 위치: {{ boardLog.sidoName }} | 생성일: {{ boardLog.createDate }}
                     </option>
                 </select>
             </div>

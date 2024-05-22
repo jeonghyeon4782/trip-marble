@@ -10,7 +10,12 @@ function getTopAttractionInfo(success, fail) {
     local.get(`/api/attraction-info/top`).then(success).catch(fail);
 }
 
+function getReviewId(boardlogid, success, fail) {
+    local.get(`/api/attraction-info/boardlogid/${boardlogid}`).then(success).catch(fail);
+}
+
 export {
     listAttractionInfo,
     getTopAttractionInfo,
+    getReviewId,
 };
