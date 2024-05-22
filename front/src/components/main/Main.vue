@@ -1,18 +1,24 @@
 <script setup>
 import defaultImage from '@/assets/defaultImage.jpg'
-const imageAlt = "image1"; // alt 속성 설정
 import { ref, watch, onMounted } from 'vue';
+
 
 import { getTopAttractionInfo } from "@/api/attractionInfo";
 import { listReview, updateHits } from "@/api/review.js";
+import { getSidoList } from "@/api/board.js";
 
+import seoulImage from '@/assets/Seoul-attractions-N-Seoul-Tower.jpg';
+import busanImage from '@/assets/busan.jpg'
 
+const carousel = ref(null);
 const attractions = ref({});
 const reviews = ref([]);
+const sidos = ref([]);
 
 onMounted(() => {
     getAttractions();
     getReviewList();
+    getSidos();
 })
 
 const param = ref({
@@ -53,6 +59,21 @@ const getReviewList = () => {
     );
 };
 
+const getSidos = () => {
+    console.log("sido 목록 요청");
+    getSidoList(
+        ({ data }) => {
+            console.log(data.msg)
+            console.log(data);
+            sidos.value = data.data;
+        },
+        (error) => {
+            console.log(error);
+        }
+    );
+};
+
+
 function incrementHits(reviewid) {
     updateHits(
         reviewid,
@@ -67,22 +88,45 @@ function incrementHits(reviewid) {
     );
 }
 
+const handleImageClick = (sidoId) => {
+    console.log("해당 시도를 찾습니다." + sidoId);
+    // url 요청
+};
+
+const nextSlide = () => {
+    if (carousel.value) {
+        carousel.value.next();
+    }
+};
+
+const prevSlide = () => {
+    if (carousel.value) {
+        carousel.value.prev();
+    }
+};
+
 
 </script>
 
 <template>
     <main class="main-wrapper">
-        <div class="description">
-            <h2>핫한 여행지</h2>
-            <div class="image-wrapper">
-                <div class="moving-image">
-                    <img v-for="(image, index) in images" :key="index" :src="image.src" :alt="image.alt" @click="moveSlide(index)">
-                </div>
-            </div>
 
-            <!-- Description Content Here -->
-            <p>Description of the images goes here.</p>
+        <div class="carousel-container">
+            <Carousel ref="carousel" :items-to-show="1" :items-to-scroll="1" :wrapAround="true" :autoplay="2000"
+                pauseAutoplayOnHover="true">
+                <Slide v-for="sido in sidos" :key="sido" class="carousel-slide">
+                    <div class="sido-info">
+                        <p>
+                            {{ sido.name }}
+                        </p>
+                    </div>
+                    <img :src="sido.imageUrl" alt="carousel image" @click="handleImageClick(sido.sidoId)"
+                        class="carousel-image" />
+                </Slide>
+            </Carousel>
         </div>
+        <button @click="prevSlide" class="carousel-nav-button prev-button">‹</button>
+        <button @click="nextSlide" class="carousel-nav-button next-button">›</button>
 
         <div class="gray-band">
             <h2>핫한 여행지</h2>
@@ -114,18 +158,54 @@ function incrementHits(reviewid) {
 </template>
 
 <style scoped>
-.image-wrapper {
-  overflow: hidden;
+.carousel-container {
+    position: relative;
+    width: 100%;
+    /* max-width: 1200px; */
+    margin: 0 auto;
+    overflow: hidden;
 }
 
-.moving-image {
-  display: flex;
+.carousel-slide {
+    display: flex;
+    /* justify-content: center; */
+    /* align-items: center; */
+    width: 100%;
+    height: 400px;
+    /* Fixed height for the slide */
 }
 
-.moving-image img {
-  flex: 0 0 auto;
-  width: 100%;
-  height: auto;
+.carousel-image {
+    /* height: 00%; */
+    /* object-fit: ; */
+    /* Ensures the image covers the slide without distortion */
+    cursor: pointer;
+}
+
+.carousel-nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.prev-button {
+    left: 10px;
+}
+
+.next-button {
+    right: 10px;
+}
+
+.sido-info {
+    font-size: 30px;
+    width: 100%;
+    text-align: left;
 }
 
 .description {
