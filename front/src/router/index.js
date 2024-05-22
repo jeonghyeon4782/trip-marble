@@ -1,6 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import TheMainView from '@/views/TheMainView.vue'
-import TheOauthView from '@/views/TheOauthView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -114,7 +112,11 @@ const router = createRouter({
         },
       ]
     },
-
+    {
+      path: "/board",
+      name: "board",
+      component: () => import("@/components/board/BoardMain.vue"),
+    },
   ]
 })
 

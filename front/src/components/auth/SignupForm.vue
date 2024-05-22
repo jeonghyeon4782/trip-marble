@@ -26,10 +26,16 @@ const member = ref({
   email: "",
   oauthServiceType: "GENERAL",
 });
+// 중복검사 여부
+const isDuplicateCheckMemberId = ref(false);
+const isDuplicateCheckNickname = ref(false);
+// 이메일 인증 여부
+const isAuthenticationEmail = ref(false);
 
 if (email) {
   member.value.email = email;
-}
+  isAuthenticationEmail.value = true;
+} 
 
 if (oauthServerType) {
   member.value.oauthServiceType = oauthServerType;
@@ -142,12 +148,6 @@ function signup() {
     (error) => console.log(error)
   );
 }
-
-// 중복검사 여부
-const isDuplicateCheckMemberId = ref(false);
-const isDuplicateCheckNickname = ref(false);
-// 이메일 인증 여부
-const isAuthenticationEmail = ref(false);
 
 const showSwal = (icon, title, text) => {
   Swal.fire({
@@ -378,7 +378,7 @@ const onAuthenticationEmail = () => {
             disabled
           />
           <button
-            v-if="email || !isAuthenticationEmail"
+            v-if="!isAuthenticationEmail"
             @click.prevent="onAuthenticationEmail"
           >
             이메일 인증

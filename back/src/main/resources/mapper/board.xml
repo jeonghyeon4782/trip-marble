@@ -4,14 +4,14 @@
 <mapper namespace="com.dj.trip.domain.board.mapper.BoardMapper">
 
     <select id="selectMemberBoardMapBySidoIdAndMemberId" resultType="MemberBoardMapVo">
-        SELECT member_board_map_id, member_id, sido_id, now_location, is_island, island_cnt
+        SELECT member_board_map_id, member_id, sido_id, now_location, island_cnt
         FROM member_board_map
         WHERE sido_id = #{sidoId}
           AND member_id = #{memberId}
     </select>
 
     <select id="selectMemberBoardMapByMemberBoardMapId" resultType="MemberBoardMapVo">
-        SELECT member_board_map_id, member_id, sido_id, now_location, is_island, island_cnt
+        SELECT member_board_map_id, member_id, sido_id, now_location, island_cnt
         FROM member_board_map
         WHERE member_board_map_id = #{memberBoardMapId}
     </select>

@@ -41,10 +41,6 @@ const horseTopArr = [
   -25, -25, -25, -25, -25, -25, -25, 100, 225, 350, 475, 600, 725, 850,
 ];
 
-const token =
-  "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTU5MjQwNTEsImlhdCI6MTcxNTkwNjA1MSwibWVtYmVySWQiOiJzc2FmeTEyMyJ9.lp3-2yj9aThOIBwfaB5OVymKb9Gnl6aqkGKr35SKuiA";
-axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
 const getRandCard = () => {
   return Math.round(Math.random() * 7 + 1);
 }
@@ -135,7 +131,7 @@ const islandSwal = (islandCnt) => {
 const doubleSwal = () => {
   Swal.fire({
     title: "DOUBLE🎊🎊",
-    html: "같은 숫자가 나오셨네요! 주사위를 한번 더 굴릴 수 있어요!",
+    html: "같은 숫자가 나오셨네요! 50점을 획득합니다!",
     imageUrl: "src/assets/double.jpg",
     imageWidth: 400,
     imageHeight: 250,
@@ -224,6 +220,7 @@ const moveHorse = (diceValues) => {
           mapInfo.value.now !== 3
         ) {
           doubleSwal();
+          updateScore(50);
         } else {
           if (mapInfo.value.now === 7) {
             islandSwal(diceValues[3]);
