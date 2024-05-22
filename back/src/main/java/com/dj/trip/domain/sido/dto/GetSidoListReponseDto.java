@@ -12,5 +12,6 @@ public class GetSidoListReponseDto {
 
     private int sidoId;
     private String name;
+    private String imageUrl;
 
 }
