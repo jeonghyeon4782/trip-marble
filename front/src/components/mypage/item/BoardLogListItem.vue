@@ -102,7 +102,7 @@ function addReviewClick(boardLogId){
   margin-bottom: 10px;
 }
 
-.check-review-icon {
+.check-review-icon, .add-review-icon {
   width: 30px;
   height: 30px;
   margin-left: 10px;
