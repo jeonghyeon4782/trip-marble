@@ -5,6 +5,7 @@ import com.dj.trip.domain.member.service.MemberService;
 import com.dj.trip.global.dto.ResponseDto;
 import com.dj.trip.global.util.JWTUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,10 +50,10 @@ public class MemberController {
 
     @DeleteMapping({"{password}"})
     public ResponseEntity<ResponseDto<?>> deleteReview(@PathVariable("password") String password,
-                                                       HttpServletRequest request
+                                                       HttpServletRequest request, HttpServletResponse response
     ) {
         String memberId = jwtUtil.getMemberIdByToken(request);
-        memberService.deleteMember(password, memberId);
+        memberService.deleteMember(password, memberId, response);
         return ResponseEntity.status(HttpStatus.NO_CONTENT.value()).body(
                 new ResponseDto<>(HttpStatus.NO_CONTENT.value(), "회원 삭제 완료", null));
     }

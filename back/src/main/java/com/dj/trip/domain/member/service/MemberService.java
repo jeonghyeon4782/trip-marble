@@ -37,5 +37,5 @@ public interface MemberService {
 
     void modifyMember(String memberId, ModifyMemberRequest modigyMemberRequest, MultipartFile file);
 
-    void deleteMember(String password, String memberId);
+    void deleteMember(String password, String memberId, HttpServletResponse response);
 }
