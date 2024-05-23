@@ -3,6 +3,7 @@ import defaultImage from '@/assets/defaultImage.jpg'
 import { ref, defineProps, onMounted, watch, computed } from 'vue';
 import moment from 'moment-timezone';
 import { listComment, registComment, modifyComment, deleteComment } from "@/api/comment.js";
+import Swal from "sweetalert2";
 
 import PageNavigation from '@/components/common/PageNavigation.vue'
 
@@ -34,6 +35,7 @@ onMounted(() => {
     isLogin.value = false;
   }
   getCommentList();
+  console.dir(comments.value)
 })
 
 
@@ -83,7 +85,9 @@ function writeComment() {
       let msg = "댓글등록 처리시 문제 발생했습니다."
       console.log(response)
       if (response.status == 201) msg = "댓글 등록이 완료되었습니다."
-      alert(msg)
+      inputComment.value.content = '';
+      getCommentList();
+      showSwal('success', msg, null)
     },
     (error) => console.log(error)
   )
@@ -104,7 +108,7 @@ watch(
 
 function onSubmit() {
   if (contentErrMsg.value) {
-    alert(contentErrMsg.value)
+    showSwal('error', contentErrMsg.value, null)
   } else {
     writeComment();
   }
@@ -128,6 +132,15 @@ function switchEditing(comment) {
   }
 };
 
+const showSwal = (icon, title, text) => {
+  Swal.fire({
+    icon: icon,
+    title: title,
+    text: text,
+    confirmButtonText: '확인'
+  });
+};
+
 function saveEdit(comment) {
   watch(
     () => comment.newContent,
@@ -141,13 +154,12 @@ function saveEdit(comment) {
   )
 
   if (contentErrMsg.value) {
-    alert(contentErrMsg.value)
+    showSwal('error', contentErrMsg.value, null)
   } else {
     inputComment.value.content = comment.newContent;
     console.log(inputComment.value.content, comment.newContent)
     editComment(comment.data.commentId);
   }
-  location.reload();
 }
 
 function editComment(commentId) {
@@ -159,7 +171,8 @@ function editComment(commentId) {
       let msg = "댓글수정 처리시 문제 발생했습니다."
       console.log(response)
       if (response.status == 201) msg = "댓글 수정이 완료되었습니다."
-      alert(msg)
+      showSwal('success', msg, null);
+      getCommentList();
     },
     (error) => console.log(error)
   )
@@ -167,29 +180,39 @@ function editComment(commentId) {
 
 function onDeleteComment(commentId) {
   // comment의 id로 삭제
-  if (window.confirm("정말 삭제하시겠습니까?")) {
-    console.log("댓글 삭제 요청", commentId)
-    deleteComment(
-      commentId,
-      (response) => {
-        let msg = "댓글삭제 처리시 문제 발생했습니다."
-        console.log(response)
-        if (response.status == 204) msg = "댓글 삭제가 완료되었습니다."
-        alert(msg)
-      },
-      (error) => console.log(error)
-    )
-    location.reload();
-  }
+  Swal.fire({
+    title: '정말 삭제하시겠습니까?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: '확인',
+    cancelButtonText: '취소'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      console.log("댓글 삭제 요청", commentId)
+      deleteComment(
+        commentId,
+        (response) => {
+          let msg = "댓글삭제 처리시 문제 발생했습니다."
+          console.log(response)
+          if (response.status == 204) msg = "댓글 삭제가 완료되었습니다."
+          showSwal('success', msg, null)
+          getCommentList();
+        },
+        (error) => console.log(error)
+      )
+    }
+  });
 };
-
 </script>
 
 <template>
   <section>
     <!-- 댓글 섹션 -->
     <div class="comments-section">
-      <h2>댓글 댓글</h2>
+      <h2>댓글</h2>
+      <hr>
       <!-- 댓글 목록 -->
       <div class="comments">
         <div class="comment" v-for="comment in comments" :key="comment.data.commentId">
@@ -214,7 +237,7 @@ function onDeleteComment(commentId) {
       </div>
 
       <div v-if="total==0">
-        <p>댓글이 비어있어</p>
+        <p>댓글이 없습니다.</p>
       </div>
       <div v-else>
         <PageNavigation :current-page="currentPage" :total-page="totalPage" @pageChange="onPageChange">
@@ -222,9 +245,9 @@ function onDeleteComment(commentId) {
       </div>
 
       <!-- 댓글 작성 폼 -->
-      <form v-if="isLogin" class="comment-form" @submit="onSubmit">
+      <form v-if="isLogin" class="comment-form" @submit.prevent="onSubmit">
         <textarea class="comment-input" placeholder="댓글을 입력하세요" v-model="inputComment.content"></textarea>
-        <button type="submit" class="comment-button">댓글 작성</button>
+        <button class="comment-button">댓글 작성</button>
       </form>
     </div>
   </section>
@@ -257,6 +280,11 @@ section {
 .comment {
   border-bottom: 1px solid #ccc;
   padding-bottom: 20px;
+  margin-bottom: 20px;
+}
+
+hr {
+  margin-top: 20px;
   margin-bottom: 20px;
 }
 
@@ -304,6 +332,7 @@ section {
 .comment-input {
   width: 100%;
   height: 100px;
+  margin-top: 50px;
   margin-bottom: 10px;
   padding: 10px;
   border: 1px solid #ccc;
@@ -312,13 +341,22 @@ section {
 }
 
 .comment-button {
-  padding: 10px 20px;
-  background-color: #E1CCEC;
-  color: white;
-  border: none;
+
+  margin-top: 10px;
+  display: block;
+  width: 20%; /* 입력창과 동일한 너비로 조정 */
+  padding: 10px;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  font-size: 1rem;
+  background-color: white;
+  color: black;
+  text-align: center;
   cursor: pointer;
+  margin: 0 auto; /* 중앙 정렬 */
+  font-family: "Gaegu", cursive;
+  font-size: 25px;
+  font-weight: bold;
+
 }
 
 .comment-button:hover {

@@ -106,13 +106,14 @@ const getboardLogs = () => {
 
 function editClick() {
   Swal.fire({
-    title: 'Enter your password',
+    title: '비밀번호를 입력해주세요.',
     input: 'password',
     inputAttributes: {
       autocapitalize: 'off'
     },
     showCancelButton: true,
-    confirmButtonText: 'Submit',
+    confirmButtonText: '확인',
+    cancelButtonText: '취소',
     showLoaderOnConfirm: true,
     preConfirm: (password) => {
       return getEditMember(password)
@@ -146,13 +147,14 @@ function editClick() {
 
 function deleteClick() {
   Swal.fire({
-    title: 'Enter your password',
+    title: '비밀번호를 입력해주세요.',
     input: 'password',
     inputAttributes: {
       autocapitalize: 'off'
     },
     showCancelButton: true,
-    confirmButtonText: 'Submit',
+    confirmButtonText: '확인',
+    cancelButtonText: '취소',
     showLoaderOnConfirm: true,
     preConfirm: (password) => {
       return ondeleteMember(password)
@@ -192,12 +194,12 @@ function deleteClick() {
     <img :src="member.imageUrl ? member.imageUrl : defaultImage" class="profile-picture">
     <div class="profile-info">
       <div class="profile-top">
-        <h2>{{ member.nickname }}</h2>
+        <h1>{{ member.nickname }}</h1>
         <img :src="editIcon" class="edit-icon" @click="editClick">
         <img :src="deleteIcon" class="delete-icon" @click="deleteClick">
       </div>
-      <p class="member-id">{{ member.memberId }}</p>
-      <p class="member-email">{{ member.email }}</p>
+      <p class="member-id" style="font-size: 25px;">{{ member.memberId }}</p>
+      <p class="member-email" style="font-size: 25px;">{{ member.email }}</p>
     </div>
     <div class="info-container">
       <label for="posts">Posts</label>
@@ -207,8 +209,7 @@ function deleteClick() {
     </div>
   </div>
   <div class="board-log">
-    <h2>My Trip Log</h2>
-
+    <h2 style="margin-top: 100px;">나의 여행일기</h2>
     <!-- My Trip log -->
     <div class="board-log-wrapper">
       <div class="board-log-list">
@@ -227,23 +228,28 @@ function deleteClick() {
 
 .profile-card {
   display: flex;
+  position: relative; /* 추가 */
   margin: 0 auto;
-  width: 70%;
+  width: 80%;
+  height: 200px;
   align-items: center;
   padding: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid #f1ebeb;
   border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .profile-picture {
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 150px;
+  border: 3px solid #f1ebeb;
   border-radius: 50%;
   margin-right: 20px;
 }
 
 .profile-info {
+  margin-left: 50px;
+  margin-bottom: 30px;
   flex: 1;
 }
 
@@ -274,26 +280,34 @@ function deleteClick() {
   font-size: 20px
 }
 
-.edit-icon,
-.delete-icon {
+.edit-icon {
   width: 30px;
   height: 30px;
   margin-left: 10px;
+  margin-top: 23px;
+  cursor: pointer;
+}
+
+.delete-icon {
+  position: absolute; /* 추가 */
+  top: 20px; /* 적절한 값으로 조절 */
+  right: 30px; /* 적절한 값으로 조절 */
   cursor: pointer;
 }
 
 .board-log{
-  width: 70%;
+  width: 85%;
   margin: 0 auto;
 }
 
 .board-log-wrapper {
+  margin-top: 50px;
   overflow-x: auto;
   white-space: nowrap;
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 1px solid gray;
+  border-radius: 1%;
 }
 
 .board-log-list {
@@ -306,5 +320,6 @@ function deleteClick() {
   flex: 0 0 25%;
   max-width: 25%; 
   box-sizing: border-box;
+  background-color: white;
 }
 </style>

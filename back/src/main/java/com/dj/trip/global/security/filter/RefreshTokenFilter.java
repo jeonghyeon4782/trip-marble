@@ -68,34 +68,30 @@ public class RefreshTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        //Refresh Token의 유효시간이 얼마 남지 않은 경우
+        // Refresh Token의 유효시간이 얼마 남지 않은 경우
         Integer exp = (Integer) refreshClaims.get("exp");
-        Date expTime = new Date(Instant.ofEpochMilli(exp).toEpochMilli());
+        Date expTime = new Date(exp * 1000L);  // Exp is in seconds, convert to milliseconds
         Date current = new Date(System.currentTimeMillis());
 
-        //만료 시간과 현재 시간의 간격 계산
-        //만일 3일 미만인 경우에는 Refresh Token도 다시 생성
-        long gapTime = (expTime.getTime() - current.getTime());
+        // 만료 시간과 현재 시간의 간격 계산
+        // 만일 3일 미만인 경우에는 Refresh Token도 다시 생성
+        long gapTime = expTime.getTime() - current.getTime();
 
         String memberId = (String) refreshClaims.get("memberId");
 
         // 이 상태까지 오면 무조건 AccessToken은 새로 생성
         log.info("------------------------------------------새로운 Access Token 생성------------------------------------------");
         String accessTokenValue = jwtUtil.getAccessToken(Map.of("memberId", memberId));
-//        String refreshTokenValue = tokens.get("refreshToken");
         String refreshTokenValue = refreshToken;
 
-        //RefrshToken이 3일도 안남았다면..
-        log.info(gapTime + " " + expTime.getTime() + " " + current.getTime());
-        if (gapTime < (1000 * 60 * 3)) {
-            if (gapTime < (1000 * 60 * 60 * 24 * 3)) {
-                log.info("------------------------------------------새로운 Refresh Token 생성------------------------------------------");
-                refreshTokenValue = jwtUtil.getRefreshToken(Map.of("memberId", memberId));
-            }
+        // RefreshToken이 3일도 안 남았다면..
+        if (gapTime < (1000 * 60 * 60 * 24 * 3)) {
+            log.info("------------------------------------------새로운 Refresh Token 생성------------------------------------------");
+            refreshTokenValue = jwtUtil.getRefreshToken(Map.of("memberId", memberId));
         }
+
         jwtUtil.setHeaderAccessToken(response, accessTokenValue);
         jwtUtil.setHeaderRefreshToken(response, refreshTokenValue);
-//        sendTokens(accessTokenValue, refreshTokenValue, response);
     }
 
     private Map<String, String> parseRequestJSON(HttpServletRequest request) {

@@ -81,9 +81,9 @@ watch(selectedRegions, () => {
   <!-- 검색 바 -->
   <div class="search-bar">
     <!-- 필터 버튼 -->
-    <button class="btn" @click="filterModal">{{ showFilterModal ? '닫기' : '필터' }}</button>
+    <button class="btn" @click="filterModal">{{ showFilterModal ? '닫기' : '지역 선택' }}</button>
     <!-- 검색 입력 필드 -->
-    <input type="text" placeholder="검색어를 입력하세요" v-model="keyword">
+    <input type="text" placeholder="검색어를 입력하세요." v-model="keyword" style="margin-left: 50px;">
     <!-- 검색 버튼 -->
     <button class="btn" @click="search">검색</button>
   </div>
@@ -96,7 +96,6 @@ watch(selectedRegions, () => {
 
   <!-- 필터 모달 -->
   <div v-if="showFilterModal" class="filter-modal">
-    <h4>지역 선택</h4>
     <div class="filter-group">
       <input type="checkbox" id="all" value="전체" v-model="allCheckbox" @change="toggleAllRegions">
       <label for="all">전체</label><br>
@@ -127,14 +126,20 @@ watch(selectedRegions, () => {
 }
 
 .search-bar button {
-  margin-right: 10px;
-  width: 100px;
-  height: 45px;
-  background-color: #E1CCEC;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
+  margin-top: 10px;
+  display: block;
+  width: 10%; 
+  padding: 10px;
+  border: 1px solid #f1ebeb;
+  border-radius: 10px;
+  background-color: white;
+  color: black;
+  text-align: center;
   cursor: pointer;
+  margin: 0 auto; /* 중앙 정렬 */
+  font-family: "Gaegu", cursive;
+  font-size: 15px;
+  font-weight: bold;
 }
 
 .sort-buttons {
@@ -144,15 +149,24 @@ watch(selectedRegions, () => {
 }
 
 .sort-buttons .btn {
-  margin-right: 10px;
-  border-radius: 20px;
-  padding: 10px 20px;
-  border: 0px;
+  margin-top: 10px;
+  margin-right: 20px;
+  display: block;
+  width: 10%; 
+  padding: 10px;
+  border: 1px solid #f1ebeb;
+  border-radius: 10px;
+  background-color: white;
+  color: black;
+  text-align: center;
+  cursor: pointer;
+  font-family: "Gaegu", cursive;
+  font-size: 15px;
+  font-weight: bold;
 }
 
 .sort-buttons .btn.active {
-  background-color: #E1CCEC;
-  color: #fff;
+  background-color: #E3EFFA;
 }
 
 .btn:hover {
@@ -164,7 +178,7 @@ watch(selectedRegions, () => {
   justify-content: center;
   align-items: center;
   border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 40px;
 }
 
 .filter-group {
@@ -180,5 +194,10 @@ watch(selectedRegions, () => {
 .filter-group input[type="checkbox"],
 .filter-group input[type="radio"] {
   margin-right: 5px;
+}
+
+input {
+  border: 1px solid #f1ebeb;
+  border-radius: 10px;
 }
 </style>

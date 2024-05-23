@@ -69,7 +69,8 @@ function onPageChange(pg) {
     border: 1px solid #ddd;
     padding: 5px 10px;
     text-decoration: none;
-    color: #333;
+    color: black;
+    border-radius: 10px;
 }
 
 .pagination .page-link:hover {
@@ -79,6 +80,6 @@ function onPageChange(pg) {
 .pagination .page-item.active .page-link {
     background-color: #E1CCEC;
     border-color: #E1CCEC;
-    color: #fff;
+    border-radius: 10px;
 }
 </style>

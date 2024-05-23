@@ -87,8 +87,9 @@ function incrementHits(reviewid) {
     <div>
         <SearchBarItem @search="updateParam" />
     </div>
+    <hr>
     <div class="write-link">
-        <RouterLink v-if="isLogin" :to="{ name: 'review-write' }">write</RouterLink>
+        <RouterLink v-if="isLogin" :to="{ name: 'review-write' }" class="custom-link">글 작성</RouterLink>
     </div>
     <div class="review-grid">
         <ReviewListItem v-for="review in reviews" :key="review.reviewId" :review="review"
@@ -96,21 +97,37 @@ function incrementHits(reviewid) {
         </ReviewListItem>
     </div>
     <div>
-        <PageNavigation :current-page="currentPage" :total-page="totalPage" @pageChange="onPageChange"></PageNavigation>
+        <PageNavigation :current-page="currentPage" :total-page="totalPage" @pageChange="onPageChange" style="margin-top: 100px;"></PageNavigation>
     </div>
 
 </template>
 
 <style scoped>
+hr {
+    margin-top: 50px;
+    margin-bottom: 50px;
+    border: 1px solid #f1ebeb;
+}
 .review-grid {
+    margin-top: 70px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
 }
 
 .write-link {
-    font-size: 20px;
+    font-size: 25px;
     margin: 10px;
     text-align: right;
+}
+
+
+.custom-link {
+  text-decoration: none;
+  color: black;
+}
+
+.custom-link:hover {
+  background-color: #E3EFFA;  /* 마우스를 올렸을 때 글자 색상을 파란색으로 변경 */
 }
 </style>

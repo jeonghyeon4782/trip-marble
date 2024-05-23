@@ -19,8 +19,8 @@ const queryMember = JSON.parse(route.query.member);
 const file = ref({})
 const preView = ref(null)
 
-if(queryMember.ImageUrl){
-  preView.value=queryMember.ImageUrl
+if(queryMember.imageUrl){
+  preView.value=queryMember.imageUrl
 }
 
 const handleImageUpload = (event) => {
