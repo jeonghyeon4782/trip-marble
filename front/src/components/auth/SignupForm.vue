@@ -11,6 +11,9 @@ import {
 import { ref, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import Swal from "sweetalert2";
+import logo from "@/assets/home.png";
+import show from "@/assets/show-password.png";
+import hide from "@/assets/hide-password.png";
 
 const route = useRoute();
 const router = useRouter();
@@ -35,7 +38,7 @@ const isAuthenticationEmail = ref(false);
 if (email) {
   member.value.email = email;
   isAuthenticationEmail.value = true;
-} 
+}
 
 if (oauthServerType) {
   member.value.oauthServiceType = oauthServerType;
@@ -113,22 +116,21 @@ watch(
 );
 
 function onSubmit() {
-  if (memberIdErrMsg.value) {
-    showSwal("error", "회원가입 오류", memberIdErrMsg.value);
+  if (!isDuplicateCheckMemberId.value) {
+    showSwal("error", "아이디 중복검사를 해주세요.", null);
+  } else if (!isDuplicateCheckNickname.value) {
+    showSwal("error", "닉네임 중복검사를 해주세요.", null);
+  } else if (!isAuthenticationEmail.value) {
+    showSwal("error", "이메일 인증을 해주세요.", null);
   } else if (nicknameErrMsg.value) {
-    showSwal("error", "회원가입 오류", nicknameErrMsg.value);
+    showSwal("error", nicknameErrMsg.value, null);
   } else if (emailErrMsg.value) {
-    showSwal("error", "회원가입 오류", emailErrMsg.value);
+    showSwal("error", emailErrMsg.value, null);
   } else if (passwordErrMsg.value) {
-    showSwal("error", "회원가입 오류", passwordErrMsg.value);
-  } else if(!isDuplicateCheckMemberId.value) {
-    showSwal("error", "회원가입 오류", "아이디 중복검사를 해주세요.");
-  } else if(!isDuplicateCheckNickname.value) {
-    showSwal("error", "회원가입 오류", "닉네임 중복검사를 해주세요.");
-  } else if(!isAuthenticationEmail.value) {
-    showSwal("error", "회원가입 오류", "이메일 인증을 해주세요.");
-  }
-  else {
+    showSwal("error", passwordErrMsg.value, null);
+  } else if (memberIdErrMsg.value) {
+    showSwal("error", memberIdErrMsg.value, null);
+  } else {
     signup();
   }
 }
@@ -143,9 +145,9 @@ function signup() {
         msg = "회원가입이 완료되었습니다.";
         router.replace({ name: "login" });
       }
-      alert(msg);
+      showSwal('success', msg, null);
     },
-    (error) => console.log(error)
+    (error) => showSwal('error', error.response.data.msg, null)
   );
 }
 
@@ -162,11 +164,10 @@ const onDuplicateCheckMemberId = () => {
     duplicateCheckMemberId(
       member.value.memberId,
       (response) => {
-        showSwal("success", "아이디 중복검사", response.data.msg);
+        showSwal("success", response.data.msg, null);
         isDuplicateCheckMemberId.value = true;
       },
-      (error) =>
-      showSwal("error", "아이디 중복검사", error.response.data.msg)
+      (error) => showSwal("error", error.response.data.msg, null)
     );
   } else {
     isDuplicateCheckMemberId.value = false;
@@ -178,11 +179,10 @@ const onDuplicateCheckNickname = () => {
     duplicateCheckNickname(
       member.value.nickname,
       (response) => {
-        showSwal("success", "닉네임 중복검사", response.data.msg);
+        showSwal("success", response.data.msg, null);
         isDuplicateCheckNickname.value = true;
       },
-      (error) =>
-      showSwal("error", "닉네임 중복검사", error.response.data.msg)
+      (error) => showSwal("error", error.response.data.msg, null)
     );
   } else {
     isDuplicateCheckNickname.value = false;
@@ -225,12 +225,14 @@ const onAuthenticationEmail = () => {
 
             Swal.update({
               html: `
+              <div style="font-family: "Gaegu", cursive;">
                 인증번호를 입력해주세요.<br/><br/>
                 남은 시간: <b id="timer">${remainingTime}</b> 초<br/><br/>
                 <div style="display: flex; align-items: center;">
                   <input type="text" id="verification-code" class="swal2-input" placeholder="인증번호 입력" style="flex: 1; margin-right: 10px;">
                   <button id="resend-button" class="swal2-confirm swal2-styled">재발송</button>
                 </div>
+              </div>
               `,
             });
             addResendButtonListener();
@@ -251,13 +253,15 @@ const onAuthenticationEmail = () => {
       Swal.fire({
         title: "이메일 인증",
         html: `
-          인증번호를 입력해주세요.<br/><br/>
-          남은 시간: <b id="timer">${remainingTime}</b> 초<br/><br/>
-          <div style="display: flex; align-items: center;">
-            <input type="text" id="verification-code" class="swal2-input" placeholder="인증번호 입력" style="flex: 1; margin-right: 10px;">
-            <button id="resend-button" class="swal2-confirm swal2-styled">재발송</button>
-          </div>
-        `,
+        <div style="font-family: 'Gaegu', cursive;">
+      인증번호를 입력해주세요.<br/><br/>
+      남은 시간: <b id="timer">${remainingTime}</b> 초<br/><br/>
+      <div style="display: flex; align-items: center;">
+        <input type="text" id="verification-code" class="swal2-input" placeholder="인증번호 입력" style="flex: 1; margin-right: 10px;">
+        <button id="resend-button" class="swal2-confirm swal2-styled">재발송</button>
+      </div>
+    </div>
+  `,
         icon: "success",
         showCancelButton: true,
         confirmButtonText: "확인",
@@ -277,7 +281,7 @@ const onAuthenticationEmail = () => {
               key: verificationCode,
             },
             (response) => {
-              showSwal("success", "이메일 인증", "인증 완료!!");
+              showSwal("success", "이메일 인증이 완료되었습니다.", null);
               isAuthenticationEmail.value = true;
             },
             (error) => {
@@ -287,7 +291,7 @@ const onAuthenticationEmail = () => {
               인증번호를 입력해주세요.<br/><br/>
               남은 시간: <b id="timer">${remainingTime}</b> 초<br/><br/>
               <div style="display: flex; align-items: center;">
-                <input type="text" id="verification-code" class="swal2-input" placeholder="인증번호 입력" style="flex: 1; margin-right: 10px;">
+                <input type="text" id="verification-code" class="swal2-input" placeholder="인증번호를 입력해주세요." style="flex: 1; margin-right: 10px;">
                 <button id="resend-button" class="swal2-confirm swal2-styled">재발송</button>
               </div>
               <div id="error-message" style="color: red;">인증번호가 틀렸습니다.</div>
@@ -295,11 +299,7 @@ const onAuthenticationEmail = () => {
                 });
                 addResendButtonListener();
               } else if (error.response.data.data == 2) {
-                showSwal(
-                  "error",
-                  "이메일 인증",
-                  "만료된 인증번호 입니다."
-                );
+                showSwal("error", "만료된 인증번호 입니다.", null);
               }
             }
           );
@@ -319,19 +319,40 @@ const onAuthenticationEmail = () => {
       });
     },
     (error) => {
-      showSwal("error", "이메일 인증", error.response.data.msg);
+      showSwal("error", error.response.data.msg, null);
     }
   );
 };
+
+const showPassword1 = ref(false);
+
+// 비밀번호 보이기 버튼
+function togglePasswordVisibility1() {
+  showPassword1.value = !showPassword1.value;
+  const passwordInput = document.getElementById("password");
+  passwordInput.type = showPassword1.value ? "text" : "password";
+}
+
+const showPassword2 = ref(false);
+
+// 비밀번호 보이기 버튼
+function togglePasswordVisibility2() {
+  showPassword2.value = !showPassword2.value;
+  const passwordInput = document.getElementById("confirm_password");
+  passwordInput.type = showPassword2.value ? "text" : "password";
+}
 </script>
 
 <template>
   <section>
     <div class="container">
-      <h2>회원가입</h2>
-      <form @submit.prevent="onSubmit">
-        <div class="form-group">
-          <label for="id">아이디</label>
+      <div class="logo-container">
+        <!-- 새로운 div를 추가하여 이미지를 포함할 컨테이너를 만듭니다 -->
+        <img :src="logo" alt="Logo" />
+        <!-- 이미지를 넣습니다 -->
+      </div>
+      <form class="signup-form" @submit.prevent="onSubmit">
+        <div class="form-group val-input">
           <input
             type="text"
             id="id"
@@ -339,13 +360,13 @@ const onAuthenticationEmail = () => {
             required
             v-model="member.memberId"
             :disabled="isDuplicateCheckMemberId"
+            placeholder="아이디를 입력하세요."
           />
-          <button @click.prevent="onDuplicateCheckMemberId">
-            {{ isDuplicateCheckMemberId ? "아이디 수정" : "아이디 중복검사" }}
+          <button class="check-val" @click.prevent="onDuplicateCheckMemberId">
+            {{ isDuplicateCheckMemberId ? "수정" : "중복검사" }}
           </button>
         </div>
-        <div class="form-group">
-          <label for="nickname">닉네임</label>
+        <div class="form-group val-input">
           <input
             type="text"
             id="nickname"
@@ -353,13 +374,13 @@ const onAuthenticationEmail = () => {
             required
             v-model="member.nickname"
             :disabled="isDuplicateCheckNickname"
+            placeholder="닉네임을 입력하세요."
           />
-          <button @click.prevent="onDuplicateCheckNickname">
-            {{ isDuplicateCheckNickname ? "닉네임 수정" : "닉네임 중복검사" }}
+          <button class="check-val" @click.prevent="onDuplicateCheckNickname">
+            {{ isDuplicateCheckNickname ? "수정" : "중복검사" }}
           </button>
         </div>
-        <div class="form-group">
-          <label for="email">이메일</label>
+        <div class="form-group val-input">
           <input
             type="email"
             id="email"
@@ -367,59 +388,107 @@ const onAuthenticationEmail = () => {
             required
             v-if="!email"
             v-model="member.email"
+            :disabled="isAuthenticationEmail"
+            placeholder="이메일을 입력하세요."
           />
           <input
             type="email"
             id="email"
             name="email"
+            placeholder="이메일을 입력하세요."
             required
             v-else
             :value="email"
             disabled
           />
           <button
+            class="check-val"
             v-if="!isAuthenticationEmail"
             @click.prevent="onAuthenticationEmail"
           >
-            이메일 인증
+            인증
           </button>
         </div>
-        <div class="form-group">
-          <label for="password">비밀번호</label>
+        <div class="form-group password-input">
           <input
             type="password"
             id="password"
             name="password"
+            placeholder="비밀번호를 입력하세요."
             required
             v-model="member.password"
           />
+          <button
+            type="button"
+            class="toggle-password"
+            @click="togglePasswordVisibility1"
+          >
+            <img
+              class="password-image"
+              v-if="showPassword1"
+              :src="hide"
+              alt="Show Password"
+            />
+            <img
+              class="password-image"
+              v-else
+              :src="show"
+              alt="Hide Password"
+            />
+          </button>
         </div>
-        <div class="form-group">
-          <label for="confirm_password">비밀번호 확인</label>
+        <div class="form-group password-input">
           <input
             type="password"
             id="confirm_password"
             name="confirm_password"
+            placeholder="비밀번호를 다시 한번 입력하세요."
             required
             v-model="member.repassword"
           />
+          <button
+            type="button"
+            class="toggle-password"
+            @click="togglePasswordVisibility2"
+          >
+            <img
+              class="password-image"
+              v-if="showPassword2"
+              :src="hide"
+              alt="Show Password"
+            />
+            <img
+              class="password-image"
+              v-else
+              :src="show"
+              alt="Hide Password"
+            />
+          </button>
         </div>
         <button type="submit" class="btn">회원가입</button>
+        <div class="link">
+          <RouterLink :to="{ name: 'findid' }">아이디 찾기</RouterLink>
+          <RouterLink :to="{ name: 'find-password' }">비밀번호 찾기</RouterLink>
+          <RouterLink :to="{ name: 'login' }">로그인</RouterLink>
+        </div>
       </form>
     </div>
-    <RouterLink :to="{ name: 'login' }" class="back-link">Login</RouterLink>
   </section>
 </template>
 
 <style scoped>
+* {
+  font-family: "Gaegu", cursive;
+}
+
 .container {
   width: 500px;
-  /* 폼 너비 조정 */
-  margin: 20px auto;
+  margin: 10px auto;
   padding: 20px;
   background-color: #fff;
   border-radius: 5px;
   box-shadow: 0 0 10px #f1f1f6;
+  text-align: center; /* 내부 요소들을 가로 방향으로 중앙 정렬 */
 }
 
 .container h2 {
@@ -436,22 +505,28 @@ const onAuthenticationEmail = () => {
 }
 
 .form-group input {
-  width: 95%;
+  width: 70%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  font-size: 20px;
 }
 
 .btn {
+  margin-top: 10px;
   display: block;
-  width: 100%;
+  width: 80%; /* 입력창과 동일한 너비로 조정 */
   padding: 10px;
-  border: none;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  background-color: #e1ccec;
-  color: #fff;
+  background-color: white;
+  color: black;
   text-align: center;
   cursor: pointer;
+  margin: 0 auto; /* 중앙 정렬 */
+  font-family: "Gaegu", cursive;
+  font-size: 25px;
+  font-weight: bo;
 }
 
 .btn:hover {
@@ -464,4 +539,60 @@ const onAuthenticationEmail = () => {
   margin-left: 10px;
   text-align: center;
 }
+
+img {
+  width: 250px;
+  height: 200px;
+}
+
+.val-input {
+  position: relative;
+}
+
+.check-val {
+  position: absolute;
+  top: 51%;
+  right: 70px; /* 오른쪽 여백 조정 */
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  color: red;
+}
+
+.password-input {
+  position: relative;
+}
+
+.toggle-password {
+  position: absolute;
+  top: 51%;
+  right: 70px; /* 오른쪽 여백 조정 */
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.password-image {
+  width: 25px;
+  height: 25px;
+}
+
+.link {
+  display: flex;
+  justify-content: space-between;
+  margin: auto 0;
+  text-align: right;
+  padding: 0 10px;
+  margin-top: 50px;
+  font-size: 20px;
+}
+
+.signup-form {
+  margin-top: 50px;
+}
 </style>
+
+<style></style>

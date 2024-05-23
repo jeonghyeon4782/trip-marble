@@ -1,16 +1,14 @@
 <script setup>
 import { ref, onBeforeMount } from "vue";
-import axios from "axios";
 import Space from "./item/Space.vue";
 import Dice from "./item/Dice.vue";
 import Horse from "./item/Horse.vue";
 import Score from "./item/Score.vue";
 import Swal from "sweetalert2";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 import { getBoard, getAttractionInfo, updateLocation, drawGoldCard, updateScore } from "@/api/board";
 
-import testImage from "@/assets/test.jpg";
 import doubleImage from "@/assets/double.jpg";
 import goldImage from "@/assets/gold-key.jpg";
 import startImage from "@/assets/start.jpg";
@@ -21,6 +19,7 @@ import islandImage from "@/assets/island.jpg";
 let isFirst = false;
 const isRolling = ref(false);
 const route = useRoute();
+const router = useRouter();
 const sidoId = route.params.sidoId;
 const imageId = route.params.imageId;
 
@@ -109,6 +108,14 @@ const onDrawGoldCard = () => {
   );
 };
 
+const showSwal = (icon, title, text) => {
+  Swal.fire({
+    icon: icon,
+    title: title,
+    text: text,
+  });
+};
+
 const goldCardSwal = (msg, location, index) => {
   Swal.fire({
     title: "황금열쇠",
@@ -195,7 +202,7 @@ onBeforeMount(() => {
       }
     },
     (error) => {
-      console.log(error);
+      showSwal("error", "오류가 발생했습니다...", null);
     }
   );
 });

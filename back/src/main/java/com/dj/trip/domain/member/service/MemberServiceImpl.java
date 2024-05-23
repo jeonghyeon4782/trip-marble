@@ -125,6 +125,7 @@ public class MemberServiceImpl implements MemberService {
         MemberInfo memberInfo = memberMapper.selectMemberPswInfoByMemberId(memberId);
 
         if (memberInfo == null || !encoder.matches(password, memberInfo.getPassword())) {
+
             throw new InsufficientAuthenticationException("잘못된 요청");
         }
 
@@ -192,7 +193,7 @@ public class MemberServiceImpl implements MemberService {
         String upperCaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String lowerCaseLetters = "abcdefghijklmnopqrstuvwxyz";
         String numbers = "0123456789";
-        String specialChars = "@_!*$%#";
+        String specialChars = "!#@";
         String allChars = upperCaseLetters + lowerCaseLetters + numbers + specialChars;
         SecureRandom secureRandom = new SecureRandom();
         StringBuilder password = new StringBuilder();

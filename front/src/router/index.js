@@ -51,10 +51,6 @@ const router = createRouter({
     {
       path: '/auth',
       name: 'auth',
-      // component: TheAuthView,
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import("@/views/TheAuthView.vue"),
       redirect: { name: "login" },
       children: [
@@ -83,10 +79,6 @@ const router = createRouter({
     {
       path: '/member',
       name: 'mypage',
-      // component: TheAuthView,
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import("@/views/TheMypageView.vue"),
       redirect: { name: "mypage-main" },
       children: [
@@ -122,24 +114,6 @@ const router = createRouter({
       name: "board",
       component: () => import("@/components/board/BoardMain.vue"),
     },
-    {
-      path: '/map',
-      name: 'map',
-      // component: TheAuthView,
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import("@/views/TheMapView.vue"),
-      redirect: { name: "map-main" },
-      children: [
-        {
-          path: "main",
-          name: "map-main",
-          component: () => import("@/components/map/MemberMap.vue"),
-        },
-      ]
-    },
-
   ]
 })
 

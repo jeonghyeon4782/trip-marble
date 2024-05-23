@@ -9,6 +9,7 @@ import location from '@/assets/location.svg';
 import defaultImage from '@/assets/defaultImage.jpg';
 
 import CommentListItem from '@/components/review/item/CommentListItem.vue';
+import Swal from "sweetalert2";
 
 
 const route = useRoute();
@@ -45,19 +46,44 @@ const getReview = () => {
     );
 };
 
+const showSwal = (icon, title, text) => {
+  Swal.fire({
+    icon: icon,
+    title: title,
+    text: text,
+    confirmButtonText: '확인'
+  });
+};
+
 function onDeleteReview() {
-    if (window.confirm("정말 삭제하시겠습니까?")) {
-        console.log(reviewid + "번 리뷰 삭제 요청");
-        deleteReview(
-            reviewid,
-            (response) => {
-                if (response.status == 204) router.replace({ name: "review-list" });
-            },
-            (error) => {
-                console.log(error);
-            }
-        );
-    }
+    Swal.fire({
+        title: '정말 삭제하시겠습니까?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '확인',
+        cancelButtonText: '취소'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            console.log(reviewid + "번 리뷰 삭제 요청");
+            deleteReview(
+                reviewid,
+                (response) => {
+                    if (response.status == 204) {
+                        router.replace({ name: "review-list" });
+                    }
+                },
+                (error) => {
+                    console.log(error);
+                    Swal.fire({
+                        title: '삭제 실패',
+                        text: '리뷰 삭제에 실패했습니다.',
+                        icon: 'error',
+                        confirmButtonText: '확인'
+                    });
+                }
+            );
+        }
+    });
 }
 
 const favoriteIcon = computed(() => {
@@ -115,17 +141,17 @@ function updateComments(newCount) {
 <template>
     <div class="container">
         <div class="link">
-            <RouterLink :to="{ name: 'review-list' }">Back to Posts</RouterLink>
+            <RouterLink :to="{ name: 'review-list' }"  style="font-size: 20px; cursor: pointer">뒤로가기</RouterLink>
             <span class="user-link">
-                <RouterLink :to="{ name: 'review-modify' }" v-if="review.isWriteByMe">modify</RouterLink>
-                <a @click="onDeleteReview" v-if="review.isWriteByMe">delete</a>
+                <RouterLink :to="{ name: 'review-modify' }" v-if="review.isWriteByMe">수정</RouterLink>
+                <a @click="onDeleteReview" v-if="review.isWriteByMe">삭제</a>
             </span>
         </div>
-
+        <hr style="margin-top: 70px;">
         <!-- 게시판 -->
         <div class="review">
             <div class="review-content">
-                <h2 class="review-title">{{ review.title }}</h2>
+                <h1 class="review-title">{{ review.title }}</h1>
                 <div class="top-info">
                     <div class="review-profile">
                         <img :src="review.profileImageUrl ? review.profileImageUrl : defaultImage"
@@ -133,20 +159,23 @@ function updateComments(newCount) {
                         <span class="username">{{ review.nickname }}</span>
                         <a>
                             <img :src="location" class="location-icon">
-                            <span class="location-text">{{ review.attractionName }}</span>
                         </a>
+                        <span class="location-text">{{ review.attractionName }}</span>
                         <span class="review-date">{{ review.createDate }}</span>
                     </div>
-                    <img v-if="!review.isWriteByMe && isLogin.value" :src="favoriteIcon" class="favorite-icon"
+                    <img v-if="!review.isWriteByMe && isLogin" :src="favoriteIcon" class="favorite-icon"
                         @click="favoriteClick">
                 </div>
                 <img :src="review.reviewImageUrl" v-if="review.reviewImageUrl" class="review-image">
+                <hr>
                 <p class="review-description">{{ review.content }}</p>
+                <hr>
                 <div class="review-info">
-                    <span>Likes: {{ review.likes }}</span>
-                    <span>Comments: {{ comments }}</span>
-                    <span>Views: {{ review.hits }}</span>
+                    <span>좋아요: {{ review.likes }}</span>
+                    <span>댓글: {{ comments }}</span>
+                    <span>조회수: {{ review.hits }}</span>
                 </div>
+                <hr>
             </div>
         </div>
         <CommentListItem @update-comment-count="updateComments" :reviewId="reviewid" />
@@ -155,10 +184,17 @@ function updateComments(newCount) {
 
 <style scoped>
 .container {
-    margin: 0 auto;
-    width: 80%;
-    height: 100%;
-    padding: 20px;
+    margin: 20px auto;
+  margin-top: 50px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px #f1f1f6;
+  text-align: center; /* 내부 요소들을 가로 방향으로 중앙 정렬 */
+}
+
+hr {
+    border: 1px solid #ccc;
 }
 
 .link {
@@ -170,19 +206,18 @@ function updateComments(newCount) {
 }
 
 .user-link>a {
-    margin-right: 20px;
+    margin-right: 30px;
     cursor: pointer;
+    font-size: 20px;
 }
 
 .review {
-    background-color: #F1F1F6;
-    border-radius: 10px;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-bottom: 20px;
 }
 
 .review-content {
+    background-color: white;
     text-align: center;
     padding: 20px;
 }
@@ -200,14 +235,16 @@ function updateComments(newCount) {
 
 
 .profile-image {
-    width: 30px;
-    height: 30px;
+    width: 50px;
+    height: 50px;
+    border: 3px solid #f1ebeb;
     border-radius: 50%;
-    margin-right: 10px;
+    margin-right: 20px;
 }
 
 .username {
     margin-right: 30px;
+    font-size: 17px
 }
 
 .top-info {
@@ -219,17 +256,17 @@ function updateComments(newCount) {
 }
 
 .review-date {
-    margin-left: 20px;
+    margin-left: 16px;
 }
 
 .location-icon {
-    width: 30px;
-    height: 30px;
+    width: 50px;
+    height: 50px;
     margin-right: 5px;
 }
 
 .location-text {
-    font-size: 0.9rem;
+    font-size: 17px;
 }
 
 .favorite-icon {
@@ -244,15 +281,16 @@ function updateComments(newCount) {
 }
 
 .review-description {
-    font-size: 1.2rem;
+    font-size: 20px;
     margin: 20px 0;
     height: 500px;
     overflow-y: auto;
 }
 
 .review-image {
-    width: 80%;
+    width: 50%;
     height: auto;
+    margin-top: 70px;
     margin-bottom: 20px;
     border-radius: 5px;
 }
@@ -263,5 +301,9 @@ function updateComments(newCount) {
     font-size: 0.9rem;
     color: gray;
     margin: 0 10%;
+}
+
+a:hover {
+  background-color: #e3effa;
 }
 </style>

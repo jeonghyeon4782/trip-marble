@@ -3,15 +3,20 @@ import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { logoutMember } from "@/api/auth";
 import { getSidoList } from "@/api/board";
+import { listAttractionInfo } from "@/api/attractionInfo";
 import Swal from "sweetalert2";
+import homeImage from "@/assets/home.png";
 
-import { createApp } from "vue";
+import SeoImage from "@/assets/서두나.png";
+import ParkImage from "@/assets/박찬호.png";
+import KimImage from "@/assets/김태균.png";
+import WelcomeImage from "@/assets/welcome.jpg";
 
 const router = useRouter();
-const isLogin = ref({});
+const isLogin = ref(false);
 
 onMounted(() => {
-  if (localStorage.getItem("isLogin") == "true") {
+  if (localStorage.getItem("isLogin") === "true") {
     isLogin.value = true;
   } else {
     isLogin.value = false;
@@ -23,6 +28,7 @@ const showSwal = (icon, title, text) => {
     icon: icon,
     title: title,
     text: text,
+    confirmButtonText: '확인'
   });
 };
 
@@ -46,6 +52,17 @@ function logout() {
   );
 }
 
+const confirmLogin = () => {
+  listAttractionInfo(
+    (response) => {
+      onGetSidoList();
+    },
+    (error) => {
+      showSwal("error", "로그인을 해주세요", null);
+    }
+  );
+}
+
 const onGetSidoList = () => {
   getSidoList(
     (response) => {
@@ -58,9 +75,6 @@ const onGetSidoList = () => {
         <button 
             class="sido-button" 
             data-id="${sido.sidoId}" 
-            style="margin: 5px; padding: 10px 20px; border-radius: 5px; border: none; background-color: #4CAF50; color: white; cursor: pointer;"
-            onmouseover="this.style.backgroundColor='#45a049'"
-            onmouseout="this.style.backgroundColor='#4CAF50'"
           >
             ${sido.name}
           </button>
@@ -81,15 +95,15 @@ const onGetSidoList = () => {
                 title: "캐릭터를 선택해주세요!",
                 html: `
   <button class="image-button" data-id="1" style="margin: 5px; border: none; background: none;">
-    <img src="src/assets/서두나.png" style="border-radius: 50%; width: 100px; height: 100px; cursor: pointer;" alt="서두나">
+    <img src="${SeoImage}" style="border-radius: 50%; width: 100px; height: 100px; cursor: pointer;" alt="서두나">
     <span style="display: block; text-align: center;">서두나</span>
   </button>
   <button class="image-button" data-id="2" style="margin: 5px; border: none; background: none;">
-    <img src="src/assets/박찬호.png" style="border-radius: 50%; width: 100px; height: 100px; cursor: pointer;" alt="박찬호">
+    <img src="${ParkImage}" style="border-radius: 50%; width: 100px; height: 100px; cursor: pointer;" alt="박찬호">
     <span style="display: block; text-align: center;">박찬호</span>
   </button>
   <button class="image-button" data-id="3" style="margin: 5px; border: none; background: none;">
-    <img src="src/assets/김태균.png" style="border-radius: 50%; width: 100px; height: 100px; cursor: pointer;" alt="김태균">
+    <img src="${KimImage}" style="border-radius: 50%; width: 100px; height: 100px; cursor: pointer;" alt="김태균">
     <span style="display: block; text-align: center;">김태균</span>
   </button>
 `,
@@ -108,7 +122,7 @@ const onGetSidoList = () => {
                       Swal.fire({
                         title: "부루마블 시작!",
                         text: "즐거운 부루마블하세요🎉🎉",
-                        imageUrl: "src/assets/welcome.jpg",
+                        imageUrl: WelcomeImage,
                         imageWidth: 400,
                         imageHeight: 200,
                         imageAlt: "환영",
@@ -132,108 +146,129 @@ const onGetSidoList = () => {
 
 // board 클릭 시
 function handleBoardClick() {
-  onGetSidoList();
+  confirmLogin();
 }
 </script>
 
 <template>
-  <header class="fixed-header">
-    <!-- Header Content Here -->
-    <h1>DJ TRIP</h1>
-  </header>
-
   <nav class="fixed-nav">
-    <div class="center">
-      <RouterLink :to="{ name: 'main' }">
-        <p>Home</p>
-      </RouterLink>
-      <a v-if="isLogin" @click.prevent="handleBoardClick">Board</a>
-      <RouterLink :to="{ name: 'review' }">
-        <p>Review</p>
-      </RouterLink>
-      <RouterLink :to="{ name: 'map' }">
-        <p>Review</p>
-      </RouterLink>
-    </div>
     <div class="left">
-      <RouterLink v-if="!isLogin" :to="{ name: 'auth' }">
-        <p>Login</p>
-      </RouterLink>
-      <a v-else @click="logout">
-        <p>Logout</p>
-      </a>
-      <RouterLink v-if="isLogin" :to="{ name: 'mypage' }">
-        <p>Mypage</p>
+      <RouterLink :to="{ name: 'main' }">
+        <img :src="homeImage" alt="Home" class="logo" />
       </RouterLink>
     </div>
+    <div class="center">
+      <a @click.prevent="handleBoardClick">🎲 부루마블</a>
+      <RouterLink :to="{ name: 'review' }">✍️ 여행일기 </RouterLink>
+    </div>
+    <div class="right">
+  <RouterLink v-if="!isLogin" :to="{ name: 'auth' }">🔐 로그인 </RouterLink>
+  <RouterLink v-if="isLogin" :to="{ name: 'mypage' }">👤 내 정보 </RouterLink>
+  <a v-if="isLogin" @click="logout">🔐 로그아웃 </a>
+</div>
   </nav>
 </template>
-
 <style scoped>
-.fixed-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 10%;
-  padding: 0px 30px;
-  z-index: 999;
+* {
+    font-family: "Gaegu", cursive;
 }
 
 .fixed-nav {
   position: fixed;
-  top: 10%;
+  top: 0;
   left: 0;
   width: 100%;
-  height: 5%;
+  height: 12%;
   display: flex;
   justify-content: space-between;
   padding: 10px;
   z-index: 999;
   font-size: 20px;
+  border-bottom: 2px solid #f1ebeb;
+  background-color: white;
 }
 
 header {
-  background-color: #e3effa;
+  background-color: white;
   padding: 20px;
 }
 
 nav {
-  background-color: #e1ccec;
+  background-color: white;
   padding: 10px;
   display: flex;
+  align-items: center;
+}
+
+.left {
+  display: flex;
+  margin-left: 20px;
+  align-items: center;
+  margin-right: auto;
 }
 
 .center {
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-grow: 1;
+  gap: 70px; /* 각 버튼 사이의 간격을 조절합니다. */
 }
 
-.left {
+.right {
   display: flex;
   align-items: center;
-}
-
-p:hover {
-  color: #e3effa;
+  gap: 70px; /* 각 요소 사이의 간격을 조절합니다. */
+  margin-right: 100px;
 }
 
 nav a {
-  color: white;
+  font-size: 30px;
+  color: black;
   text-decoration: none;
-  margin: 0 40px;
+  margin: 0 20px;
   cursor: pointer;
-  height: 100%;
   display: flex;
   align-items: center;
+  padding: 10px 0;
+  line-height: 1.5;
+}
+
+.center a:hover, .right a:hover{
+  background-color: #e3effa; /* 배경색도 변경 */
+}
+
+.logo {
+  width: 140px;
+  height: 110px;
 }
 </style>
 
 <style>
+
+* {
+    font-family: "Gaegu", cursive;
+}
+
 .custom-popup-class {
   width: 1100px !important;
   height: 1100px !important;
   overflow: hidden !important;
+}
+
+.sido-button {
+  margin: 5px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: white;
+  color: black;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  font-size: 20px;
+}
+
+.sido-button:hover {
+  background-color: #e3effa;
 }
 </style>

@@ -17,7 +17,7 @@ import TheFooter from '@/components/layout/TheFooter.vue';
 .main{
   height: auto;
   width: 100vw;
-  margin-top: 15%;
+  margin-top: 10%;
   margin-bottom: 10%;
   grid-template-columns: 1fr 1fr;
 }
