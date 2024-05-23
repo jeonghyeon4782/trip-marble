@@ -178,10 +178,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void deleteMember(String password, String memberId) {
+    public void deleteMember(String password, String memberId, HttpServletResponse response) {
         if (!encoder.matches(password, memberMapper.getPassword(memberId))) {
             throw new InsufficientAuthenticationException("잘못된 요청");
         }
+        jwtUtil.setHeaderAccessTokenEmpty(response);
+        jwtUtil.setHeaderRefreshTokenEmpty(response);
         memberMapper.deleteMember(memberId);
     }
 
