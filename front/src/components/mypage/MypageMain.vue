@@ -159,7 +159,9 @@ function deleteClick() {
         .then(() => {
           if (isEditing.value) {
             // 비밀번호가 맞으면 페이지 이동
-            router.replace({ name: 'login' });
+            localStorage.setItem("isLogin", false);
+            location.reload();
+            location.href = "/auth";
           } else {
             // 비밀번호가 틀리면 에러 메시지 표시
             Swal.fire({
