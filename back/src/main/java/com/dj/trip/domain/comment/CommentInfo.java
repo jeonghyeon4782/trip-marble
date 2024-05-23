@@ -18,4 +18,8 @@ public class CommentInfo {
     private String content;
     private Timestamp createDate;
     private boolean isWriteByMe;
+
+    public void setReviewImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }
