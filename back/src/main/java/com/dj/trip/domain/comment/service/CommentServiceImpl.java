@@ -9,6 +9,7 @@ import com.dj.trip.domain.comment.dto.request.GetCommentsRequest;
 import com.dj.trip.domain.comment.dto.request.ModifyCommentRequest;
 import com.dj.trip.domain.comment.dto.response.GetCommentsResponse;
 import com.dj.trip.domain.comment.mapper.CommentMapper;
+import com.dj.trip.domain.image.service.ImageServiceUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.List;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentMapper commentMapper;
+    private final ImageServiceUtils imageServiceUtils;
 
     @Override
     public void createComment(CreateCommentRequest createCommentRequest, String memberId) {
@@ -43,6 +45,12 @@ public class CommentServiceImpl implements CommentService {
                 getCommentsRequest.pagesize() * (getCommentsRequest.pageno() - 1)
         );
         List<CommentInfo> comments = commentMapper.selectComments(commentsDao);
+
+        for (CommentInfo comment : comments) {
+            if (comment.getImageUrl() != null) {
+                comment.setReviewImageUrl(imageServiceUtils.getImageUrl(comment.getImageUrl()));
+            }
+        }
 
         int page = getCommentsRequest.pageno();
         int total = commentMapper.getTotalCommentsCount(commentsDao);
