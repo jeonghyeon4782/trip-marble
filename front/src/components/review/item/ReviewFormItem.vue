@@ -184,7 +184,7 @@ function goBack() {
     </div>
     <form @submit.prevent="onSubmit">
       <div class="form-group">
-        <label for="title" style="font-size: 20px; margin-top: 50px"
+        <label for="title" style="font-size: 20px; margin-top: 50px; text-align: left;"
           >제목</label
         >
         <input
@@ -195,7 +195,7 @@ function goBack() {
         />
       </div>
       <div class="form-group">
-        <label for="content" style="font-size: 20px; margin-top: 50px"
+        <label for="content" style="font-size: 20px; margin-top: 50px; text-align: left;"
           >내용</label
         >
         <textarea
@@ -206,7 +206,7 @@ function goBack() {
         ></textarea>
       </div>
       <div class="form-group">
-        <label for="attractionList" style="font-size: 20px; margin-top: 50px"
+        <label for="attractionList" style="font-size: 20px; margin-top: 50px; text-align: left;"
           >보드 기록 목록</label
         >
         <select id="attractionList" v-model="review.attractionInfoId">

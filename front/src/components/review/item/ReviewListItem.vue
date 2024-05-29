@@ -34,7 +34,7 @@ function incrementHits() {
 
 <style scoped>
 .item {
-  background-color: #F1F1F6;
+  background-color: white;
   border-radius: 10px;
   overflow: hidden;
   height: 450px;

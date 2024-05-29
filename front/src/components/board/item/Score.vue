@@ -106,12 +106,12 @@ onMounted(() => {
 .my-score,
 .all-score {
   width: 100%;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
 }
 
 h4 {
   margin-bottom: 10px;
-  font-size: 18px;
+  font-size: 20px;
 }
 
 table {
@@ -125,7 +125,7 @@ td {
   font-weight: bold;
   text-align: left;
   padding: 8px;
-  font-size: 14px;
+  font-size: 17px;
 }
 
 th {

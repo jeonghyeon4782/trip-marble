@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onBeforeMount } from "vue";
+import { ref, onBeforeMount, onBeforeUnmount  } from "vue";
 import Space from "./item/Space.vue";
 import Dice from "./item/Dice.vue";
 import Horse from "./item/Horse.vue";
@@ -16,12 +16,30 @@ import spaceGif from "@/assets/space.gif";
 import spaceImage from "@/assets/space-travel.jpg";
 import islandImage from "@/assets/island.jpg";
 
+import gameStart from "@/assets/game-start.mp3"; 
+import spaceStart from "@/assets/space-start.mp3"; 
+import islandStart from "@/assets/island-start.mp3"; 
+import move from "@/assets/move.mp3"; 
+
 let isFirst = false;
 const isRolling = ref(false);
 const route = useRoute();
 const router = useRouter();
 const sidoId = route.params.sidoId;
-const imageId = route.params.imageId;
+const sidoName = route.params.name;
+const imageId = parseInt(route.params.imageId);
+
+const startAudio = new Audio(gameStart);
+startAudio.loop = true;
+
+const spaceAudio = new Audio(spaceStart);
+spaceAudio.loop = true;
+
+const islandAudio = new Audio(islandStart);
+islandAudio.loop = true;
+
+const moveAudio = new Audio(move);
+moveAudio.loop = true;
 
 let attractionInfo = {
   name: "",
@@ -71,16 +89,20 @@ const spaceTravelSwal = () => {
     confirmButtonText: "확인",
   }).then((result) => {
     if (result.isConfirmed) {
+      startAudio.pause();
+      spaceAudio.play();
       const destination = result.value;
       Swal.fire({
         title: "꽉 잡으세요...",
-        html: "<img src=spaceGif width='400' height='400'>",
+        html: `<img src=${spaceGif} width='400' height='400'>`,
         showConfirmButton: false,
-        timer: 3000,
+        timer: 5000,
         didOpen: () => {
           Swal.showLoading();
         },
       }).then(() => {
+        spaceAudio.pause();
+        startAudio.play();
         onUpdateLocation(destination);
         if (21 > destination) {
           onUpdateScore(50);
@@ -138,7 +160,7 @@ const islandSwal = (islandCnt) => {
   Swal.fire({
     title: "무인도",
     html: `아쉽게도 무인도네요..<br>${
-      3 - islandCnt
+      2 - islandCnt
     }턴동안 이동이 불가합니다.<br>Double이 나오면 탈출이 가능합니다!`,
     imageUrl: islandImage,
     imageWidth: 400,
@@ -175,7 +197,7 @@ const startSwal = () => {
 const attractionInfoSwal = () => {
   Swal.fire({
     title: `${attractionInfo.name}`,
-    html: `주소 : ${attractionInfo.addr}<br>상세 설명 : ${attractionInfo.description}`,
+    html: `<b>주소</b> : ${attractionInfo.addr}<br><br><b>설명</b> : ${attractionInfo.description}`,
     imageUrl: attractionInfo.url,
     imageWidth: 400,
     imageHeight: 250,
@@ -183,18 +205,30 @@ const attractionInfoSwal = () => {
     showCancelButton: true,
     confirmButtonText: "글 작성",
     cancelButtonText: "취소",
+  }).then((result) => {
+    // 확인 버튼을 클릭했을 때 실행되는 콜백 함수
+    if (result.isConfirmed) {
+      router.push({ name: "review-write"});
+    }
   });
 };
 
+
 onBeforeMount(() => {
+  startAudio.play();
   getBoard(
     sidoId,
     (response) => {
       mapInfo.value.spaces = response.data.data.boardInfoVoList;
       mapInfo.value.mapId = response.data.data.boardMemberMapId;
       mapInfo.value.now = response.data.data.nowLocation;
-      mapInfo.value.island = response.data.data.island;
       mapInfo.value.islandCnt = response.data.data.islandCnt;
+      console.log(mapInfo.value.islandCnt);
+      if (mapInfo.value.now == 7) {
+        isIslandTime == true;
+        startAudio.pause();
+        islandAudio.play();
+      }
       horse.value.horseTop = horseTopArr[response.data.data.nowLocation];
       horse.value.horseLeft = horseLeftArr[response.data.data.nowLocation];
       if (mapInfo.value.now === 0) {
@@ -207,12 +241,31 @@ onBeforeMount(() => {
   );
 });
 
+// 페이지를 떠날 때 오디오를 멈추는 beforeRouteLeave 가드 추가
+onBeforeUnmount(() => {
+  startAudio.pause();
+  startAudio.currentTime = 0;
+  islandAudio.pause();
+  islandAudio.currentTime = 0;
+  spaceAudio.pause();
+  spaceAudio.currentTime = 0;
+});
+
+let isIslandTime = false;
+
 const moveHorse = async (diceValues) => {
-  isRolling.value = true;
+  console.log(isIslandTime)
+  console.dir(diceValues)
+  if (isIslandTime === true && diceValues[3] === 0) {
+    isIslandTime = false;
+    islandAudio.pause();
+    startAudio.play();
+  }
   let moveCount = 0;
   const moveInterval = 500;
 
   const moveOneStep = () => {
+    moveAudio.play();
     if (moveCount < diceValues[0] + diceValues[1]) {
       if (mapInfo.value.now === 0 && isFirst == false) {
         onUpdateScore(50);
@@ -220,7 +273,7 @@ const moveHorse = async (diceValues) => {
       } else {
         isFirst = false;
       }
-      if (diceValues[3] == 0) {
+      if (diceValues[3] === 0) {
         mapInfo.value.now = (mapInfo.value.now + 1) % 28;
         horse.value.horseTop = horseTopArr[mapInfo.value.now];
         horse.value.horseLeft = horseLeftArr[mapInfo.value.now];
@@ -241,10 +294,17 @@ const moveHorse = async (diceValues) => {
           mapInfo.value.now !== 18 &&
           mapInfo.value.now !== 3
         ) {
+          moveAudio.pause();
           doubleSwal();
           onUpdateScore(50);
         } else {
           if (mapInfo.value.now === 7) {
+            moveAudio.pause();
+            if (isIslandTime === false) {
+              startAudio.pause();
+              islandAudio.play();
+              isIslandTime = true;
+            }
             islandSwal(diceValues[3]);
           } else if (
             mapInfo.value.now === 9 ||
@@ -253,10 +313,13 @@ const moveHorse = async (diceValues) => {
             mapInfo.value.now === 18 ||
             mapInfo.value.now === 3
           ) {
+            moveAudio.pause();
             onDrawGoldCard();
           } else if (mapInfo.value.now === 21) {
+            moveAudio.pause();
             spaceTravelSwal();
           } else {
+            moveAudio.pause();
             await onGetAttractionInfo(mapInfo.value.mapId);
             attractionInfoSwal();
           }
@@ -265,7 +328,6 @@ const moveHorse = async (diceValues) => {
     }
   };
   setTimeout(moveOneStep, moveInterval);
-  isRolling.value = false;
 };
 
 const onGetAttractionInfo = (mapId) => {
@@ -299,6 +361,9 @@ const onUpdateLocation = (newLocation) => {
       horse.value.horseTop = horseTopArr[mapInfo.value.now];
       horse.value.horseLeft = horseLeftArr[mapInfo.value.now];
       if (mapInfo.value.now === 7) {
+        startAudio.pause();
+        islandAudio.play();
+        isIslandTime = true;
         islandSwal(0);
       } else if (
         mapInfo.value.now === 9 ||
@@ -340,6 +405,8 @@ const onUpdateScore = (score) => {
 </script>
 
 <template>
+  <div class="center-container">
+  <h3>{{ sidoName }}에 오신걸 환영합니다🎲</h3>
   <div class="container">
     <div
       :style="{
@@ -434,6 +501,7 @@ const onUpdateScore = (score) => {
       </tr>
     </table>
   </div>
+</div>
 </template>
 
 <style scoped>
@@ -453,9 +521,18 @@ th {
 }
 
 p {
-  font-size: 10px;
+  font-size: 20px;
   font-weight: bold;
   margin-top: 55px;
+}
+
+.center-container {
+  width: 100%;
+  height: 1200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #7EAF44;
 }
 
 .container {

@@ -272,6 +272,7 @@ hr {
 .favorite-icon {
     margin-right: 20px;
     margin-bottom: 20px;
+    cursor: pointer;
 }
 
 .review-title {
@@ -285,6 +286,7 @@ hr {
     margin: 20px 0;
     height: 500px;
     overflow-y: auto;
+    text-align: center;
 }
 
 .review-image {

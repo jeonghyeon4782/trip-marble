@@ -211,7 +211,7 @@ function onDeleteComment(commentId) {
   <section>
     <!-- 댓글 섹션 -->
     <div class="comments-section">
-      <h2>댓글</h2>
+      <h2 style="text-align: left;">댓글</h2>
       <hr>
       <!-- 댓글 목록 -->
       <div class="comments">
@@ -226,12 +226,12 @@ function onDeleteComment(commentId) {
           <div class="comment-content" v-if="!comment.isEditing">{{ comment.data.content }}</div>
           <div class="comment-edit" v-if="comment.isEditing">
             <textarea v-model="comment.newContent"></textarea>
-            <a @click="saveEdit(comment)">저장</a> |
-            <a @click.prevent="switchEditing(comment)">취소</a>
+            <a @click="saveEdit(comment)" style="cursor: pointer;">저장</a> |
+            <a @click.prevent="switchEditing(comment)" style="cursor: pointer;">취소</a>
           </div>
           <div class="comment-actions" v-if="comment.data.writeByMe && !comment.isEditing">
-            <a @click.prevent="switchEditing(comment)">수정</a> |
-            <a @click="onDeleteComment(comment.data.commentId)">삭제</a>
+            <a @click.prevent="switchEditing(comment)" style="cursor: pointer;">수정</a> |
+            <a @click="onDeleteComment(comment.data.commentId)" style="cursor: pointer;">삭제</a>
           </div>
         </div>
       </div>

@@ -1,6 +1,14 @@
 <script setup>
-import { ref, defineEmits, defineProps } from "vue";
+import { ref, defineEmits, defineProps, watch } from "vue";
 import axios from "axios";
+
+const emit = defineEmits(['moveHorse'])
+const props = defineProps({
+  mapId: Number,
+  isRolling: Boolean
+});
+
+const isMove = ref(false);
 
 const diceVal1 = ref(null);
 const diceVal2 = ref(null);
@@ -8,11 +16,6 @@ const nowLocation = ref(null);
 const islandCnt = ref(null);
 
 var rollTimeout;
-const emit = defineEmits(['moveHorse'])
-const props = defineProps({
-  mapId: Number,
-  isRolling: Boolean
-});
 
 const setVal = (num, val) => {
   var dices = document.querySelectorAll(".dice");
@@ -30,6 +33,7 @@ const getRand = () => {
   return Math.round(Math.random() * 5 + 1);
 }
 
+// 여기를 사용해라
 const setVals = () => {
   diceVal1.value = getRand();
   diceVal2.value = getRand();
@@ -38,12 +42,15 @@ const setVals = () => {
 }
 
 const rollDice = () => {
+  if (isMove.value) return; // 이미 주사위가 굴러가는 중인 경우 동작하지 않도록 함
+  isMove.value = true; // 주사위 굴리기 시작
   if (rollTimeout) clearTimeout(rollTimeout);
   toggleRoll();
   rollTimeout = setTimeout(async function () {
     setVals();
     await updateNow(diceVal1.value, diceVal2.value); 
     emit('moveHorse', [diceVal1.value, diceVal2.value, nowLocation.value, islandCnt.value]);
+    isMove.value = false; // 주사위 굴리기 끝
   }, 1000);
 }
 
@@ -62,6 +69,7 @@ const updateNow = async (diceVal1, diceVal2) => {
   }
 }
 </script>
+
 
 <template>
   <div class="dice-container">
@@ -123,7 +131,7 @@ const updateNow = async (diceVal1, diceVal2) => {
       </div>
     </div>
   </div>
-  <button class="button" v-if="!isRolling" @click="rollDice">굴리기</button>
+  <button class="button" v-if="!isMove" @click="rollDice">굴리기</button>
 </template>
 
 <style scoped>
@@ -251,27 +259,25 @@ const updateNow = async (diceVal1, diceVal2) => {
 }
 
 .button {
-  width: 140px;
-  height: 45px;
-  font-family: 'Roboto', sans-serif;
-  font-size: 15px;
-  text-transform: uppercase;
-  letter-spacing: 2.5px;
-  font-weight: 500;
-  color: #000;
-  background-color: aliceblue;
-  border: none;
-  border-radius: 45px;
-  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease 0s;
+  margin-top: 10px;
+  display: block;
+  width: 50%; /* 입력창과 동일한 너비로 조정 */
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: white;
+  color: black;
+  text-align: center;
   cursor: pointer;
-  outline: none;
-  }
+  margin: 0 auto; /* 중앙 정렬 */
+  font-family: "Gaegu", cursive;
+  font-size: 25px;
+  font-weight: bolder;
+}
 
 .button:hover {
   background-color: #2EE59D;
   box-shadow: 0px 15px 20px rgba(46, 229, 157, 0.4);
-  color: #fff;
   transform: translateY(-7px);
 }
 </style>
