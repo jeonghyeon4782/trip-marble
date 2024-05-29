@@ -156,6 +156,7 @@ const showSwal = (icon, title, text) => {
     icon: icon,
     title: title,
     text: text,
+    confirmButtonText: "확인"
   });
 };
 
@@ -531,6 +532,11 @@ function togglePasswordVisibility2() {
 
 .btn:hover {
   background-color: #e3effa;
+}
+
+a:hover {
+  background-color: #e3effa;
+  border-radius: 10px;
 }
 
 .back-link {

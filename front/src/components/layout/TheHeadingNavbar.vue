@@ -32,8 +32,8 @@ const showSwal = (icon, title, text) => {
   });
 };
 
-function showBoardMain(sidoId, imageId) {
-  router.push({ name: "board", params: { sidoId, imageId } });
+function showBoardMain(sidoId, imageId, name) {
+  router.push({ name: "board", params: { sidoId, imageId, name } });
 }
 
 function logout() {
@@ -75,6 +75,7 @@ const onGetSidoList = () => {
         <button 
             class="sido-button" 
             data-id="${sido.sidoId}" 
+            data-name="${sido.name}" 
           >
             ${sido.name}
           </button>
@@ -91,20 +92,21 @@ const onGetSidoList = () => {
           buttons.forEach((button) => {
             button.addEventListener("click", () => {
               const sidoId = button.getAttribute("data-id");
+              const name = button.getAttribute("data-name");
               Swal.fire({
                 title: "캐릭터를 선택해주세요!",
                 html: `
   <button class="image-button" data-id="1" style="margin: 5px; border: none; background: none;">
-    <img src="${SeoImage}" style="border-radius: 50%; width: 100px; height: 100px; cursor: pointer;" alt="서두나">
-    <span style="display: block; text-align: center;">서두나</span>
+    <img src="${SeoImage}" style="border-radius: 50%; width: 170px; height: 170px; cursor: pointer;" alt="서두나">
+    <span style="display: block; text-align: center; font-size:30px">서두나</span>
   </button>
   <button class="image-button" data-id="2" style="margin: 5px; border: none; background: none;">
-    <img src="${ParkImage}" style="border-radius: 50%; width: 100px; height: 100px; cursor: pointer;" alt="박찬호">
-    <span style="display: block; text-align: center;">박찬호</span>
+    <img src="${ParkImage}" style="border-radius: 50%; width: 170px; height: 170px; cursor: pointer;" alt="박찬호">
+    <span style="display: block; text-align: center; font-size:30px">박찬호</span>
   </button>
   <button class="image-button" data-id="3" style="margin: 5px; border: none; background: none;">
-    <img src="${KimImage}" style="border-radius: 50%; width: 100px; height: 100px; cursor: pointer;" alt="김태균">
-    <span style="display: block; text-align: center;">김태균</span>
+    <img src="${KimImage}" style="border-radius: 50%; width: 170px; height: 170px; cursor: pointer;" alt="김태균">
+    <span style="display: block; text-align: center; font-size:30px">김태균</span>
   </button>
 `,
 
@@ -128,7 +130,7 @@ const onGetSidoList = () => {
                         imageAlt: "환영",
                         confirmButtonText: "확인",
                       });
-                      showBoardMain(sidoId, imageId);
+                      showBoardMain(sidoId, imageId, name);
                     });
                   });
                 },
@@ -232,15 +234,29 @@ nav a {
   align-items: center;
   padding: 10px 0;
   line-height: 1.5;
-}
-
-.center a:hover, .right a:hover{
-  background-color: #e3effa; /* 배경색도 변경 */
+  transition: transform 0.3s ease; /* 마우스 오버 시 부드러운 변환 효과를 위한 트랜지션 */
 }
 
 .logo {
   width: 140px;
   height: 110px;
+  transition: transform 0.3s ease; /* 마우스 오버 시 부드러운 변환 효과를 위한 트랜지션 */
+}
+
+.logo:hover, .center a:hover, .right a:hover {
+  animation: jump 0.5s ease; /* 마우스를 올렸을 때 애니메이션 적용 */
+}
+
+@keyframes jump {
+  0% {
+    transform: translateY(0); /* 애니메이션 시작 시 초기 위치 */
+  }
+  50% {
+    transform: translateY(-20px); /* 중간 지점에서 위로 이동 */
+  }
+  100% {
+    transform: translateY(0); /* 애니메이션 종료 시 초기 위치로 복귀 */
+  }
 }
 </style>
 
@@ -260,7 +276,7 @@ nav a {
   margin: 5px;
   padding: 10px 20px;
   border-radius: 5px;
-  border: none;
+  border: 1px solid #f1ebeb;
   background-color: white;
   color: black;
   cursor: pointer;

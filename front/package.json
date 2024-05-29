@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "axios": "^1.6.8",
+    "imagesloaded": "^5.0.0",
     "moment-timezone": "^0.5.45",
     "sweetalert2": "^11.11.0",
     "vue": "^3.4.21",

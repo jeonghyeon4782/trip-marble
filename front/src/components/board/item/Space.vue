@@ -14,7 +14,7 @@ const props = defineProps({
 <style scoped>
 
 p {
-  font-size: 10px;
+  font-size: 17px;
   font-weight: bold; 
   margin-top: 55px;
 }
