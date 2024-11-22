@@ -1,9 +1,20 @@
-![image](https://github.com/jeonghyeon4782/trip-project/assets/102511188/bd080f90-448f-49bc-88e6-6dfd22d1f259)
+<img src="https://github.com/user-attachments/assets/13e4b72f-72ff-4f3f-b24a-3cca83b59159">
+</br>
+
+# 🎲 트립마블
+**2024.04.26 ~ 2024.05.23**
+
+</br>
+
 # "여행지를 선택하는 과정을 즐길 수 있는 콘텐츠를 제공하여 재미와 유익함을 주고 싶습니다!"
+
+</br>
 
 ## 어떤 사람들을 위한 서비스일까요?
 - 여행지를 선택하는 데 어려움이 있는 사람들
 - 여행지를 다른 사람들에게 공유하고 추천해주고 싶은 사람들
+
+</br>
 
 ## 👊 주요 기능
 
@@ -59,6 +70,8 @@
 |<div><img src="https://github.com/user-attachments/assets/652d7abd-04e9-4a89-871c-a63f2fbf10e6" ></div>|
 |:------------------------------------------------------:|
 
+</br>
+
 ## 🛠️ 기술 스택
 |분류|내용|
 |:---|:---|
@@ -68,6 +81,8 @@
 |데이터베이스|AWS S3, MySQL)|
 |버전 관리|Git, Github|
 |협업 Tool|Mattermost, Notion|
+
+</br>
 
 ## 📖 문서
 📚 **기능명세서**
