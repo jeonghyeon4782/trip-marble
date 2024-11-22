@@ -35,7 +35,44 @@
 |<div><img src="https://github.com/user-attachments/assets/fda61ab1-9fac-44f0-8043-11bf792b2a86"></div>|
 |:------------------------------------------------------:|
 
-|<div><img src="https://github.com/user-attachments/assets/1b1281ef-e4d3-4ebb-b14b-3경
+|<div><img src="https://github.com/user-attachments/assets/1b1281ef-e4d3-4ebb-b14b-36cebad19e28" ></div>|
+|:------------------------------------------------------:|
+
+|<div><img src="https://github.com/user-attachments/assets/c2b3bcf2-491d-4f04-81cf-f501eecd879a" ></div>|
+|:------------------------------------------------------:|
+
+🎲 **부루 마블**
+- 지역 선택 후 랜덤으로 보드판 생성
+- 주사위를 굴려서 위치 표 이동
+- 무인도, 황금 열쇠, 우주 여행 기능 구현
+- 관광지 도착 후 관광지 정보 조회
+
+|<div><img src="https://github.com/user-attachments/assets/5df2c9a1-565c-4bf4-a143-6d8bc04e635e" ></div>|
+|:------------------------------------------------------:|
+
+🍀 **커뮤니티**
+- 게시글 작성, 수정, 조회, 삭제
+- 지역 필터링 기능으로 원하는 지역 리뷰 조회
+- 최신순이나 좋아요 순으로 정렬 기능
+- 페이징 기능
+- Best 게시글 조회
+- Axios 댓글 작성, 수정, 조회, 삭제
+
+|<div><img src="https://github.com/user-attachments/assets/e7a106b8-e903-41ea-8969-378f0acf2364"></div>|
+|:------------------------------------------------------:|
+
+|<div><img src="https://github.com/user-attachments/assets/96547808-c7ab-428f-8ceb-4fd1c4d33507"></div>|
+|:------------------------------------------------------:|
+
+|<div><img src="https://github.com/user-attachments/assets/792da328-7104-4ebf-be98-3b50b57e6f7c"></div>|
+|:------------------------------------------------------:|
+
+|<div><img src="https://github.com/user-attachments/assets/652d7abd-04e9-4a89-871c-a63f2fbf10e6" ></div>|
+|:------------------------------------------------------:|
+
+</br>
+
+## 🛠️ 개발 환경
 |분류|내용|
 |:---|:---|
 |통합 개발 환경|IntelliJ, VSCode|
