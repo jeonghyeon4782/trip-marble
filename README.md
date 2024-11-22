@@ -78,7 +78,7 @@
 |통합 개발 환경|IntelliJ, VSCode|
 |언어|Java, JS, Html, CSS|
 |프레임워크|Spring boot, Vue.js|
-|데이터베이스|AWS S3, MySQL)|
+|데이터베이스|AWS S3, MySQL|
 |버전 관리|Git, Github|
 |협업 Tool|Mattermost, Notion|
 
