@@ -68,3 +68,23 @@
 |데이터베이스|AWS S3, MySQL)|
 |버전 관리|Git, Github|
 |협업 Tool|Mattermost, Notion|
+
+## 📖 문서
+📚 **기능명세서**
+</br>
+[🔗 기능 명세서 보기](https://successful-mountain-ee3.notion.site/454d757178ac42b6b2767509eca3c132?v=13062621ba9e4ac0a0abf327d7c6757c&pvs=4)  
+
+![기능 명세서](https://github.com/user-attachments/assets/d60a452a-014d-43f7-b896-0e9a12273fe8)
+
+---
+
+📚 **ERD**
+![ERD](https://github.com/user-attachments/assets/d5a0be54-86a1-420c-b18b-91a23d9c3eed)
+
+---
+
+📚 **API명세서**
+</br>
+[🔗 API 명세서 보기](https://successful-mountain-ee3.notion.site/83d63cf81da04958936713a9460d3501?v=ba1a1ef9872a4edbb94c8e6709ba22c9&pvs=74)  
+
+![API 명세서](https://github.com/user-attachments/assets/2970d7a3-c687-4222-9f20-d81d91c449c4)
